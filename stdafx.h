@@ -4,7 +4,7 @@
 //
 
 #pragma once
-
+#pragma comment(linker,"/entry:wWinMainCRTStartup /subsystem:console")
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
@@ -33,3 +33,4 @@ enum Enemy_Kind {
 #define WHOLE_MAP 2500
 #define BLOCK_SIZE 20
 #define MAP_RAY 650
+

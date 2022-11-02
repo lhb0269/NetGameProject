@@ -172,6 +172,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static POINT screen;
 	static HBITMAP hbm;
 
+	printf("player : %d \n enemy : %d \n ", sizeof(Player), sizeof(Enemy));
 	switch (message)
 	{
 	case WM_CREATE:
