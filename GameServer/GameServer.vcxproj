@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\EnemyManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\EnemyManager.h" />
     <ClInclude Include="PACKET.h" />
     <ClInclude Include="Server.h" />
   </ItemGroup>

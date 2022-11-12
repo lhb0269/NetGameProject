@@ -27,7 +27,6 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager()
 {
-	delete boss;
 	for (int i = 0; i < mobNum; ++i)
 		delete enemyList[i];
 	delete bulletMng;
@@ -69,9 +68,6 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 		break;
 	case SLUG:
 		enemyList[mobNum] = new Slug;
-		break;
-	case SUN:
-		enemyList[mobNum] = new Sun;
 		break;
 	default:
 		enemyList[mobNum] = new HeadedMob;
