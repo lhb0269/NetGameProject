@@ -3,20 +3,18 @@
 #include "EffectManager.h"
 #include "Monster.h"
 #include "Tower.h"
-#include "Boss.h"
 
 #define MAX_MOB 100
 
 class EnemyManager
 {
 	Enemy* enemyList[MAX_MOB];
-	Sun* boss;
 	int mobNum;
 	bool typeList[10];
 	int nowBulletType;
 
 public:
-	BulletManager *bulletMng = new BulletManager;
+	BulletManager* bulletMng = new BulletManager;
 
 	EnemyManager();
 	~EnemyManager();
@@ -28,4 +26,9 @@ public:
 	int getEnemyNumber();
 	Bomber* getBomb(int index);
 	void destroy(int index);
+	//Server
+	void init();
+	void Recv();
+	void EnemtState(Enemy);
+	Enemy* HandOverInfo();
 };
