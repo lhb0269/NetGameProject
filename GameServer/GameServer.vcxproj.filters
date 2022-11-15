@@ -21,7 +21,7 @@
     <ClCompile Include="Server.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\EnemyManager.cpp">
+    <ClCompile Include="EnemyManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClInclude Include="PACKET.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\EnemyManager.h">
+    <ClInclude Include="EnemyManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
