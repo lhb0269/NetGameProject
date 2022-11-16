@@ -28,7 +28,25 @@ void CLIENT::err_display(const char* msg)
 
 DWORD WINAPI RecvThread(LPVOID arg)
 {
-	CLIENT* pClinet = (CLIENT*)arg;
+	int retval = 0;
+	CLIENT* pClient = (CLIENT*)arg;
+	SOCKET sock = pClient->GetSock();
+	char buf[BUFSIZE];
+
+	while (true)
+	{
+
+	}
+}
+
+void CLIENT::Send_Packet()
+{
+
+}
+
+void CLIENT::Recv_Packet()
+{
+
 }
 
 int CLIENT::Init()
