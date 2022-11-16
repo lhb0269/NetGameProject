@@ -1,6 +1,7 @@
 #pragma once
 #define MAX_ENEMY 100
-#include<Windows.h>
+#include <Windows.h>
+
 class Enemy
 {
 	int x, y;//ÁÂÇ¥

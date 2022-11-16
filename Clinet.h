@@ -7,12 +7,12 @@
 #include <iostream>
 using namespace std;
 
-char* SERVERIP = (char*)"127.0.0.1";
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
 class CLIENT {
 private:
+	char* SERVERIP = (char*)"127.0.0.1";
 	WSADATA wsa;
 	SOCKET sock;
 	struct sockaddr_in serveraddr;
@@ -23,6 +23,7 @@ public:
 	
 	SOCKET& GetSock() { return sock; }
 	int Init();
+	void Login();
 	void Send_Packet();
 	void Recv_Packet();
 };

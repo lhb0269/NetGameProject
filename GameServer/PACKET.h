@@ -1,6 +1,5 @@
 #pragma once
 #include <Windows.h>
-
 struct PlayerInfo {
 	POINT pos;
 	//Sword sword; //클라이언트 class SWORD를 가져와야함

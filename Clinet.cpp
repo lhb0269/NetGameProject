@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Clinet.h"
 
 void CLIENT::err_quit(const char* msg)
@@ -33,10 +34,19 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	SOCKET sock = pClient->GetSock();
 	char buf[BUFSIZE];
 
+	pClient->Login();
 	while (true)
 	{
 
 	}
+}
+
+void CLIENT::Login()
+{
+	int retval = 0;
+	int id = 0;
+	retval = recv(sock, (char*)&id, sizeof(int), MSG_WAITALL);
+	if (retval == SOCKET_ERROR) err_display("send()");
 }
 
 void CLIENT::Send_Packet()

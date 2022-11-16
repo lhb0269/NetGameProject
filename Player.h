@@ -80,6 +80,8 @@ class Player : public RealObject
 
 	int bangMotion;
 
+	int id;
+
 	void drawCore(HDC);
 	void drawSword(HDC);
 	void drawShell(HDC);

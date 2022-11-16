@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "TeamProject_2KnMn_1.h"
+#include "Clinet.h"
 #include<mmsystem.h>
 #pragma comment(lib,"winmm.lib")
 #define MAX_LOADSTRING 100
@@ -146,7 +147,7 @@ POINT mPos;
 int collideNum;
 int collideTime;
 
-
+CLIENT Client;
 //bool bStart = false;
 char str[] = "Slash And Shoot";
 void menu(HDC hdc)
@@ -172,7 +173,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static POINT screen;
 	static HBITMAP hbm;
 
-	printf("player : %d \n enemy : %d \n ", sizeof(Player), sizeof(Enemy));
 	switch (message)
 	{
 	case WM_CREATE:
@@ -189,6 +189,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hbm = CreateCompatibleBitmap(hdc, mapMng.getWholeMapSize().x, mapMng.getWholeMapSize().y);
 			ReleaseDC(hWnd, hdc);
 		}
+		Client.Init(); // 서버와 연결
 		break;
 	case WM_GETMINMAXINFO:
 		((MINMAXINFO *)lParam)->ptMaxTrackSize = mapMng.getCameraSize();//screen.x;

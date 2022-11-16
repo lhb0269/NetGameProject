@@ -1,4 +1,4 @@
-#include"global.h"
+#include "global.h"
 
 void Enemy::setPos(int xpos, int ypos)
 {
@@ -58,6 +58,7 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 		return;
 	switch (typeSwitch) {
 	case HEADED:
-		EnemyList[mobNum] = new HeadedMob;
+		//EnemyList[mobNum] = new HeadedMob;
+		break;
 	}
 }

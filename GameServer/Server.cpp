@@ -1,3 +1,4 @@
+#pragma once
 #include "Server.h"
 
 void SERVER::err_quit(const char* msg)
@@ -54,8 +55,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	int retval;
 	SERVER* server = (SERVER*)arg;
 	SOCKET client_sock = server->GetClinetSock();
-	struct sockaddr_in clientaddr;
 
+	server->ClientLogin(client_sock);
 	while (1) {
 		//send recv 구현필요
 	}
@@ -73,6 +74,15 @@ void SERVER::Recv_Packet()
 void SERVER::Send_AllPacket()
 {
 
+}
+
+void SERVER::ClientLogin(SOCKET& clientsock)
+{
+	int retval;
+	retval = send(clientsock, (char*)&ClientCount, sizeof(int), 0);
+	if (retval == SOCKET_ERROR) err_display("send()");
+	ClientCount++;
+	std::cout << ClientCount << std::endl;
 }
 
 int SERVER::Update()

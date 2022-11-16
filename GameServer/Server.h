@@ -19,6 +19,8 @@ class SERVER {
 	HANDLE hThread;
 	char addr[INET_ADDRSTRLEN];
 	char buf[BUFSIZE + 1];
+
+	int ClientCount = 0;
 public:
 	int Init();
 	int Update();
@@ -28,4 +30,6 @@ public:
 	SOCKET& GetClinetSock() { return client_sock; }
 	void Send_AllPacket();
 	void Recv_Packet();
+
+	void ClientLogin(SOCKET& clientsock);
 };
