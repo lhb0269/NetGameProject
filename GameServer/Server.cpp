@@ -34,12 +34,9 @@ int SERVER::Init()
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
 
-	// 소켓 생성
-	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
 
-	// bind()
-	struct sockaddr_in serveraddr;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -68,21 +65,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
 
 	while (1) {
-		// 데이터 받기
-		retval = recv(client_sock, buf, BUFSIZE, 0);
-		if (retval == SOCKET_ERROR) {
-			server->err_display("recv()");
-			break;
-		}
-		else if (retval == 0)
-			break;
-
-		// 데이터 보내기
-		retval = send(client_sock, buf, retval, 0);
-		if (retval == SOCKET_ERROR) {
-			server->err_display("send()");
-			break;
-		}
+		//send recv 구현필요
 	}
 
 	// 소켓 닫기

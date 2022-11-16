@@ -28,6 +28,7 @@ struct ALL_PACKET {
 };
 
 struct CollideEnemy {
-	int Enemy_id;
+	int Enemyid;
+	int Playerid;
 	POINT pos;
 };

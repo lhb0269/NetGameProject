@@ -26,4 +26,6 @@ public:
 	void err_display(const char* msg);
 
 	SOCKET& GetClinetSock() { return client_sock; }
+	void Send_AllPacket();
+	void Recv_Packet();
 };
