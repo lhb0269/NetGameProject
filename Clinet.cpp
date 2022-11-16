@@ -1,6 +1,6 @@
 #include "Clinet.h"
 
-void CLINET::err_quit(const char* msg)
+void CLIENT::err_quit(const char* msg)
 {
 	LPVOID lpMsgBuf;
 	FormatMessageA(
@@ -13,7 +13,7 @@ void CLINET::err_quit(const char* msg)
 	LocalFree(lpMsgBuf);
 	exit(1);
 }
-void CLINET::err_display(const char* msg)
+void CLIENT::err_display(const char* msg)
 {
 	LPVOID lpMsgBuf;
 	FormatMessageA(
@@ -26,8 +26,12 @@ void CLINET::err_display(const char* msg)
 	LocalFree(lpMsgBuf);
 }
 
+DWORD WINAPI RecvThread(LPVOID arg)
+{
+	CLIENT* pClinet = (CLIENT*)arg;
+}
 
-int CLINET::Init()
+int CLIENT::Init()
 {
 	int retval;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -44,4 +48,8 @@ int CLINET::Init()
 	serveraddr.sin_port = htons(SERVERPORT);
 	retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
+
+	hThread = CreateThread(NULL, 0, RecvThread,
+		(LPVOID)this, 0, NULL);
+	if(hThread != NULL) (CloseHandle(hThread));
 }

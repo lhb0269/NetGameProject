@@ -3,7 +3,7 @@
 
 struct PlayerInfo {
 	POINT pos;
-	//SWORD sword; //클라이언트 class SWORD를 가져와야함
+	//Sword sword; //클라이언트 class SWORD를 가져와야함
 	int id;
 	int direction;
 	int speed;
