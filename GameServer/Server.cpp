@@ -55,14 +55,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	SERVER* server = (SERVER*)arg;
 	SOCKET client_sock = server->GetClinetSock();
 	struct sockaddr_in clientaddr;
-	char addr[INET_ADDRSTRLEN];
-	int addrlen;
-	char buf[BUFSIZE + 1];
-
-	// 클라이언트 정보 얻기
-	addrlen = sizeof(clientaddr);
-	getpeername(client_sock, (struct sockaddr*)&clientaddr, &addrlen);
-	inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
 
 	while (1) {
 		//send recv 구현필요
@@ -70,9 +62,17 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 	// 소켓 닫기
 	closesocket(client_sock);
-	printf("[TCP 서버] 클라이언트 종료: IP 주소=%s, 포트 번호=%d\n",
-		addr, ntohs(clientaddr.sin_port));
 	return 0;
+}
+
+void SERVER::Recv_Packet()
+{
+
+}
+
+void SERVER::Send_AllPacket()
+{
+
 }
 
 int SERVER::Update()
