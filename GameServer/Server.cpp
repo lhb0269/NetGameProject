@@ -1,6 +1,6 @@
 #pragma once
 #include "Server.h"
-
+#include "global.h"
 void SERVER::err_quit(const char* msg)
 {
 	LPVOID lpMsgBuf;
@@ -27,9 +27,9 @@ void SERVER::err_display(const char* msg)
 	printf("[%s] %s\n", msg, (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
-
 int SERVER::Init()
 {
+	enemyManager->init();
 	int retval = 0;
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -49,6 +49,7 @@ int SERVER::Init()
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
 }
+
 
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
@@ -85,8 +86,32 @@ void SERVER::ClientLogin(SOCKET& clientsock)
 	std::cout << ClientCount << std::endl;
 }
 
+void SERVER::Spawn()
+{
+	int mobNum = enemyManager->getEnemyNumber();
+
+	if (waveMng->isSpawn()) {
+		Monster* now = waveMng->getMob();
+		if (now != nullptr) {
+			enemyManager->spawn(now->start, now->type, now->protect);
+		}
+	}
+
+	/*static int shootTerm = 100;
+	static int shootStock = shootTerm;
+	shootStock++;
+	if (shootStock > shootTerm) {
+		shootStock = 0;
+		enemyManager->shoot(player.getPos());
+	}*/
+}
+
 int SERVER::Update()
 {
+	waveMng->update();
+	Spawn();
+	//플레이어 받아오면 player->getcore() 넘겨준다.
+	enemyManager->move({ 50,50,50,50 });
 	while (1) {
 		// accept()
 		addrlen = sizeof(clientaddr);

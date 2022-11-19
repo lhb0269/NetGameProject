@@ -5,6 +5,8 @@ int main(int argc, char* argv[])
 {
 	SERVER server;
 	server.Init();
-	server.Update();
+	while (1) {
+		server.Update();
+	}
 	return 0;
 }

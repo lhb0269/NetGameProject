@@ -5,7 +5,7 @@
 #include <WinSock2.h>
 #include <stdio.h>
 #include <iostream>
-
+#include"global.h"
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
@@ -19,11 +19,13 @@ class SERVER {
 	HANDLE hThread;
 	char addr[INET_ADDRSTRLEN];
 	char buf[BUFSIZE + 1];
-
+	EnemyManager* enemyManager = new EnemyManager;
+	WaveManager* waveMng = new WaveManager;
 	int ClientCount = 0;
 public:
 	int Init();
 	int Update();
+	void Spawn();
 	void err_quit(const char* msg);
 	void err_display(const char* msg);
 
