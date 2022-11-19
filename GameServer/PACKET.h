@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include"Enemy.h"
 struct PlayerInfo {
 	POINT pos;
 	//Sword sword; //클라이언트 class SWORD를 가져와야함
@@ -22,8 +23,8 @@ struct LOBBYPACKET {
 
 struct ALL_PACKET {
 	PlayerInfo	P_info[4];
-	//ENEMY		EnemyList;
-	UI			Ui;
+	Enemy* enemyList;
+	UI Ui;
 };
 
 struct CollideEnemy {
