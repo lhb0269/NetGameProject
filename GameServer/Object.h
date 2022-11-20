@@ -34,3 +34,19 @@ public:
 	const POINTFLOAT getVelocity();
 	const FLOAT getWeight();
 };
+
+class Sword {
+	FLOAT rotMoment;
+	FLOAT rotVelocity;
+	LONG inertia;
+	int numOfRotate;
+	int pnm;
+	bool isSlash;
+	POINT swordPos;
+	LONG swordLength;
+	LONG swordLength_s;
+	LONG swordWidth;
+	FLOAT nowAngle;
+	FLOAT lastAngle;
+	LONG swordRay;
+};

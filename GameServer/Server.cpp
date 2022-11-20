@@ -48,6 +48,9 @@ int SERVER::Init()
 	// listen()
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
+
+	ReadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	SendEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 }
 
 
@@ -60,6 +63,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	server->ClientLogin(client_sock);
 	while (1) {
 		//send recv 구현필요
+		server->Recv_Packet(client_sock);
+		server->Send_AllPacket();
 	}
 
 	// 소켓 닫기
@@ -67,23 +72,56 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	return 0;
 }
 
-void SERVER::Recv_Packet()
+void SERVER::Recv_Packet(SOCKET& clientsock)
 {
+	WaitForSingleObject(SendEvent, INFINITE);
+	int retval;
+	//패킷 type 이랑 크기 받고 type에 따라 처리해야함
+	PACKET_TYPE type;
+	retval = recv(clientsock, (char*)&type, sizeof(type), MSG_WAITALL);
+	if (retval == SOCKET_ERROR) err_display("recv()");
 
+	switch (type)
+	{
+	case PLAYERINFO:
+	{
+		retval = recv(clientsock, (char*)&recvPlayerInfo, sizeof(PlayerInfo), MSG_WAITALL);
+		if (retval == SOCKET_ERROR) err_display("recv()");
+		playerInfo[recvPlayerInfo.id].pos = recvPlayerInfo.pos;
+		playerInfo[recvPlayerInfo.id].sword = recvPlayerInfo.sword;
+		break;
+	}
+	case UIPACKET:
+		break;
+	case LOBBYPACKET:
+		break;
+	case COLLIDEENEMY:
+		break;
+	case ALLPACKET:
+		break;
+	}
+	printPlayerInfo();
+
+	SetEvent(ReadEvent);
 }
 
 void SERVER::Send_AllPacket()
 {
+	WaitForSingleObject(ReadEvent, INFINITE);
+	ALL_PACKET packet;
+	for (auto& cl : v_clients)
+		send(cl, (char*)&packet, sizeof(packet), 0);
+	SetEvent(SendEvent);
 
 }
 
 void SERVER::ClientLogin(SOCKET& clientsock)
 {
 	int retval;
+	v_clients.push_back(clientsock);
 	retval = send(clientsock, (char*)&ClientCount, sizeof(int), 0);
 	if (retval == SOCKET_ERROR) err_display("send()");
 	ClientCount++;
-	std::cout << ClientCount << std::endl;
 }
 
 void SERVER::Spawn()
@@ -139,4 +177,13 @@ int SERVER::Update()
 	// 윈속 종료
 	WSACleanup();
 	return 0;
+}
+
+void SERVER::printPlayerInfo()
+{
+	for (int i = 0; i < ClientCount; ++i)
+	{
+		cout << playerInfo[i].id << ": " <<
+			playerInfo[i].pos.x << ", " << playerInfo[i].pos.y << endl;
+	}
 }

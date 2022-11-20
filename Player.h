@@ -114,4 +114,7 @@ public:
 	BOOL isDamaged();
 	void beAttacked();
 	bool gameovercheck();
+
+	void SetId(int x) { id = x; }
+	int GetId() { return id; }
 };

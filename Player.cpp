@@ -396,7 +396,6 @@ void Player::getSwordCollider(LKM::Shape* hitBox)
 	}
 }
 
-
 Sword::Sword()
 {
 	isSlash = false;

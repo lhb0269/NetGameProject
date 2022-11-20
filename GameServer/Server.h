@@ -13,6 +13,7 @@ class SERVER {
 	WSADATA wsa;
 	SOCKET listen_sock;
 	SOCKET client_sock;
+	vector<SOCKET> v_clients;
 	struct sockaddr_in serveraddr;
 	struct sockaddr_in clientaddr;
 	int addrlen;
@@ -22,6 +23,13 @@ class SERVER {
 	EnemyManager* enemyManager = new EnemyManager;
 	WaveManager* waveMng = new WaveManager;
 	int ClientCount = 0;
+
+	PlayerInfo playerInfo[4];
+	PlayerInfo recvPlayerInfo;
+	ALL_PACKET allPacket;
+
+	HANDLE ReadEvent;
+	HANDLE SendEvent;
 public:
 	int Init();
 	int Update();
@@ -31,7 +39,9 @@ public:
 
 	SOCKET& GetClinetSock() { return client_sock; }
 	void Send_AllPacket();
-	void Recv_Packet();
+	void Recv_Packet(SOCKET& clientsock);
 
 	void ClientLogin(SOCKET& clientsock);
+	void UpdateAllPacket();
+	void printPlayerInfo();
 };

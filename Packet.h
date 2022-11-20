@@ -1,13 +1,15 @@
 #pragma once
-#include "Player.h"
 #include "Enemy.h"
+#include "Player.h"
+
+enum PACKET_TYPE {
+	PLAYERINFO,UIPACKET,LOBBYPACKET, COLLIDEENEMY,ALLPACKET
+};
 
 struct PlayerInfo {
+	int id;
 	POINT pos;
 	Sword sword;
-	int id;
-	int direction;
-	int speed;
 };
 
 struct UI {
@@ -24,7 +26,7 @@ struct LOBBYPACKET {
 
 struct ALL_PACKET {
 	PlayerInfo	P_info[4];
-	Enemy*		EnemyList;
+	Enemy		EnemyList;
 	UI			Ui;
 };
 

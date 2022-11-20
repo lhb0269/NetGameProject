@@ -176,7 +176,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_CREATE:
-		PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
+		Client.Init(&player,enemyMng); // 서버와 연결
+		//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 		screen = { GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN) };
 		MoveWindow(hWnd, 0, 0, mapMng.getCameraSize().x, mapMng.getCameraSize().y, FALSE);
 		GetClientRect(hWnd, &win);
@@ -189,7 +190,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hbm = CreateCompatibleBitmap(hdc, mapMng.getWholeMapSize().x, mapMng.getWholeMapSize().y);
 			ReleaseDC(hWnd, hdc);
 		}
-		Client.Init(); // 서버와 연결
 		break;
 	case WM_GETMINMAXINFO:
 		((MINMAXINFO *)lParam)->ptMaxTrackSize = mapMng.getCameraSize();//screen.x;
@@ -444,6 +444,9 @@ void update(HWND hWnd, BOOL buffer[])
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
 	player.move(&map, &whole, NULL);
+
+
+	Client.Send_Packet(PLAYERINFO);
 	//moveAfter
 
 	//collide 검사

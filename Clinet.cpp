@@ -37,7 +37,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	pClient->Login();
 	while (true)
 	{
-
+		pClient->Recv_Packet(sock);
 	}
 }
 
@@ -47,20 +47,65 @@ void CLIENT::Login()
 	int id = 0;
 	retval = recv(sock, (char*)&id, sizeof(int), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
+
+	player->SetId(id);
 }
 
-void CLIENT::Send_Packet()
+void CLIENT::Send_Packet(void* pakcet,int size,PACKET_TYPE type)
 {
+	int retval;
+	retval = send(sock, (char*)type, sizeof(type), 0);
+	if (retval == SOCKET_ERROR) err_display("send()");
 
+	retval = send(sock, (char*)pakcet, size, 0);
+	if (retval == SOCKET_ERROR) err_display("send()");
 }
 
-void CLIENT::Recv_Packet()
+void CLIENT::Send_Packet(PACKET_TYPE type)
 {
-
+	int retval = 0;
+	switch (type)
+	{
+	case PLAYERINFO:
+	{
+		UpdatePlayerInfo();
+		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
+		retval = send(sock, (char*)&pInfo, sizeof(PlayerInfo), 0);
+		break;
+	}
+	case UIPACKET:
+		break;
+	case LOBBYPACKET:
+		break;
+	case COLLIDEENEMY:
+		break;
+	case ALLPACKET:
+		break;
+	}
+	if (retval == SOCKET_ERROR) err_display("send()");
 }
 
-int CLIENT::Init()
+void CLIENT::UpdatePlayerInfo()
 {
+	pInfo.id = player->GetId();
+	pInfo.pos = player->getPos();
+	pInfo.sword = player->getSword();
+}
+
+void CLIENT::Recv_Packet(SOCKET& sock)
+{
+	int retval;
+	ALL_PACKET packet;
+
+	retval = recv(sock, (char*)&packet, sizeof(ALL_PACKET), MSG_WAITALL);
+	if (retval == SOCKET_ERROR) err_display("send()");
+}
+
+int CLIENT::Init(Player* p, EnemyManager* e)
+{
+	player = p;
+	enemyMng = e;
+
 	int retval;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
