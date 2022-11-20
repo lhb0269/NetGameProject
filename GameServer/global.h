@@ -1,5 +1,7 @@
 #pragma once
 
+// 11.19 - ¿Á»∆
+#define MAX_PLAYER 4
 
 #define MAX_MOB 100
 
