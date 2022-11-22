@@ -63,12 +63,11 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	server->ClientLogin(client_sock);
 	while (1) {
 		//send recv 구현필요
-		server->Recv_Packet(client_sock);
+		//server->Recv_Packet(client_sock);
 		server->Send_AllPacket();
 	}
 
 	// 소켓 닫기
-	closesocket(client_sock);
 	return 0;
 }
 
@@ -96,7 +95,12 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	case LOBBYPACKET:
 		break;
 	case COLLIDEENEMY:
+	{
+		retval = recv(clientsock, (char*)&recvCollide, sizeof(CollideEnemy), MSG_WAITALL);
+		if (retval == SOCKET_ERROR) err_display("recv()");
+		enemyManager->Recv(recvCollide);
 		break;
+	}
 	case ALLPACKET:
 		break;
 	}
@@ -107,11 +111,16 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 
 void SERVER::Send_AllPacket()
 {
-	WaitForSingleObject(ReadEvent, INFINITE);
+	waveMng->update();
+	Spawn();
+	//플레이어 받아오면 player->getcore() 넘겨준다.
+	enemyManager->move({ 50,50,50,50 });
+	//WaitForSingleObject(ReadEvent, INFINITE);
 	ALL_PACKET packet;
+	//memcpy(packet.enemyList, enemyManager->HandOverInfo(), sizeof(Enemy*) * MAX_MOB);
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
-	SetEvent(SendEvent);
+	//SetEvent(SendEvent);
 
 }
 
@@ -124,6 +133,10 @@ void SERVER::ClientLogin(SOCKET& clientsock)
 	ClientCount++;
 }
 
+EnemyManager* SERVER::getList()
+{
+	return enemyManager;
+}
 void SERVER::Spawn()
 {
 	int mobNum = enemyManager->getEnemyNumber();
@@ -146,10 +159,6 @@ void SERVER::Spawn()
 
 int SERVER::Update()
 {
-	waveMng->update();
-	Spawn();
-	//플레이어 받아오면 player->getcore() 넘겨준다.
-	enemyManager->move({ 50,50,50,50 });
 	while (1) {
 		// accept()
 		addrlen = sizeof(clientaddr);
@@ -169,6 +178,7 @@ int SERVER::Update()
 			(LPVOID)this, 0, NULL);
 		if (hThread == NULL) { closesocket(client_sock); }
 		else { CloseHandle(hThread); }
+		
 	}
 
 	// 소켓 닫기

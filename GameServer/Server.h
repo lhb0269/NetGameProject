@@ -26,6 +26,7 @@ class SERVER {
 
 	PlayerInfo playerInfo[4];
 	PlayerInfo recvPlayerInfo;
+	CollideEnemy recvCollide;
 	ALL_PACKET allPacket;
 
 	HANDLE ReadEvent;
@@ -44,4 +45,5 @@ public:
 	void ClientLogin(SOCKET& clientsock);
 	void UpdateAllPacket();
 	void printPlayerInfo();
+	EnemyManager* getList();
 };

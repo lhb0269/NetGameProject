@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include "Enemy.h"
-
+#define MAX_MOB 100
 
 enum PACKET_TYPE {
 	PLAYERINFO, UIPACKET, LOBBYPACKET, COLLIDEENEMY, ALLPACKET
@@ -27,7 +27,7 @@ struct LOBBYPACKET {
 
 struct ALL_PACKET {
 	PlayerInfo	P_info[4];
-	Enemy enemyList;
+	Enemy *enemyList[MAX_MOB];
 	UI Ui;
 };
 
@@ -35,4 +35,12 @@ struct CollideEnemy {
 	int Enemyid;
 	int Playerid;
 	POINT pos;
+};
+
+struct state {
+	int nHeaded = 0;
+	int nHeadlessMob = 0;
+	int nTower = 0;
+	int nBomber = 0;
+	int nSlug = 0;
 };

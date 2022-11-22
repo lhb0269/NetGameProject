@@ -145,7 +145,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="PlayerInfoManager.cpp" />
+    <ClCompile Include="PlayerInfoManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Queue.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Shape.cpp" />
@@ -160,7 +162,9 @@
     <ClInclude Include="Monster.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PACKET.h" />
-    <ClInclude Include="PlayerInfoManager.h" />
+    <ClInclude Include="PlayerInfoManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Tower.h" />

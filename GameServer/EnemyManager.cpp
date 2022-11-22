@@ -1,5 +1,4 @@
 #include "global.h"
-
 std::random_device rd;
 std::mt19937_64 re(rd());
 std::uniform_int_distribution<int> uid(100, 2900);
@@ -45,21 +44,27 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 	switch (typeSwitch) {
 	case HEADED:
 		enemyList[mobNum] = new HeadedMob;
+		mstate.nHeaded += 1;
 		break;
 	case HEADLESS:
 		enemyList[mobNum] = new HeadlessMob;
+		mstate.nHeaded += 1;
 		break;
 	case TOWER:
 		enemyList[mobNum] = new Tower;
+		mstate.nHeaded += 1;
 		break;
 	case BOMBER:
 		enemyList[mobNum] = new Bomber;
+		mstate.nHeaded += 1;
 		break;
 	case SLUG:
+		mstate.nHeaded += 1;
 		enemyList[mobNum] = new Slug;
 		break;
 	default:
 		enemyList[mobNum] = new HeadedMob;
+		mstate.nHeaded += 1;
 		break;
 	}
 	enemyList[mobNum]->start(spawnPos);
@@ -165,4 +170,19 @@ void EnemyManager::init()
 	}
 	nowBulletType = 0;
 	mobNum = 0;
+}
+
+void EnemyManager::Recv(const CollideEnemy& ce)
+{
+	delete enemyList[ce.Enemyid];
+	enemyList[ce.Enemyid] = enemyList[--mobNum];
+}
+
+void EnemyManager::EnemtState(const Enemy& enemy)
+{
+
+}
+Enemy EnemyManager::HandOverInfo()
+{
+	return;
 }

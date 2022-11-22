@@ -26,9 +26,9 @@ public:
 	int getEnemyNumber();
 	Bomber* getBomb(int index);
 	void destroy(int index);
-	//Server
+	//client
 	void init();
-	void Recv();
+	void Recv(Enemy* recvList);
 	void EnemtState(Enemy);
 	Enemy* HandOverInfo();
 };

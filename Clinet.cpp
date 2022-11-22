@@ -51,7 +51,7 @@ void CLIENT::Login()
 	player->SetId(id);
 }
 
-void CLIENT::Send_Packet(void* pakcet,int size,PACKET_TYPE type)
+void CLIENT::Send_Packet(void* pakcet, int size, PACKET_TYPE type)
 {
 	int retval;
 	retval = send(sock, (char*)type, sizeof(type), 0);
@@ -124,5 +124,5 @@ int CLIENT::Init(Player* p, EnemyManager* e)
 
 	hThread = CreateThread(NULL, 0, RecvThread,
 		(LPVOID)this, 0, NULL);
-	if(hThread != NULL) (CloseHandle(hThread));
+	if (hThread != NULL) (CloseHandle(hThread));
 }
