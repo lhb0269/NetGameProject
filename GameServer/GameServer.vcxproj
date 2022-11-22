@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="gWinSock.cpp" />
     <ClCompile Include="LKM_Physics.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp" />
@@ -155,9 +156,11 @@
     <ClCompile Include="WaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="debug_test.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="gWinSock.h" />
     <ClInclude Include="LKM_Physics.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="Object.h" />

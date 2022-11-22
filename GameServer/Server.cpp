@@ -1,36 +1,13 @@
 #pragma once
 #include "Server.h"
 #include "global.h"
-void SERVER::err_quit(const char* msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessageA(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER
-		| FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(char*)&lpMsgBuf, 0, NULL);
-	MessageBoxA(NULL, (const char*)lpMsgBuf, msg, MB_ICONERROR);
-	LocalFree(lpMsgBuf);
-	exit(1);
-}
 
-void SERVER::err_display(const char* msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessageA(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER
-		| FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(char*)&lpMsgBuf, 0, NULL);
-	printf("[%s] %s\n", msg, (char*)lpMsgBuf);
-	LocalFree(lpMsgBuf);
-}
 int SERVER::Init()
 {
 	enemyManager->init();
 	int retval = 0;
+
+	playerMng->InitPlayer(ClientCount);
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
@@ -62,12 +39,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 	server->ClientLogin(client_sock);
 	while (1) {
-		//send recv ±¸ÇöÇÊ¿ä
+		//send recv êµ¬í˜„í•„ìš”
 		//server->Recv_Packet(client_sock);
 		server->Send_AllPacket();
 	}
 
-	// ¼ÒÄÏ ´Ý±â
+	// ì†Œì¼“ ë‹«ê¸°
 	return 0;
 }
 
@@ -75,7 +52,7 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 {
 	WaitForSingleObject(SendEvent, INFINITE);
 	int retval;
-	//ÆÐÅ¶ type ÀÌ¶û Å©±â ¹Þ°í type¿¡ µû¶ó Ã³¸®ÇØ¾ßÇÔ
+	//íŒ¨í‚· type ì´ëž‘ í¬ê¸° ë°›ê³  typeì— ë”°ë¼ ì²˜ë¦¬í•´ì•¼í•¨
 	PACKET_TYPE type;
 	retval = recv(clientsock, (char*)&type, sizeof(type), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("recv()");
@@ -84,10 +61,10 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	{
 	case PLAYERINFO:
 	{
-		retval = recv(clientsock, (char*)&recvPlayerInfo, sizeof(PlayerInfo), MSG_WAITALL);
-		if (retval == SOCKET_ERROR) err_display("recv()");
-		playerInfo[recvPlayerInfo.id].pos = recvPlayerInfo.pos;
-		playerInfo[recvPlayerInfo.id].sword = recvPlayerInfo.sword;
+		if (ClientCount != playerMng->GetPlayerNum())
+			playerMng->SetPlayerNum(ClientCount);
+
+		playerMng->RecvPlayer(clientsock);
 		break;
 	}
 	case UIPACKET:
@@ -104,7 +81,7 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	case ALLPACKET:
 		break;
 	}
-	printPlayerInfo();
+	playerMng->printPlayerInfo();
 
 	SetEvent(ReadEvent);
 }
@@ -113,11 +90,20 @@ void SERVER::Send_AllPacket()
 {
 	waveMng->update();
 	Spawn();
-	//ÇÃ·¹ÀÌ¾î ¹Þ¾Æ¿À¸é player->getcore() ³Ñ°ÜÁØ´Ù.
+	//í”Œë ˆì´ì–´ ë°›ì•„ì˜¤ë©´ player->getcore() ë„˜ê²¨ì¤€ë‹¤.
 	enemyManager->move({ 50,50,50,50 });
 	//WaitForSingleObject(ReadEvent, INFINITE);
 	ALL_PACKET packet;
-	//memcpy(packet.enemyList, enemyManager->HandOverInfo(), sizeof(Enemy*) * MAX_MOB);
+	memcpy(packet.P_info, playerMng->HandOverInfo(), sizeof(PlayerInfo) * MAX_PLAYER);
+  //memcpy(packet.enemyList, enemyManager->HandOverInfo(), sizeof(Enemy*) * MAX_MOB);
+#ifdef TEST__SEND_ALLPACKET__PINFO_POS
+	for (int i = 0; i < ClientCount; ++i)
+	{
+		cout << packet.P_info->id << ": " <<
+			packet.P_info->pos.x << ", " << packet.P_info->pos.y << endl;
+	}
+#endif
+
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
 	//SetEvent(SendEvent);
@@ -170,10 +156,10 @@ int SERVER::Update()
 
 		char addr[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
-		printf("\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ðÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+		printf("\n[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
 			addr, ntohs(clientaddr.sin_port));
 
-		// ½º·¹µå »ý¼º
+		// ìŠ¤ë ˆë“œ ìƒì„±
 		hThread = CreateThread(NULL, 0, ProcessClient,
 			(LPVOID)this, 0, NULL);
 		if (hThread == NULL) { closesocket(client_sock); }
@@ -181,19 +167,10 @@ int SERVER::Update()
 		
 	}
 
-	// ¼ÒÄÏ ´Ý±â
+	// ì†Œì¼“ ë‹«ê¸°
 	closesocket(listen_sock);
 
-	// À©¼Ó Á¾·á
+	// ìœˆì† ì¢…ë£Œ
 	WSACleanup();
 	return 0;
-}
-
-void SERVER::printPlayerInfo()
-{
-	for (int i = 0; i < ClientCount; ++i)
-	{
-		cout << playerInfo[i].id << ": " <<
-			playerInfo[i].pos.x << ", " << playerInfo[i].pos.y << endl;
-	}
 }
