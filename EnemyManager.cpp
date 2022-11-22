@@ -108,6 +108,12 @@ void EnemyManager::destroy(int index)
 	effectMng.add(enemyList[index]->getPos(), Destroy);
 	delete enemyList[index];
 	enemyList[index] = enemyList[--mobNum];
+	//index 보내서 서버의 enemylist에서 처리
+}
+
+void EnemyManager::Recv(Enemy* recvList)
+{
+	memcpy(enemyList, recvList, sizeof(enemyList));
 }
 
 BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox)

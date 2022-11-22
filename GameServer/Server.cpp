@@ -39,13 +39,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 	server->ClientLogin(client_sock);
 	while (1) {
-		//send recv ±¸ÇöÇÊ¿ä
-		server->Recv_Packet(client_sock);
+		//send recv êµ¬í˜„í•„ìš”
+		//server->Recv_Packet(client_sock);
 		server->Send_AllPacket();
 	}
 
-	// ¼ÒÄÏ ´İ±â
-	closesocket(client_sock);
+	// ì†Œì¼“ ë‹«ê¸°
 	return 0;
 }
 
@@ -53,7 +52,7 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 {
 	WaitForSingleObject(SendEvent, INFINITE);
 	int retval;
-	//ÆĞÅ¶ type ÀÌ¶û Å©±â ¹Ş°í type¿¡ µû¶ó Ã³¸®ÇØ¾ßÇÔ
+	//íŒ¨í‚· type ì´ë‘ í¬ê¸° ë°›ê³  typeì— ë”°ë¼ ì²˜ë¦¬í•´ì•¼í•¨
 	PACKET_TYPE type;
 	retval = recv(clientsock, (char*)&type, sizeof(type), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("recv()");
@@ -73,7 +72,12 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	case LOBBYPACKET:
 		break;
 	case COLLIDEENEMY:
+	{
+		retval = recv(clientsock, (char*)&recvCollide, sizeof(CollideEnemy), MSG_WAITALL);
+		if (retval == SOCKET_ERROR) err_display("recv()");
+		enemyManager->Recv(recvCollide);
 		break;
+	}
 	case ALLPACKET:
 		break;
 	}
@@ -84,10 +88,14 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 
 void SERVER::Send_AllPacket()
 {
-	WaitForSingleObject(ReadEvent, INFINITE);
+	waveMng->update();
+	Spawn();
+	//í”Œë ˆì´ì–´ ë°›ì•„ì˜¤ë©´ player->getcore() ë„˜ê²¨ì¤€ë‹¤.
+	enemyManager->move({ 50,50,50,50 });
+	//WaitForSingleObject(ReadEvent, INFINITE);
 	ALL_PACKET packet;
 	memcpy(packet.P_info, playerMng->HandOverInfo(), sizeof(PlayerInfo) * MAX_PLAYER);
-
+  //memcpy(packet.enemyList, enemyManager->HandOverInfo(), sizeof(Enemy*) * MAX_MOB);
 #ifdef TEST__SEND_ALLPACKET__PINFO_POS
 	for (int i = 0; i < ClientCount; ++i)
 	{
@@ -98,7 +106,7 @@ void SERVER::Send_AllPacket()
 
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
-	SetEvent(SendEvent);
+	//SetEvent(SendEvent);
 
 }
 
@@ -111,6 +119,10 @@ void SERVER::ClientLogin(SOCKET& clientsock)
 	ClientCount++;
 }
 
+EnemyManager* SERVER::getList()
+{
+	return enemyManager;
+}
 void SERVER::Spawn()
 {
 	int mobNum = enemyManager->getEnemyNumber();
@@ -133,10 +145,6 @@ void SERVER::Spawn()
 
 int SERVER::Update()
 {
-	waveMng->update();
-	Spawn();
-	//ÇÃ·¹ÀÌ¾î ¹Ş¾Æ¿À¸é player->getcore() ³Ñ°ÜÁØ´Ù.
-	enemyManager->move({ 50,50,50,50 });
 	while (1) {
 		// accept()
 		addrlen = sizeof(clientaddr);
@@ -148,20 +156,21 @@ int SERVER::Update()
 
 		char addr[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
-		printf("\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+		printf("\n[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
 			addr, ntohs(clientaddr.sin_port));
 
-		// ½º·¹µå »ı¼º
+		// ìŠ¤ë ˆë“œ ìƒì„±
 		hThread = CreateThread(NULL, 0, ProcessClient,
 			(LPVOID)this, 0, NULL);
 		if (hThread == NULL) { closesocket(client_sock); }
 		else { CloseHandle(hThread); }
+		
 	}
 
-	// ¼ÒÄÏ ´İ±â
+	// ì†Œì¼“ ë‹«ê¸°
 	closesocket(listen_sock);
 
-	// À©¼Ó Á¾·á
+	// ìœˆì† ì¢…ë£Œ
 	WSACleanup();
 	return 0;
 }

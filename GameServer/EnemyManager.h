@@ -2,14 +2,13 @@
 #include "Monster.h"
 #include "Tower.h"
 #include"global.h"
-
 class EnemyManager
 {
 	Enemy* enemyList[MAX_MOB];
 	int mobNum;
 	bool typeList[10];
 	int nowBulletType;
-
+	state mstate;
 public:
 	//BulletManager* bulletMng = new BulletManager;
 
@@ -25,7 +24,7 @@ public:
 	//void destroy(int index);
 	//Server
 	void init();
-	void Recv();
-	void EnemtState(Enemy);
-	Enemy* HandOverInfo();
+	void Recv(const CollideEnemy& ce);
+	void EnemtState(const Enemy& enemy);
+	Enemy HandOverInfo();
 };
