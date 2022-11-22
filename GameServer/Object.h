@@ -35,18 +35,34 @@ public:
 	const FLOAT getWeight();
 };
 
-class Sword {
-	FLOAT rotMoment;
-	FLOAT rotVelocity;
-	LONG inertia;
-	int numOfRotate;
-	int pnm;
-	bool isSlash;
-	POINT swordPos;
-	LONG swordLength;
-	LONG swordLength_s;
-	LONG swordWidth;
-	FLOAT nowAngle;
-	FLOAT lastAngle;
-	LONG swordRay;
+//class Sword {
+//	FLOAT rotMoment;
+//	FLOAT rotVelocity;
+//	LONG inertia;
+//	int numOfRotate;
+//	int pnm;
+//	bool isSlash;
+//	POINT swordPos;
+//	LONG swordLength;
+//	LONG swordLength_s;
+//	LONG swordWidth;
+//	FLOAT nowAngle;
+//	FLOAT lastAngle;
+//	LONG swordRay;
+//};
+
+struct Sword {
+	FLOAT rotMoment = 0.f;
+	FLOAT rotVelocity = 0.f;
+	LONG inertia = 0;
+	int numOfRotate = 0;
+	int pnm = 0;
+	bool isSlash = 0;
+	POINT swordPos = { 0, 0 };
+	LONG swordLength = 0;
+	LONG swordLength_s = 0;
+	LONG swordWidth = 0;
+	FLOAT nowAngle = 0.f;
+	FLOAT lastAngle = 0.f;
+	LONG swordRay = 0;
 };

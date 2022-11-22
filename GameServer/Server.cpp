@@ -1,36 +1,13 @@
 #pragma once
 #include "Server.h"
 #include "global.h"
-void SERVER::err_quit(const char* msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessageA(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER
-		| FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(char*)&lpMsgBuf, 0, NULL);
-	MessageBoxA(NULL, (const char*)lpMsgBuf, msg, MB_ICONERROR);
-	LocalFree(lpMsgBuf);
-	exit(1);
-}
 
-void SERVER::err_display(const char* msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessageA(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER
-		| FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(char*)&lpMsgBuf, 0, NULL);
-	printf("[%s] %s\n", msg, (char*)lpMsgBuf);
-	LocalFree(lpMsgBuf);
-}
 int SERVER::Init()
 {
 	enemyManager->init();
 	int retval = 0;
+
+	playerMng->InitPlayer(ClientCount);
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
@@ -85,10 +62,10 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	{
 	case PLAYERINFO:
 	{
-		retval = recv(clientsock, (char*)&recvPlayerInfo, sizeof(PlayerInfo), MSG_WAITALL);
-		if (retval == SOCKET_ERROR) err_display("recv()");
-		playerInfo[recvPlayerInfo.id].pos = recvPlayerInfo.pos;
-		playerInfo[recvPlayerInfo.id].sword = recvPlayerInfo.sword;
+		if (ClientCount != playerMng->GetPlayerNum())
+			playerMng->SetPlayerNum(ClientCount);
+
+		playerMng->RecvPlayer(clientsock);
 		break;
 	}
 	case UIPACKET:
@@ -100,7 +77,7 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	case ALLPACKET:
 		break;
 	}
-	printPlayerInfo();
+	playerMng->printPlayerInfo();
 
 	SetEvent(ReadEvent);
 }
@@ -109,6 +86,16 @@ void SERVER::Send_AllPacket()
 {
 	WaitForSingleObject(ReadEvent, INFINITE);
 	ALL_PACKET packet;
+	memcpy(packet.P_info, playerMng->HandOverInfo(), sizeof(PlayerInfo) * MAX_PLAYER);
+
+#ifdef TEST__SEND_ALLPACKET__PINFO_POS
+	for (int i = 0; i < ClientCount; ++i)
+	{
+		cout << packet.P_info->id << ": " <<
+			packet.P_info->pos.x << ", " << packet.P_info->pos.y << endl;
+	}
+#endif
+
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
 	SetEvent(SendEvent);
@@ -177,13 +164,4 @@ int SERVER::Update()
 	// 윈속 종료
 	WSACleanup();
 	return 0;
-}
-
-void SERVER::printPlayerInfo()
-{
-	for (int i = 0; i < ClientCount; ++i)
-	{
-		cout << playerInfo[i].id << ": " <<
-			playerInfo[i].pos.x << ", " << playerInfo[i].pos.y << endl;
-	}
 }

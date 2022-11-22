@@ -51,6 +51,9 @@
     <ClCompile Include="PlayerInfoManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="gWinSock.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -87,6 +90,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="PlayerInfoManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="gWinSock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_test.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

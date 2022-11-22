@@ -1,11 +1,8 @@
 #pragma once
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-#pragma comment(lib, "ws2_32")
-#include <WS2tcpip.h>
-#include <WinSock2.h>
 #include <stdio.h>
 #include <iostream>
-#include"global.h"
+#include "global.h"
+
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
@@ -22,10 +19,10 @@ class SERVER {
 	char buf[BUFSIZE + 1];
 	EnemyManager* enemyManager = new EnemyManager;
 	WaveManager* waveMng = new WaveManager;
+	PlayerInfoManager* playerMng = new PlayerInfoManager;
 	int ClientCount = 0;
 
 	PlayerInfo playerInfo[4];
-	PlayerInfo recvPlayerInfo;
 	ALL_PACKET allPacket;
 
 	HANDLE ReadEvent;
@@ -34,8 +31,6 @@ public:
 	int Init();
 	int Update();
 	void Spawn();
-	void err_quit(const char* msg);
-	void err_display(const char* msg);
 
 	SOCKET& GetClinetSock() { return client_sock; }
 	void Send_AllPacket();
@@ -43,5 +38,4 @@ public:
 
 	void ClientLogin(SOCKET& clientsock);
 	void UpdateAllPacket();
-	void printPlayerInfo();
 };
