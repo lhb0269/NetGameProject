@@ -26,7 +26,7 @@ struct LOBBYPACKET {
 
 struct ALL_PACKET {
 	PlayerInfo	P_info[4];
-	Enemy* enemyList[100];
+	Enemy enemyList[100];
 	UI			Ui;
 };
 

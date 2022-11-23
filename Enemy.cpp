@@ -26,6 +26,11 @@ bool Enemy::isProtect()
 	return bProtected;
 }
 
+void Enemy::setShape(int num)
+{
+	shape = num;
+}
+
 //bool Enemy::getBulletType()
 //{
 //	type %= 10;

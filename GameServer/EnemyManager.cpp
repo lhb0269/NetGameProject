@@ -1,4 +1,5 @@
 #include "global.h"
+#include<iostream>
 std::random_device rd;
 std::mt19937_64 re(rd());
 std::uniform_int_distribution<int> uid(100, 2900);
@@ -15,8 +16,8 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager()
 {
-	for (int i = 0; i < mobNum; ++i)
-		delete enemyList[i];
+	/*for (int i = 0; i < mobNum; ++i)
+		delete enemyList[i];*/
 	//delete bulletMng;
 }
 
@@ -43,34 +44,28 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 		return;
 	switch (typeSwitch) {
 	case HEADED:
-		enemyList[mobNum] = new HeadedMob;
-		mstate.nHeaded += 1;
+		enemyList[mobNum].setShape(0);
 		break;
 	case HEADLESS:
-		enemyList[mobNum] = new HeadlessMob;
-		mstate.nHeaded += 1;
+		enemyList[mobNum].setShape(1);
 		break;
 	case TOWER:
-		enemyList[mobNum] = new Tower;
-		mstate.nHeaded += 1;
+		enemyList[mobNum].setShape(2);
 		break;
 	case BOMBER:
-		enemyList[mobNum] = new Bomber;
-		mstate.nHeaded += 1;
+		enemyList[mobNum].setShape(3);
 		break;
 	case SLUG:
-		mstate.nHeaded += 1;
-		enemyList[mobNum] = new Slug;
+		enemyList[mobNum].setShape(4);
 		break;
 	default:
-		enemyList[mobNum] = new HeadedMob;
-		mstate.nHeaded += 1;
+		enemyList[mobNum].setShape(0);
 		break;
 	}
-	enemyList[mobNum]->start(spawnPos);
-	enemyList[mobNum]->protectOnOff(isProtect);
-	if (!enemyList[mobNum]->isSpawned())
-		enemyList[mobNum]->spawnSignal();
+	enemyList[mobNum].start(spawnPos);
+	enemyList[mobNum].protectOnOff(isProtect);
+	if (!enemyList[mobNum].isSpawned())
+		enemyList[mobNum].spawnSignal();
 	//printf("mobnum= %d, x = %d, y = %d angle = %d, force.x = %f, force.y = %f, size = %ld, velocity.x = %f, velocity.y = %f, weight = %f \n", mobNum, enemyList[mobNum]->getPos().x, enemyList[mobNum]->getPos().y, enemyList[mobNum]->getAngle(), enemyList[mobNum]->getForce().x, enemyList[mobNum]->getForce().y, enemyList[mobNum]->getSize(), enemyList[mobNum]->getVelocity().x, enemyList[mobNum]->getVelocity().y, enemyList[mobNum]->getWeight());
 	mobNum++;
 	//effectMng.add(spawnPos, Create);
@@ -82,8 +77,8 @@ void EnemyManager::move(const RECT& player)
 	POINT playerPos = { player.left + playerSize.x / 2, player.top + playerSize.y / 2 };
 	//RECT WholeMapRect = mapMng.getWholeMapRect();
 	for (int i = 0; i < mobNum; ++i) {
-		if (enemyList[i]->isSpawned()) {
-			enemyList[i]->move(playerPos);
+		if (enemyList[i].isSpawned()) {
+			enemyList[i].move(playerPos);
 			/*if (!PtInRect(&WholeMapRect, enemyList[i]->getPos())) {
 				if (enemyList[i]->goOut()) {
 					destroy(i);
@@ -111,8 +106,8 @@ BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox)
 {
 	bool result = false;
 	for (int i = 0; i < mobNum; ++i) {
-		if (enemyList[i]->isSpawned() && enemyList[i]->beAttacked(bitBox)) {
-			if (!enemyList[i]->isProtect()) {
+		if (enemyList[i].isSpawned() && enemyList[i].beAttacked(bitBox)) {
+			if (!enemyList[i].isProtect()) {
 				//effectMng.add(enemyList[i]->getPos(), BOSS_DAMAGED);
 				//destroy(i);
 				i--;
@@ -120,7 +115,7 @@ BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox)
 			}
 			else {
 				result = true;
-				enemyList[i]->protectOnOff(false);
+				enemyList[i].protectOnOff(false);
 				//effectMng.add(enemyList[i]->getPos(), Break);
 			}
 			break;
@@ -155,15 +150,15 @@ int EnemyManager::getEnemyNumber()
 	return mobNum;
 }
 
-Bomber* EnemyManager::getBomb(int index)
-{
-	return dynamic_cast<Bomber*>(enemyList[index]);
-}
+//Bomber* EnemyManager::getBomb(int index)
+//{
+//	return dynamic_cast<Bomber*>(enemyList[index]);
+//}
 
 void EnemyManager::init()
 {
 	for (int i = 0; i < MAX_MOB; ++i) {
-		enemyList[i] = NULL;
+		//enemyList[i] = NULL;
 	}
 	for (int i = 0; i < 10; ++i) {
 		typeList[i] = i % 6 ? false : true;
@@ -174,7 +169,7 @@ void EnemyManager::init()
 
 void EnemyManager::Recv(const CollideEnemy& ce)
 {
-	delete enemyList[ce.Enemyid];
+	//delete enemyList[ce.Enemyid];
 	enemyList[ce.Enemyid] = enemyList[--mobNum];
 }
 
@@ -182,7 +177,7 @@ void EnemyManager::EnemtState(const Enemy& enemy)
 {
 
 }
-Enemy EnemyManager::HandOverInfo()
+Enemy* EnemyManager::HandOverInfo()
 {
-	return;
+	return enemyList;
 }

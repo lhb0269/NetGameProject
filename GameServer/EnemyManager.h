@@ -4,7 +4,7 @@
 #include"global.h"
 class EnemyManager
 {
-	Enemy* enemyList[MAX_MOB];
+	Enemy enemyList[MAX_MOB];
 	int mobNum;
 	bool typeList[10];
 	int nowBulletType;
@@ -26,5 +26,5 @@ public:
 	void init();
 	void Recv(const CollideEnemy& ce);
 	void EnemtState(const Enemy& enemy);
-	Enemy HandOverInfo();
+	Enemy* HandOverInfo();
 };

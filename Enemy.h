@@ -12,6 +12,7 @@ class Enemy : public RealObject
 { 
 	char spawnStack;
 	int type = 0;
+	int shape = 0;
 protected:
 	LONG size;
 	RECT getBody();
@@ -34,5 +35,6 @@ public:
 	bool isSpawned();
 	void spawnSignal();
 	bool isProtect();
+	void setShape(int num);
 };
 

@@ -42,6 +42,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		//send recv 구현필요
 		//server->Recv_Packet(client_sock);
 		server->Send_AllPacket();
+
 	}
 
 	// 소켓 닫기
@@ -95,7 +96,8 @@ void SERVER::Send_AllPacket()
 	//WaitForSingleObject(ReadEvent, INFINITE);
 	ALL_PACKET packet;
 	memcpy(packet.P_info, playerMng->HandOverInfo(), sizeof(PlayerInfo) * MAX_PLAYER);
-  //memcpy(packet.enemyList, enemyManager->HandOverInfo(), sizeof(Enemy*) * MAX_MOB);
+	memcpy(packet.enemyList, enemyManager->HandOverInfo(), sizeof(Enemy) * MAX_MOB);
+	
 #ifdef TEST__SEND_ALLPACKET__PINFO_POS
 	for (int i = 0; i < ClientCount; ++i)
 	{

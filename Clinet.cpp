@@ -99,6 +99,7 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 
 	retval = recv(sock, (char*)&packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
+	printf("");
 }
 
 int CLIENT::Init(Player* p, EnemyManager* e)
