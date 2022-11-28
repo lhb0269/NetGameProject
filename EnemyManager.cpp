@@ -108,7 +108,7 @@ void EnemyManager::destroy(int index)
 	effectMng.add(enemyList[index]->getPos(), Destroy);
 	delete enemyList[index];
 	enemyList[index] = enemyList[--mobNum];
-	//index º¸³»¼­ ¼­¹öÀÇ enemylist¿¡¼­ Ã³¸®
+	//index ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ enemylistï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 }
 
 void EnemyManager::Recv(Enemy* recvList)

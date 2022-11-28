@@ -153,6 +153,7 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Tower.cpp" />
+    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="WaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Tower.h" />
+    <ClInclude Include="UIManager.h" />
     <ClInclude Include="WaveManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

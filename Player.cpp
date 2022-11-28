@@ -108,7 +108,7 @@ void Player::beAttacked()
 void Player::setSwordShape()
 {
 	const POINT& swordPos = sword.swordPos;
-	fsword.ptls[0] = { swordPos.x + sword.swordRay + sword.swordLength, swordPos.y }; // °¡Àå ¸Õ ³¡Á¡¿¡¼­ºÎÅÍ ½Ã°è ¹æÇâÀ¸·Î ÁÂÇ¥ ºÎ¿©
+	fsword.ptls[0] = { swordPos.x + sword.swordRay + sword.swordLength, swordPos.y }; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½Î¿ï¿½
 	fsword.ptls[1] = { fsword.ptls[0].x - sword.swordWidth * 2, fsword.ptls[0].y + sword.swordWidth };
 	fsword.ptls[2] = { swordPos.x + sword.swordRay, fsword.ptls[1].y };
 	fsword.ptls[3] = { swordPos.x + sword.swordRay - sword.swordWidth * 2, swordPos.y };

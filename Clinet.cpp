@@ -74,6 +74,9 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 		break;
 	}
 	case UIPACKET:
+		UpdateUIInfo();
+		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
+		retval = send(sock, (char*)&uinfo, sizeof(UI), 0);
 		break;
 	case LOBBYPACKET:
 		break;
@@ -90,6 +93,11 @@ void CLIENT::UpdatePlayerInfo()
 	pInfo.id = player->GetId();
 	pInfo.pos = player->getPos();
 	pInfo.sword = player->getSword();
+}
+
+void CLIENT::UpdateUIInfo()
+{
+	uinfo.PlayerID = player->GetId();
 }
 
 void CLIENT::Recv_Packet(SOCKET& sock)
@@ -111,7 +119,7 @@ int CLIENT::Init(Player* p, EnemyManager* e)
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
 
-	// ╪рдо ╩Щ╪╨
+	// О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) err_quit("socket()");
 
