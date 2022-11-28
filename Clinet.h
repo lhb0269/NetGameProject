@@ -24,6 +24,7 @@ private:
 
 	EnemyManager* enemyMng;
 	Player* player;
+	Player* Otherplayers;
 	PlayerInfo pInfo;
 	UI uinfo;
 
@@ -34,11 +35,12 @@ public:
 	void err_display(const char* msg);
 	
 	SOCKET& GetSock() { return sock; }
-	int Init(Player* p, EnemyManager* e);
+	int Init(Player* p, EnemyManager* e,Player* o);
 	void Login();
 	void Send_Packet(void* pakcet,int size,PACKET_TYPE type);
 	void Send_Packet(PACKET_TYPE type);
 	void Recv_Packet(SOCKET& sock);
 	void UpdatePlayerInfo();
 	void UpdateUIInfo();
+	void UpdateOtherPlayers(PlayerInfo* o);
 };

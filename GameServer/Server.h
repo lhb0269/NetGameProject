@@ -23,7 +23,6 @@ class SERVER {
 	UIManager* UIMng = new UIManager;
 	int ClientCount = 0;
 
-	PlayerInfo playerInfo[4];
 	PlayerInfo recvPlayerInfo;
 	UI ui[4];
 	CollideEnemy recvCollide;

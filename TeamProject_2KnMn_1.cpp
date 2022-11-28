@@ -134,6 +134,7 @@ std::mt19937_64 mte(uid_int(sid));
 
 
 static Player player;
+Player OtherPlayers[3];
 EnemyManager *enemyMng = new EnemyManager;
 MapManager mapMng({ WHOLE_MAP, WHOLE_MAP });
 WaveManager *waveMng = new WaveManager;
@@ -176,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_CREATE:
-		Client.Init(&player,enemyMng); // 서버와 연결
+		Client.Init(&player,enemyMng,OtherPlayers); // 서버와 연결
 		//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 		screen = { GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN) };
 		MoveWindow(hWnd, 0, 0, mapMng.getCameraSize().x, mapMng.getCameraSize().y, FALSE);
@@ -186,6 +187,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			POINT temp = mapMng.getWholeMapSize();
 			temp.x /= 2; temp.y /= 2;
 			player.start(temp);
+
+			for (int i = 0; i < 3; ++i)
+				OtherPlayers[i].start(temp);
+
 			HDC hdc = GetDC(hWnd);
 			hbm = CreateCompatibleBitmap(hdc, mapMng.getWholeMapSize().x, mapMng.getWholeMapSize().y);
 			ReleaseDC(hWnd, hdc);
@@ -475,6 +480,8 @@ void draw(HDC hdc)
 {
 	mapMng.draw(hdc);
 	player.draw(hdc);
+	for (int i = 0; i < 3; ++i)
+		OtherPlayers[i].draw(hdc);
 	enemyMng->draw(hdc);
 	moniter(hdc);
 }

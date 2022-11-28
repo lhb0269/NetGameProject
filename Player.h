@@ -117,4 +117,5 @@ public:
 
 	void SetId(int x) { id = x; }
 	int GetId() { return id; }
+	void SetSword(Sword& s) { sword = s; }
 };

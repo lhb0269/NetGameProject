@@ -40,7 +40,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	server->ClientLogin(client_sock);
 	while (1) {
 		//send recv 구현필요
-		//server->Recv_Packet(client_sock);
+		server->Recv_Packet(client_sock);
 		server->Send_AllPacket();
 
 	}
@@ -94,7 +94,8 @@ void SERVER::Send_AllPacket()
 	Spawn();
 	//플레이어 받아오면 player->getcore() 넘겨준다.
 	enemyManager->move({ 50,50,50,50 });
-	//WaitForSingleObject(ReadEvent, INFINITE);
+
+	WaitForSingleObject(ReadEvent, INFINITE);
 	ALL_PACKET packet;
 	memcpy(packet.P_info, playerMng->HandOverInfo(), sizeof(PlayerInfo) * MAX_PLAYER);
 	memcpy(packet.enemyList, enemyManager->HandOverInfo(), sizeof(Enemy) * MAX_MOB);
@@ -110,7 +111,7 @@ void SERVER::Send_AllPacket()
 
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
-	//SetEvent(SendEvent);
+	SetEvent(SendEvent);
 
 }
 

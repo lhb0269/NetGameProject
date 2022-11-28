@@ -47,6 +47,8 @@ Player::Player() : fsword(6)
 	isTouched = clock();
 
 	bangMotion = 0;
+
+	id = -1;
 }
 
 Player::~Player()
@@ -175,6 +177,22 @@ void Player::drawCore(HDC hdc)
 {
 	//RECT rect = getCore();
 	HBRUSH brush = CreateSolidBrush(RGB(0xe, 0xe, 0xe));
+
+	switch (id) //id에 따른 플레이어 색깔 구분
+	{
+	case 0:	 // 검정
+		brush = CreateSolidBrush(RGB(0, 0, 0));
+		break;
+	case 1: // 빨강
+		brush = CreateSolidBrush(RGB(255, 0, 0));
+		break;
+	case 2: // 초록
+		brush = CreateSolidBrush(RGB(0, 255, 0));
+		break;
+	case 3: // 파랑
+		brush = CreateSolidBrush(RGB(0, 0, 255));
+		break;
+	}
 	HBRUSH old = (HBRUSH)SelectObject(hdc, brush);
 	HPEN  oldpen = (HPEN)SelectObject(hdc, GetStockObject(NULL_PEN));
 	LKM::Shape core(6);

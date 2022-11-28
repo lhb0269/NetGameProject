@@ -100,6 +100,22 @@ void CLIENT::UpdateUIInfo()
 	uinfo.PlayerID = player->GetId();
 }
 
+void CLIENT::UpdateOtherPlayers(PlayerInfo* o)
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		int pid = o[i].id;
+		cout << pid << endl;
+		if (pid == -1) continue;
+		if (pid == player->GetId()) continue;
+
+		
+		Otherplayers[i].SetId(o[i].id);
+		Otherplayers[i].setPos(o[i].pos);
+		Otherplayers[i].SetSword(o[i].sword);
+	}
+}
+
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;
@@ -107,14 +123,15 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 
 	retval = recv(sock, (char*)&packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
-	printf("");
+
+	UpdateOtherPlayers(packet.P_info);
 }
 
-int CLIENT::Init(Player* p, EnemyManager* e)
+int CLIENT::Init(Player* p, EnemyManager* e, Player* o)
 {
 	player = p;
 	enemyMng = e;
-
+	Otherplayers = o;
 	int retval;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
