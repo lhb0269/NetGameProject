@@ -15,8 +15,10 @@ struct PlayerInfo {
 
 struct UI {
 	int PlayerNum;	// 현재 접속중인 플레이어 수
-	int State;		// 현재 진행중인 Stage 단계
+	int Stage;		// 현재 진행중인 Stage 단계
+	int score;
 	int MSG_TYPE;	//
+	int PlayerID;
 };
 
 struct LOBBYPACKET {
@@ -29,7 +31,7 @@ struct ALL_PACKET {
 	PlayerInfo	P_info[4];
 	Enemy enemyList[100];
 
-	UI Ui;
+	UI Ui[4];
 };
 
 struct CollideEnemy {

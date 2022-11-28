@@ -25,6 +25,7 @@ private:
 	EnemyManager* enemyMng;
 	Player* player;
 	PlayerInfo pInfo;
+	UI uinfo;
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
@@ -39,4 +40,5 @@ public:
 	void Send_Packet(PACKET_TYPE type);
 	void Recv_Packet(SOCKET& sock);
 	void UpdatePlayerInfo();
+	void UpdateUIInfo();
 };

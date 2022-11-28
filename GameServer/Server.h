@@ -20,10 +20,12 @@ class SERVER {
 	EnemyManager* enemyManager = new EnemyManager;
 	WaveManager* waveMng = new WaveManager;
 	PlayerInfoManager* playerMng = new PlayerInfoManager;
+	UIManager* UIMng = new UIManager;
 	int ClientCount = 0;
 
 	PlayerInfo playerInfo[4];
 	PlayerInfo recvPlayerInfo;
+	UI ui[4];
 	CollideEnemy recvCollide;
 
 	ALL_PACKET allPacket;

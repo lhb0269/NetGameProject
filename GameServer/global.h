@@ -1,6 +1,6 @@
 #pragma once
 
-// 11.19 - ÀçÈÆ
+// 11.19 - ï¿½ï¿½ï¿½ï¿½
 #define MAX_PLAYER 4
 
 #define MAX_MOB 100
@@ -13,6 +13,7 @@
 #include "EnemyManager.h"
 #include "WaveManager.h"
 #include "PlayerInfoManager.h"
+#include"UIManager.h"
 #include "Tower.h"
 #include "debug_test.h"
 

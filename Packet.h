@@ -14,8 +14,10 @@ struct PlayerInfo {
 
 struct UI {
 	int PlayerNum;	
-	int State;		
+	int Stage;	
+	int score;
 	int MSG_TYPE;	
+	int PlayerID;
 };
 
 struct LOBBYPACKET {
