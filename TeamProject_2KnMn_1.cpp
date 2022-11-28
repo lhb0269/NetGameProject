@@ -450,10 +450,10 @@ void update(HWND hWnd, BOOL buffer[])
 	RECT whole = mapMng.getWholeMapRect();
 	player.move(&map, &whole, NULL);
 
-
 	Client.Send_Packet(PLAYERINFO);
 	//moveAfter
 
+	Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 	//collide 검사
 	collide();
 	//Collide after

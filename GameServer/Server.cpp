@@ -100,7 +100,7 @@ void SERVER::Send_AllPacket()
 	memcpy(packet.P_info, playerMng->HandOverInfo(), sizeof(PlayerInfo) * MAX_PLAYER);
 	memcpy(packet.enemyList, enemyManager->HandOverInfo(), sizeof(Enemy) * MAX_MOB);
 	memcpy(packet.Ui, UIMng->HandOverInfo(), sizeof(UI) * MAX_PLAYER);
-	
+
 #ifdef TEST__SEND_ALLPACKET__PINFO_POS
 	for (int i = 0; i < ClientCount; ++i)
 	{

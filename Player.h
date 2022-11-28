@@ -88,7 +88,6 @@ class Player : public RealObject
 	void drawBullet(HDC);
 	void slash(POINT, int);
 	void stab(POINT, int charge);
-	void setSwordShape();
 	void drawSwordShadow(HDC hdc);
 	void bang(POINT);
 public:
@@ -114,8 +113,21 @@ public:
 	BOOL isDamaged();
 	void beAttacked();
 	bool gameovercheck();
+	void setSwordShape();
 
-	void SetId(int x) { id = x; }
 	int GetId() { return id; }
+	void SetId(int x) { id = x; }
 	void SetSword(Sword& s) { sword = s; }
+	//add 11.29
+	void SetNumOfShell(int x) { numOfShell = x; }
+	void SetisTouched(clock_t& t) { isTouched = t; }
+	void SetorbitRay(LONG x) { orbitRay = x; }
+	void SetshellStack(float s) { shellStack = s; }
+
+	int GetNumOfShell() { return numOfShell; }
+	clock_t GetisTouched() { return isTouched; }
+	LONG GetorbitRay() { return orbitRay; }
+	float GetshellStack() { return shellStack; }
+
+
 };

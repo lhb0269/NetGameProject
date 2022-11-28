@@ -58,7 +58,6 @@ Player::~Player()
 void Player::setPos(POINT point)
 {
 	pos = point;
-	numOfShell = 4;
 }
 
 void Player::start(POINT startPoint)

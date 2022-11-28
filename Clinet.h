@@ -27,6 +27,7 @@ private:
 	Player* Otherplayers;
 	PlayerInfo pInfo;
 	UI uinfo;
+	ALL_PACKET All_packet;
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
@@ -42,5 +43,5 @@ public:
 	void Recv_Packet(SOCKET& sock);
 	void UpdatePlayerInfo();
 	void UpdateUIInfo();
-	void UpdateOtherPlayers(PlayerInfo* o);
+	void UpdateOtherPlayers();
 };

@@ -93,6 +93,10 @@ void CLIENT::UpdatePlayerInfo()
 	pInfo.id = player->GetId();
 	pInfo.pos = player->getPos();
 	pInfo.sword = player->getSword();
+	pInfo.numOfShell = player->GetNumOfShell();
+	pInfo.orbitRay = player->GetorbitRay();
+	pInfo.shellStack = player->GetshellStack();
+	pInfo.isTouched = player->GetisTouched();
 }
 
 void CLIENT::UpdateUIInfo()
@@ -100,31 +104,32 @@ void CLIENT::UpdateUIInfo()
 	uinfo.PlayerID = player->GetId();
 }
 
-void CLIENT::UpdateOtherPlayers(PlayerInfo* o)
+void CLIENT::UpdateOtherPlayers()
 {
 	for (int i = 0; i < 4; ++i)
 	{
-		int pid = o[i].id;
-		cout << pid << endl;
-		if (pid == -1) continue;
-		if (pid == player->GetId()) continue;
+		int pid = All_packet.P_info[i].id;
+		//아직 접속하지 않는 플레이어의 아이디 이거나 자기 자신의 id값이 아닐 경우
+		if (pid == player->GetId() || pid == -1) continue;
 
-		
-		Otherplayers[i].SetId(o[i].id);
-		Otherplayers[i].setPos(o[i].pos);
-		Otherplayers[i].SetSword(o[i].sword);
+		Otherplayers[i].SetId(All_packet.P_info[i].id);
+		Otherplayers[i].setPos(All_packet.P_info[i].pos);
+		Otherplayers[i].SetSword(All_packet.P_info[i].sword);
+		Otherplayers[i].setSwordShape();
+		Otherplayers[i].SetNumOfShell(All_packet.P_info[i].numOfShell);
+		Otherplayers[i].SetisTouched(All_packet.P_info[i].isTouched);
+		Otherplayers[i].SetorbitRay(All_packet.P_info[i].orbitRay);
+		Otherplayers[i].SetshellStack(All_packet.P_info[i].shellStack);
+
 	}
 }
 
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;
-	ALL_PACKET packet;
 
-	retval = recv(sock, (char*)&packet, sizeof(ALL_PACKET), MSG_WAITALL);
+	retval = recv(sock, (char*)&All_packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
-
-	UpdateOtherPlayers(packet.P_info);
 }
 
 int CLIENT::Init(Player* p, EnemyManager* e, Player* o)
