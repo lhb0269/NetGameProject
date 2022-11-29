@@ -89,9 +89,10 @@ Sword & Player::getSword()
 BOOL Player::isDamaged()
 {
 	if (clock() - isTouched < 999)
-		return false;
+		isdamaged = false;
 	else
-		return true;
+		isdamaged =  true;
+	return isdamaged;
 }
 
 void Player::beAttacked()
@@ -227,7 +228,7 @@ void Player::drawShell(HDC hdc)
 		POINT end = LKM::rotatePoint(pos, origin, LKM::getRadian(90 * (i + 1) - TermAngle));
 		Arc(hdc, shell.left, shell.top, shell.right, shell.bottom, start.x, start.y, end.x, end.y);
 	}
-	if (!isDamaged()) {
+	if (!isdamaged) {
 		orbitRay += 15;
 		RECT shell = { pos.x - orbitRay, pos.y - orbitRay, pos.x + orbitRay, pos.y + orbitRay };
 		orbitRay -= 15;

@@ -34,6 +34,7 @@ void PlayerInfoManager::RecvPlayer(SOCKET& clientsock)
 	pInfo[Recv_pInfo.id].numOfShell = Recv_pInfo.numOfShell;
 	pInfo[Recv_pInfo.id].orbitRay = Recv_pInfo.orbitRay;
 	pInfo[Recv_pInfo.id].shellStack = Recv_pInfo.shellStack;
+	pInfo[Recv_pInfo.id].isdamaged = Recv_pInfo.isdamaged;
 }
 
 void PlayerInfoManager::SetPlayerNum(int num)

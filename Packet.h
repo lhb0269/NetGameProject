@@ -7,13 +7,14 @@ enum PACKET_TYPE {
 };
 
 struct PlayerInfo {
-	int id;
-	int numOfShell;
+	int		id;
+	int		numOfShell;
 	clock_t isTouched;
-	LONG orbitRay;
-	float shellStack;
-	POINT pos;
-	Sword sword;
+	LONG	orbitRay;
+	float	shellStack;
+	BOOL	isdamaged;
+	POINT	pos;
+	Sword	sword;
 };
 
 struct UI {

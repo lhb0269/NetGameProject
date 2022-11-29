@@ -97,6 +97,7 @@ void CLIENT::UpdatePlayerInfo()
 	pInfo.orbitRay = player->GetorbitRay();
 	pInfo.shellStack = player->GetshellStack();
 	pInfo.isTouched = player->GetisTouched();
+	pInfo.isdamaged = player->Getisdamaged();
 }
 
 void CLIENT::UpdateUIInfo()
@@ -120,6 +121,7 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[i].SetisTouched(All_packet.P_info[i].isTouched);
 		Otherplayers[i].SetorbitRay(All_packet.P_info[i].orbitRay);
 		Otherplayers[i].SetshellStack(All_packet.P_info[i].shellStack);
+		Otherplayers[i].Setisdamaged(All_packet.P_info[i].isdamaged);
 
 	}
 }

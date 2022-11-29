@@ -8,13 +8,14 @@ enum PACKET_TYPE {
 };
 
 struct PlayerInfo {
-	int id;
-	int numOfShell;
+	int		id;
+	int		numOfShell;
 	clock_t isTouched;
-	LONG orbitRay;
-	float shellStack;
-	POINT pos;
-	Sword sword;
+	LONG	orbitRay;
+	float	shellStack;
+	BOOL	isdamaged;
+	POINT	pos;
+	Sword	sword;
 };
 
 struct UI {
@@ -33,14 +34,14 @@ struct LOBBYPACKET {
 
 struct ALL_PACKET {
 	PlayerInfo	P_info[4];
-	Enemy enemyList[100];
-	UI Ui[4];
+	Enemy		enemyList[100];
+	UI			Ui[4];
 };
 
 struct CollideEnemy {
-	int Enemyid;
-	int Playerid;
-	POINT pos;
+	int		Enemyid;
+	int		Playerid;
+	POINT	pos;
 };
 
 struct state {
