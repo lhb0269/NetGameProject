@@ -7,6 +7,7 @@
 #include <iostream>
 #include "PACKET.h"
 #include "EnemyManager.h"
+//#include"UIManager.h"
 #include "Player.h"
 
 using namespace std;
@@ -31,6 +32,7 @@ private:
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
+	//UIManager* UIMng;
 public:
 	void err_quit(const char* msg);
 	void err_display(const char* msg);

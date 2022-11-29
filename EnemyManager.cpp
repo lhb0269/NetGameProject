@@ -109,6 +109,7 @@ void EnemyManager::destroy(int index)
 	delete enemyList[index];
 	enemyList[index] = enemyList[--mobNum];
 	//index ������ ������ enemylist���� ó��
+
 }
 
 void EnemyManager::Recv(Enemy* recvList)
