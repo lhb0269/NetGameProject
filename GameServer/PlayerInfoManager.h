@@ -17,7 +17,9 @@ public:
 	void SetPlayerNum(int num);
 	int GetPlayerNum();
 
+	PlayerInfo* Get_pInfo();
+	Sword* Get_sInfo();
+
 	PlayerInfo* HandOverInfo();
 	void ErrorInfoCheck();
-	void printPlayerInfo();
 };

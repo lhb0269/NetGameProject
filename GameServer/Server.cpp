@@ -41,8 +41,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	while (1) {
 		//send recv 구현필요
 		server->Recv_Packet(client_sock);
+		server->UpdateObject();
 		server->Send_AllPacket();
-
 	}
 
 	// 소켓 닫기
@@ -83,15 +83,27 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	case ALLPACKET:
 		break;
 	}
-	playerMng->printPlayerInfo();
+	printInfo();
 
 	SetEvent(ReadEvent);
 }
 
+void SERVER::printInfo()
+{
+#ifdef TEST__PRT_PLAYER_INFO__PINFO_POS
+	PlayerInfo* pInfo = playerMng->Get_pInfo();
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		std::cout << pInfo[i].id << ": " <<
+			pInfo[i].pos.x << ", " << pInfo[i].pos.y << endl;
+	}
+#endif
+#ifdef TEST__PRT_ENEMY_INFO
+#endif
+}
+
 void SERVER::Send_AllPacket()
 {
-	waveMng->update();
-	Spawn();
 	//플레이어 받아오면 player->getcore() 넘겨준다.
 	enemyManager->move({ 50,50,50,50 });
 
@@ -122,6 +134,12 @@ void SERVER::ClientLogin(SOCKET& clientsock)
 	retval = send(clientsock, (char*)&ClientCount, sizeof(int), 0);
 	if (retval == SOCKET_ERROR) err_display("send()");
 	ClientCount++;
+}
+
+void SERVER::UpdateObject()
+{
+	waveMng->update();
+	Spawn();
 }
 
 EnemyManager* SERVER::getList()

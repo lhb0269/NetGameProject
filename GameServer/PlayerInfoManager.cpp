@@ -46,6 +46,16 @@ int PlayerInfoManager::GetPlayerNum()
 	return player_num;
 }
 
+PlayerInfo* PlayerInfoManager::Get_pInfo()
+{
+	return pInfo;
+}
+
+Sword* PlayerInfoManager::Get_sInfo()
+{
+	return sInfo;
+}
+
 PlayerInfo* PlayerInfoManager::HandOverInfo()
 {
 	return pInfo;
@@ -53,13 +63,4 @@ PlayerInfo* PlayerInfoManager::HandOverInfo()
 
 void PlayerInfoManager::ErrorInfoCheck()
 {
-}
-
-void PlayerInfoManager::printPlayerInfo()
-{
-	for (int i = 0; i < MAX_PLAYER; ++i)
-	{
-		std::cout << pInfo[i].id << ": " <<
-			pInfo[i].pos.x << ", " << pInfo[i].pos.y << endl;
-	}
 }

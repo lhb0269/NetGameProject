@@ -45,4 +45,5 @@ public:
 	void printPlayerInfo();
 	EnemyManager* getList();
 
+	void printInfo();
 };

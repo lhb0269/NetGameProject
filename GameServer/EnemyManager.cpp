@@ -157,9 +157,8 @@ int EnemyManager::getEnemyNumber()
 
 void EnemyManager::init()
 {
-	for (int i = 0; i < MAX_MOB; ++i) {
-		//enemyList[i] = NULL;
-	}
+	memset(enemyList, 0, sizeof(Enemy) * MAX_MOB);
+
 	for (int i = 0; i < 10; ++i) {
 		typeList[i] = i % 6 ? false : true;
 	}
@@ -169,7 +168,6 @@ void EnemyManager::init()
 
 void EnemyManager::Recv(const CollideEnemy& ce)
 {
-	//delete enemyList[ce.Enemyid];
 	enemyList[ce.Enemyid] = enemyList[--mobNum];
 }
 
