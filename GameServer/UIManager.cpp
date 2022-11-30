@@ -11,8 +11,10 @@ UIManager::~UIManager()
 void UIManager::init()
 {
 	for (int i = 0; i < MAX_PLAYER; ++i) {
-		ui[i].PlayerNum = 0;
-		ui[i].score = 0;
+		ui[i].PlayerNum = NULL;
+		ui[i].PlayerID = -1;
+		ui[i].score = NULL;
+		ui[i].Stage = NULL;
 	}
 }
 
@@ -23,12 +25,20 @@ UI* UIManager::HandOverInfo()
 
 void UIManager::Recv_UI(SOCKET& clientsock)
 {
-	UI UIInfo;
-	int retval = recv(clientsock, (char*)&UIInfo, sizeof(UI), MSG_WAITALL);
+	UI rui;
+	int retval = recv(clientsock, (char*)&rui, sizeof(UI), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("recv()");
-	ui[UIInfo.PlayerID].score = UIInfo.score;
-	ui[UIInfo.PlayerID].Stage = UIInfo.Stage;
-
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (rui.PlayerID < 4 && rui.PlayerID>-1 && rui.Stage < 100) {
+			ui[rui.PlayerID].PlayerID = rui.PlayerID;
+			ui[rui.PlayerID].score = rui.score;
+			ui[rui.PlayerID].Stage = rui.Stage;
+			printf("%d\n", i);
+			printf("player ID = %d\n", ui[i].PlayerID);
+			printf("Score = %d\n", ui[i].score);
+			printf("Stage = %d\n", ui[i].Stage);
+		}
+	}
 }
 
 void UIManager::Send_Msg()

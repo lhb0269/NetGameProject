@@ -172,7 +172,7 @@
     <ClInclude Include="TeamProject_2KnMn_1.h" />
     <ClInclude Include="Tower.h" />
     <ClInclude Include="UIManager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="WaveManager.h" />
   </ItemGroup>
@@ -201,7 +201,7 @@
     <ClCompile Include="TeamProject_2KnMn_1.cpp" />
     <ClCompile Include="Tower.cpp" />
     <ClCompile Include="UIManager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="WaveManager.cpp" />
   </ItemGroup>

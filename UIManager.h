@@ -1,20 +1,21 @@
 #pragma once
 #include"stdafx.h"
 #include"Packet.h"
-//#include"TeamProject_2KnMn_1.h"
+#include"WaveManager.h"
 class UIManager
 {
-	UI ui[4];
+	UI ui;
 
 public:
 	UIManager();
 	~UIManager();
 
 	void init(Player*player);
-	UI* HandOverInfo();
+	UI HandOverInfo();
 	void Recv_UI(UI& rui);
 	void Send_Msg();
-	void UpdateLevel(Player* player,WaveManager* waveMng);
-	void UpdateScore(Player* player);
+	void UpdateLevel(Player* player,int in);
+	void UpdateScore(Player* player,int in);
+	void Print();
 };
 

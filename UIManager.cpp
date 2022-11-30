@@ -1,22 +1,46 @@
 #include "stdafx.h"
 #include "UIManager.h"
+UIManager::UIManager()
+{
 
+}
+UIManager::~UIManager()
+{
+
+}
 void UIManager::init(Player* player)
 {
-	ui[player->GetId()].PlayerID = player->GetId();
+	ui.PlayerNum = NULL;
+	ui.PlayerID = player->GetId();
+	ui.score = NULL;
+	ui.Stage = NULL;
+}
+
+UI UIManager::HandOverInfo()
+{
+	return ui;
 }
 
 void UIManager::Recv_UI(UI& rui)
 {
-	memcpy(&ui, &rui, sizeof(UI));
+	memcpy(&ui, &rui, sizeof(UI) * 4);
 }
 
-void UIManager::UpdateLevel(Player* player, WaveManager* waveMng)
+void UIManager::UpdateLevel(Player* player, int in)
 {
-	ui[player->GetId()].Stage = waveMng->getLevel();
+	ui.PlayerID = player->GetId();
+	ui.Stage = in;
 }
 
-void UIManager::UpdateScore(Player* player)
+void UIManager::UpdateScore(Player* player, int in)
 {
-	ui[player->GetId()].score += 10;
+	ui.score = in;
+}
+void UIManager::Print()
+{
+	/*for (int i = 0; i < 4; ++i) {
+		printf("id = %d\n", i);
+		printf("stage = %d\n", ui[i].Stage);
+		printf("score = %d\n", ui[i].score);
+	}*/
 }

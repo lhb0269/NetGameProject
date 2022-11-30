@@ -138,6 +138,7 @@ Player OtherPlayers[3];
 EnemyManager* enemyMng = new EnemyManager;
 MapManager mapMng({ WHOLE_MAP, WHOLE_MAP });
 WaveManager* waveMng = new WaveManager;
+UIManager* UIMng = new UIManager;
 extern EffectManager effectMng;
 RECT win;
 
@@ -177,7 +178,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_CREATE:
-		Client.Init(&player, enemyMng, OtherPlayers); // 서버와 연결
+		Client.Init(&player, enemyMng, OtherPlayers,UIMng); // 서버와 연결
 		//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 		screen = { GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN) };
 		MoveWindow(hWnd, 0, 0, mapMng.getCameraSize().x, mapMng.getCameraSize().y, FALSE);
@@ -452,7 +453,7 @@ void update(HWND hWnd, BOOL buffer[])
 
 	Client.Send_Packet(PLAYERINFO);
 	//moveAfter
-
+	Client.Send_Packet(UIPACKET);
 	Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 	//collide 검사
 	collide();
@@ -460,7 +461,7 @@ void update(HWND hWnd, BOOL buffer[])
 
 	//spawn 진행
 	spawn();
-	//Client.UIMng->UpdateLevel(&player, waveMng);
+	Client.UpdateUIInfo(waveMng->getLevel(),10);
 }
 
 

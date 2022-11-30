@@ -7,7 +7,7 @@
 #include <iostream>
 #include "PACKET.h"
 #include "EnemyManager.h"
-//#include"UIManager.h"
+#include"UIManager.h"
 #include "Player.h"
 
 using namespace std;
@@ -27,23 +27,23 @@ private:
 	Player* player;
 	Player* Otherplayers;
 	PlayerInfo pInfo;
-	UI uinfo;
 	ALL_PACKET All_packet;
+	UIManager UIMng;
+	UI uiinfo;
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
-	//UIManager* UIMng;
 public:
 	void err_quit(const char* msg);
 	void err_display(const char* msg);
 	
 	SOCKET& GetSock() { return sock; }
-	int Init(Player* p, EnemyManager* e,Player* o);
+	int Init(Player* p, EnemyManager* e,Player* o,UIManager* u);
 	void Login();
 	void Send_Packet(void* pakcet,int size,PACKET_TYPE type);
 	void Send_Packet(PACKET_TYPE type);
 	void Recv_Packet(SOCKET& sock);
 	void UpdatePlayerInfo();
-	void UpdateUIInfo();
+	void UpdateUIInfo(int level, int score);
 	void UpdateOtherPlayers();
 };

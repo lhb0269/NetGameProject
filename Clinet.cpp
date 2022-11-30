@@ -74,9 +74,12 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 		break;
 	}
 	case UIPACKET:
-		UpdateUIInfo();
+		uiinfo = UIMng.HandOverInfo();
+		printf("%d\n", uiinfo.PlayerID);
+		printf("%d\n", uiinfo.score);
+		printf("%d\n", uiinfo.Stage);
 		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
-		retval = send(sock, (char*)&uinfo, sizeof(UI), 0);
+		retval = send(sock, (char*)&uiinfo, sizeof(UI), 0);
 		break;
 	case LOBBYPACKET:
 		break;
@@ -100,9 +103,11 @@ void CLIENT::UpdatePlayerInfo()
 	pInfo.isdamaged = player->Getisdamaged();
 }
 
-void CLIENT::UpdateUIInfo()
+void CLIENT::UpdateUIInfo(int level,int score)
 {
-	uinfo.PlayerID = player->GetId();
+	UIMng.UpdateLevel(player, level);
+	UIMng.UpdateScore(player, score);
+	UIMng.Print();
 }
 
 void CLIENT::UpdateOtherPlayers()
@@ -132,13 +137,20 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 
 	retval = recv(sock, (char*)&All_packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
+	
+	/*for (int i = 0; i < 4; ++i) {
+		printf("%d Player ID = %d \n",i, All_packet.Ui[i].PlayerID);
+		printf("%d Score : %d \n",i, All_packet.Ui[i].score);
+		printf("%d Stage : %d \n",i, All_packet.Ui[i].Stage);
+	}*/
 }
 
-int CLIENT::Init(Player* p, EnemyManager* e, Player* o)
+int CLIENT::Init(Player* p, EnemyManager* e, Player* o,UIManager* u)
 {
 	player = p;
 	enemyMng = e;
 	Otherplayers = o;
+	UIMng.init(player);
 	int retval;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
