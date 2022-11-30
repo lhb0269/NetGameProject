@@ -162,7 +162,7 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 	}*/
 }
 
-int Init(Player* p, EnemyManager* e,Player* o,UIManager* u, PlayerBulletManager* b);
+int CLIENT::Init(Player* p, EnemyManager* e,Player* o,UIManager* u, PlayerBulletManager* b)
 {
 	player = p;
 	enemyMng = e;

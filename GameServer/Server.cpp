@@ -62,10 +62,10 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	{
 	case PLAYERINFO:
 	{
-		/*if (ClientCount != playerMng->GetPlayerNum())
+		if (ClientCount != playerMng->GetPlayerNum())
 			playerMng->SetPlayerNum(ClientCount);
 
-		playerMng->RecvPlayer(clientsock);*/
+		playerMng->RecvPlayer(clientsock);
 		break;
 	}
 	case UIPACKET:
