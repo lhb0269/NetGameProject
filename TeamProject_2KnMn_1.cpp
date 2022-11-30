@@ -135,7 +135,9 @@ std::mt19937_64 mte(uid_int(sid));
 
 static Player player;
 Player OtherPlayers[3];
-EnemyManager* enemyMng = new EnemyManager;
+
+PlayerBulletManager OtherPlayerBulletMng;
+EnemyManager *enemyMng = new EnemyManager;
 MapManager mapMng({ WHOLE_MAP, WHOLE_MAP });
 WaveManager* waveMng = new WaveManager;
 UIManager* UIMng = new UIManager;
@@ -178,7 +180,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_CREATE:
-		Client.Init(&player, enemyMng, OtherPlayers,UIMng); // 서버와 연결
+    Client.Init(&player,enemyMng,OtherPlayers,UIMng,&OtherPlayerBulletMng); // 서버와 연결
 		//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 		screen = { GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN) };
 		MoveWindow(hWnd, 0, 0, mapMng.getCameraSize().x, mapMng.getCameraSize().y, FALSE);
@@ -438,15 +440,15 @@ void collide() {
 void update(HWND hWnd, BOOL buffer[])
 {
 	//서로간 정보 전달 
-	waveMng->update();
+	//waveMng->update();
 	mapMng.update(hWnd, player.getPos());
 
 	if (player.gameovercheck())
 		return;
 
 	//move
-	waveMng->update();
-	enemyMng->move(player.getCore());
+	//waveMng->update();
+	//enemyMng->move(player.getCore());
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
 	player.move(&map, &whole, NULL);
@@ -455,12 +457,13 @@ void update(HWND hWnd, BOOL buffer[])
 	//moveAfter
 	Client.Send_Packet(UIPACKET);
 	Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
+	Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 	//collide 검사
 	collide();
 	//Collide after
 
 	//spawn 진행
-	spawn();
+	//spawn();
 	Client.UpdateUIInfo(waveMng->getLevel(),10);
 }
 
@@ -484,7 +487,9 @@ void draw(HDC hdc)
 	player.draw(hdc);
 	for (int i = 0; i < 3; ++i)
 		OtherPlayers[i].draw(hdc);
-	enemyMng->draw(hdc);
+
+	OtherPlayerBulletMng.draw(hdc);
+	//enemyMng->draw(hdc);
 	moniter(hdc);
 }
 

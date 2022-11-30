@@ -42,7 +42,7 @@ struct PlayerBullet {
 
 };
 
-#define MAX_PLAYER_BULLET 10
+#define MAX_PLAYER_BULLET 100
 class PlayerBulletManager {
 	PlayerBullet* playerBullet[MAX_PLAYER_BULLET];
 	int num;
@@ -79,6 +79,8 @@ class Player : public RealObject
 	clock_t isTouched;
 
 	int bangMotion;
+	POINT Bangpos;
+	POINTFLOAT velocity;
 
 	int id;
 	BOOL isdamaged;
@@ -125,11 +127,17 @@ public:
 	void SetorbitRay(LONG x) { orbitRay = x; }
 	void SetshellStack(float s) { shellStack = s; }
 	void Setisdamaged(BOOL x) { isdamaged = x; }
+	void SetbangMotion(int b) { bangMotion = b; }
+	void SetBangpos(POINT p) { Bangpos = p; }
+	void SetVelocity(POINTFLOAT f) { velocity = f; }
 
 	int GetNumOfShell() { return numOfShell; }
 	clock_t GetisTouched() { return isTouched; }
 	LONG GetorbitRay() { return orbitRay; }
 	float GetshellStack() { return shellStack; }
 	BOOL Getisdamaged() { return isdamaged; }
+	int GetbangMotion() { return bangMotion; }
+	POINT GetBangpos() { return Bangpos; }
+	POINTFLOAT GetVelocity() { return velocity; }
 
 };
