@@ -135,10 +135,12 @@ std::mt19937_64 mte(uid_int(sid));
 
 static Player player;
 Player OtherPlayers[3];
+
 PlayerBulletManager OtherPlayerBulletMng;
 EnemyManager *enemyMng = new EnemyManager;
 MapManager mapMng({ WHOLE_MAP, WHOLE_MAP });
-WaveManager *waveMng = new WaveManager;
+WaveManager* waveMng = new WaveManager;
+UIManager* UIMng = new UIManager;
 extern EffectManager effectMng;
 RECT win;
 
@@ -178,7 +180,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_CREATE:
-		Client.Init(&player,enemyMng,OtherPlayers,&OtherPlayerBulletMng); // 서버와 연결
+    Client.Init(&player,enemyMng,OtherPlayers,UIMng,&OtherPlayerBulletMng); // 서버와 연결
 		//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 		screen = { GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN) };
 		MoveWindow(hWnd, 0, 0, mapMng.getCameraSize().x, mapMng.getCameraSize().y, FALSE);
@@ -198,8 +200,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_GETMINMAXINFO:
-		((MINMAXINFO *)lParam)->ptMaxTrackSize = mapMng.getCameraSize();//screen.x;
-		((MINMAXINFO *)lParam)->ptMinTrackSize = mapMng.getCameraSize();
+		((MINMAXINFO*)lParam)->ptMaxTrackSize = mapMng.getCameraSize();//screen.x;
+		((MINMAXINFO*)lParam)->ptMinTrackSize = mapMng.getCameraSize();
 		break;
 	case WM_COMMAND:
 	{
@@ -247,7 +249,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			temp.x /= 2; temp.y /= 2;
 			player.start(temp);
 			delete enemyMng;
-			EnemyManager *enemyMng = new EnemyManager;
+			EnemyManager* enemyMng = new EnemyManager;
 			waveMng->setLevel();
 			break;
 		}
@@ -453,7 +455,7 @@ void update(HWND hWnd, BOOL buffer[])
 
 	Client.Send_Packet(PLAYERINFO);
 	//moveAfter
-
+	Client.Send_Packet(UIPACKET);
 	Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 	Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 	//collide 검사
@@ -462,6 +464,7 @@ void update(HWND hWnd, BOOL buffer[])
 
 	//spawn 진행
 	//spawn();
+	Client.UpdateUIInfo(waveMng->getLevel(),10);
 }
 
 
@@ -470,7 +473,7 @@ void moniter(HDC hdc) {
 	POINT point = mapMng.getCameraPoint();
 	SetBkMode(hdc, TRANSPARENT);
 	/*
-	wsprintf(word, L"KillEnemy : %d", collideNum);
+	wsprintf(word, L"killenemy : %d", collidenum);
 	TextOut(hdc, point.x + 300, point.y, word, _tcslen(word));
 	*/
 	wsprintf(word, L"Level : %d", waveMng->getLevel());

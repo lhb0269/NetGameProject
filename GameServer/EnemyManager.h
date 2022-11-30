@@ -8,7 +8,6 @@ class EnemyManager
 	int mobNum;
 	bool typeList[10];
 	int nowBulletType;
-	state mstate;
 public:
 	//BulletManager* bulletMng = new BulletManager;
 

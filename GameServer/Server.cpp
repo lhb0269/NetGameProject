@@ -8,7 +8,7 @@ int SERVER::Init()
 	int retval = 0;
 
 	playerMng->InitPlayer(ClientCount);
-
+	UIMng->init();
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
 
@@ -62,10 +62,10 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	{
 	case PLAYERINFO:
 	{
-		if (ClientCount != playerMng->GetPlayerNum())
+		/*if (ClientCount != playerMng->GetPlayerNum())
 			playerMng->SetPlayerNum(ClientCount);
 
-		playerMng->RecvPlayer(clientsock);
+		playerMng->RecvPlayer(clientsock);*/
 		break;
 	}
 	case UIPACKET:
@@ -77,23 +77,23 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	{
 		retval = recv(clientsock, (char*)&recvCollide, sizeof(CollideEnemy), MSG_WAITALL);
 		if (retval == SOCKET_ERROR) err_display("recv()");
-		enemyManager->Recv(recvCollide);
+		//enemyManager->Recv(recvCollide);
 		break;
 	}
 	case ALLPACKET:
 		break;
 	}
-	playerMng->printPlayerInfo();
+	//playerMng->printPlayerInfo();
 
 	SetEvent(ReadEvent);
 }
 
 void SERVER::Send_AllPacket()
 {
-	waveMng->update();
-	Spawn();
-	//플레이어 받아오면 player->getcore() 넘겨준다.
-	enemyManager->move({ 50,50,50,50 });
+	//waveMng->update();
+	//Spawn();
+	////플레이어 받아오면 player->getcore() 넘겨준다.
+	//enemyManager->move({ 50,50,50,50 });
 
 	WaitForSingleObject(ReadEvent, INFINITE);
 	ALL_PACKET packet;
@@ -169,7 +169,7 @@ int SERVER::Update()
 			(LPVOID)this, 0, NULL);
 		if (hThread == NULL) { closesocket(client_sock); }
 		else { CloseHandle(hThread); }
-		
+
 	}
 
 	// 소켓 닫기

@@ -42,15 +42,7 @@ struct ALL_PACKET {
 };
 
 struct CollideEnemy {
-	int		Enemyid;
-	int		Playerid;
-	POINT	pos;
-};
-
-struct state {
-	int nHeaded = 0;
-	int nHeadlessMob = 0;
-	int nTower = 0;
-	int nBomber = 0;
-	int nSlug = 0;
+	int Enemyid;
+	int Playerid;
+	POINT pos;
 };

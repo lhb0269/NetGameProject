@@ -7,7 +7,7 @@
 #include "MapManager.h"
 #include "BulletManager.h"
 #include "WaveManager.h"
-
+#include "Clinet.h"
 void update(HWND hWnd, BOOL buffer[]);
 void draw(HDC);
 #ifndef bool bStart
