@@ -170,6 +170,8 @@ void MapManager::drawFrontier(HDC memDC)
 	Ellipse(memDC, mapSize.left, mapSize.top, mapSize.right, mapSize.bottom);
 	SelectObject(memDC, oldb);
 	SelectObject(memDC, oldp);
+	DeleteObject(oldp);
+	DeleteObject(oldb);
 	DeleteObject(pen);
 }
 

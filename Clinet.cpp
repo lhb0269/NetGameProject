@@ -98,6 +98,9 @@ void CLIENT::UpdatePlayerInfo()
 	pInfo.shellStack = player->GetshellStack();
 	pInfo.isTouched = player->GetisTouched();
 	pInfo.isdamaged = player->Getisdamaged();
+	pInfo.bangMotion = player->GetbangMotion();
+	pInfo.Bangpos = player->GetBangpos();
+	pInfo.velocity = player->GetVelocity();
 }
 
 void CLIENT::UpdateUIInfo()
@@ -122,8 +125,22 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[i].SetorbitRay(All_packet.P_info[i].orbitRay);
 		Otherplayers[i].SetshellStack(All_packet.P_info[i].shellStack);
 		Otherplayers[i].Setisdamaged(All_packet.P_info[i].isdamaged);
-
+		Otherplayers[i].SetbangMotion(All_packet.P_info[i].bangMotion);
+		Otherplayers[i].SetBangpos(All_packet.P_info[i].Bangpos);
+		Otherplayers[i].SetVelocity(All_packet.P_info[i].velocity);
+		
+		if (Otherplayers[i].GetbangMotion() == 10) //총을 발사 했을때
+		{
+			POINT bulletpos = Otherplayers[i].GetBangpos();
+			POINTFLOAT bulletVelocity = Otherplayers[i].GetVelocity();
+			OtherPlayerBullets->add(bulletpos, bulletVelocity);
+		}
 	}
+}
+
+void CLIENT::UpdateOtherPlayerBullets(RECT* map)
+{
+	OtherPlayerBullets->move(map);
 }
 
 void CLIENT::Recv_Packet(SOCKET& sock)
@@ -134,11 +151,13 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 	if (retval == SOCKET_ERROR) err_display("send()");
 }
 
-int CLIENT::Init(Player* p, EnemyManager* e, Player* o)
+int CLIENT::Init(Player* p, EnemyManager* e, Player* o,PlayerBulletManager* b)
 {
 	player = p;
 	enemyMng = e;
 	Otherplayers = o;
+	OtherPlayerBullets = b;
+
 	int retval;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;

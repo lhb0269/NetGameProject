@@ -165,7 +165,9 @@ void Player::bang(POINT sub)
 		FLOAT len = LKM::getLength(LKM::exchange(sub));
 		POINTFLOAT temp = { (FLOAT)sub.x / len * BULLET_SPEED, -(FLOAT)sub.y / len * BULLET_SPEED };
 		POINTFLOAT swordEdge = { pos.x + sword.swordLength * cos(sword.nowAngle), pos.y - sword.swordLength * sin(sword.nowAngle) };
-		pbManager.add(LKM::exchange(swordEdge), temp);
+		Bangpos = LKM::exchange(swordEdge);
+		velocity = temp;
+		pbManager.add(Bangpos, temp);
 		bangMotion = 10;
 	}
 	else {

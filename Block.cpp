@@ -49,6 +49,8 @@ void Block::draw(HDC hdc)
 	SelectObject(hdc, oldp);
 	DeleteObject(newb);
 	DeleteObject(newp);
+	DeleteObject(oldb);
+	DeleteObject(oldp);
 }
 
 RECT Block::getRect() {
