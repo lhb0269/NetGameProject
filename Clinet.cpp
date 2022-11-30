@@ -75,9 +75,9 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 	}
 	case UIPACKET:
 		uiinfo = UIMng.HandOverInfo();
-		printf("%d\n", uiinfo.PlayerID);
-		printf("%d\n", uiinfo.score);
-		printf("%d\n", uiinfo.Stage);
+		//printf("%d\n", uiinfo.PlayerID);
+		//printf("%d\n", uiinfo.score);
+		//printf("%d\n", uiinfo.Stage);
 		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
 		retval = send(sock, (char*)&uiinfo, sizeof(UI), 0);
 		break;
@@ -148,13 +148,21 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 	OtherPlayerBullets->move(map);
 }
 
+void CLIENT::UpdateEnemy()
+{
+	enemyMng->EnemyInfoUpdate(All_packet.enemyList);
+}
+
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;
 
 	retval = recv(sock, (char*)&All_packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
-	
+	//for (int i = 0; i < MAX_MOB; ++i)
+	//{
+	//	cout << "enemyList[" << i << "]'s SpawnState: " << All_packet.enemyList[i].isSpawned() << endl;
+	//}
 	/*for (int i = 0; i < 4; ++i) {
 		printf("%d Player ID = %d \n",i, All_packet.Ui[i].PlayerID);
 		printf("%d Score : %d \n",i, All_packet.Ui[i].score);

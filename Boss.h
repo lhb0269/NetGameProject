@@ -38,6 +38,7 @@ public:
 	void move(const POINT&) override;
 	BOOL beAttacked(const LKM::Shape* hitBox) override;
 	void bang(const POINT& playerPos, BulletManager& bm, bool type) override;
+	virtual bool IsChildClass() { return true; }
 };
 
 //struct Flame {

@@ -54,16 +54,3 @@ PlayerInfo* PlayerInfoManager::HandOverInfo()
 {
 	return pInfo;
 }
-
-void PlayerInfoManager::ErrorInfoCheck()
-{
-}
-
-void PlayerInfoManager::printPlayerInfo()
-{
-	for (int i = 0; i < MAX_PLAYER; ++i)
-	{
-		std::cout << pInfo[i].id << ": " <<
-			pInfo[i].pos.x << ", " << pInfo[i].pos.y << endl;
-	}
-}

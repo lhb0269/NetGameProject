@@ -14,6 +14,7 @@ public:
 	BOOL beAttacked(const LKM::Shape* hitBox) override;
 	BOOL goOut() override;
 	void bang(const POINT& playerPos, BulletManager& bm, bool type) override;
+	virtual bool IsChildClass() { return true; }
 };
 
 class HeadlessMob : public Enemy
@@ -32,6 +33,7 @@ public:
 	BOOL beAttacked(const LKM::Shape* hitBox) override;
 	BOOL goOut() override;
 	void bang(const POINT& playerPos, BulletManager& bm, bool type) override;
+	virtual bool IsChildClass() { return true; }
 };
 
 class Bomber : public Enemy
@@ -52,6 +54,7 @@ public:
 	BOOL goOut() override;
 	BOOL isShoot() override;
 	LONG getBombRange();
+	virtual bool IsChildClass() { return true; }
 };
 
 class Slug :
@@ -67,6 +70,7 @@ public:
 	void move(const POINT&) override;
 	BOOL beAttacked(const LKM::Shape* hitBox) override;
 	void bang(const POINT& playerPos, BulletManager& bm, bool type) override;
+	virtual bool IsChildClass() { return true; }
 };
 
 

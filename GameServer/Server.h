@@ -31,6 +31,11 @@ class SERVER {
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
+
+#ifdef TEST__DEBUG_TIMER_SETTING
+	LARGE_INTEGER timer, start, end;
+#endif
+
 public:
 	int Init();
 	int Update();
@@ -41,8 +46,12 @@ public:
 	void Recv_Packet(SOCKET& clientsock);
 
 	void ClientLogin(SOCKET& clientsock);
-	void UpdateAllPacket();
-	void printPlayerInfo();
 	EnemyManager* getList();
 
+	void UpdateObject();
+
+#ifdef TEST__DEBUG_TIMER_SETTING
+	float GetTime();
+	void SetTimer();
+#endif
 };

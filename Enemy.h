@@ -36,5 +36,8 @@ public:
 	void spawnSignal();
 	bool isProtect();
 	void setShape(int num);
+
+	int getShape() const { return shape; }
+	virtual bool IsChildClass() { return false; }
 };
 

@@ -33,10 +33,12 @@ void UIManager::Recv_UI(SOCKET& clientsock)
 			ui[rui.PlayerID].PlayerID = rui.PlayerID;
 			ui[rui.PlayerID].score = rui.score;
 			ui[rui.PlayerID].Stage = rui.Stage;
+#ifdef TEST__PRT_UI_INFO
 			printf("%d\n", i);
 			printf("player ID = %d\n", ui[i].PlayerID);
 			printf("Score = %d\n", ui[i].score);
 			printf("Stage = %d\n", ui[i].Stage);
+#endif
 		}
 	}
 }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "EnemyManager.h"
+#include "Boss.h"
 #include <time.h>
 
 std::random_device rd;
@@ -16,6 +17,7 @@ EnemyManager::EnemyManager()
 	for (int i = 0; i < MAX_MOB; ++i) {
 		enemyList[i] = NULL;
 	}
+
 	for (int i = 0; i < 10; ++i) {
 		typeList[i] = i % 6 ? false : true;
 	}
@@ -34,14 +36,15 @@ EnemyManager::~EnemyManager()
 
 void EnemyManager::draw(HDC hdc)
 {
-	for (int i = 0; i < mobNum; ++i)
-		if (enemyList[i]->isSpawned())
+	for (int i = 0; i < /*mobNum*/MAX_MOB; ++i)
+		if (enemyList[i] && enemyList[i]->isSpawned())
+		{
 			enemyList[i]->draw(hdc);
-
+		}
 	bulletMng->drawAll(hdc, mapMng.getThemaColor());
 	effectMng.draw(hdc);
-	for (int i = 0; i < mobNum; ++i) {
-		if (!enemyList[i]->isSpawned()) {
+	for (int i = 0; i < /*mobNum*/MAX_MOB; ++i) {
+		if (enemyList[i] && !enemyList[i]->isSpawned()) {
 			enemyList[i]->spawnSignal();
 		}
 	}
@@ -49,43 +52,13 @@ void EnemyManager::draw(HDC hdc)
 	//	boss->draw(hdc);
 }
 
-void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
-{
-	if (mobNum >= MAX_MOB)
-		return;
-	switch (typeSwitch) {
-	case HEADED:
-		enemyList[mobNum] = new HeadedMob;
-		break;
-	case HEADLESS:
-		enemyList[mobNum] = new HeadlessMob;
-		break;
-	case TOWER:
-		enemyList[mobNum] = new Tower;
-		break;
-	case BOMBER:
-		enemyList[mobNum] = new Bomber;
-		break;
-	case SLUG:
-		enemyList[mobNum] = new Slug;
-		break;
-	default:
-		enemyList[mobNum] = new HeadedMob;
-		break;
-	}
-	enemyList[mobNum]->start(spawnPos);
-	enemyList[mobNum]->protectOnOff(isProtect);
-	mobNum++;
-	effectMng.add(spawnPos, Create);
-}
-
 void EnemyManager::move(const RECT& player)
 {
 	POINT playerSize = { player.right - player.left, player.bottom - player.top };
 	POINT playerPos = { player.left + playerSize.x / 2, player.top + playerSize.y / 2 };
 	RECT WholeMapRect = mapMng.getWholeMapRect();
-	for (int i = 0; i < mobNum; ++i) {
-		if (enemyList[i]->isSpawned()) {
+	for (int i = 0; i < /*mobNum*/MAX_MOB; ++i) {
+		if (enemyList[i] && enemyList[i]->isSpawned()) {
 			enemyList[i]->move(playerPos);
 			if (!PtInRect(&WholeMapRect, enemyList[i]->getPos())) {
 				if (enemyList[i]->goOut()) {
@@ -168,4 +141,43 @@ int EnemyManager::getEnemyNumber()
 Bomber* EnemyManager::getBomb(int index)
 {
 	return dynamic_cast<Bomber*>(enemyList[index]);
+}
+
+void EnemyManager::EnemyInfoUpdate(const Enemy* enm)
+{
+	for (int i = 0; i < MAX_MOB; ++i)
+	{
+		if (!enemyList[i])
+		{
+			switch (enm[i].getShape()) {
+			case HEADED:
+				enemyList[i] = new HeadedMob();
+				break;
+			case HEADLESS:
+				enemyList[i] = new HeadlessMob();
+				break;
+			case TOWER:
+				enemyList[i] = new Tower();
+				break;
+			case BOMBER:
+				enemyList[i] = new Bomber();
+				break;
+			case SLUG:
+				enemyList[i] = new Slug();
+				break;
+			case SUN:
+				enemyList[i] = new Sun();
+				break;
+			default:
+				enemyList[i] = new HeadedMob();
+				break;
+			}
+		}
+		*enemyList[i] = enm[i];
+	}
+}
+
+void EnemyManager::SetMosterType(int n)
+{
+	
 }

@@ -158,8 +158,9 @@ int EnemyManager::getEnemyNumber()
 void EnemyManager::init()
 {
 	for (int i = 0; i < MAX_MOB; ++i) {
-		//enemyList[i] = NULL;
+		enemyList[i] = Enemy();
 	}
+
 	for (int i = 0; i < 10; ++i) {
 		typeList[i] = i % 6 ? false : true;
 	}

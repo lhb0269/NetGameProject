@@ -4,6 +4,10 @@
 
 int SERVER::Init()
 {
+#ifdef	TEST__DEBUG_TIMER_SETTING
+	SetTimer();
+#endif
+
 	enemyManager->init();
 	int retval = 0;
 
@@ -41,8 +45,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	while (1) {
 		//send recv 구현필요
 		server->Recv_Packet(client_sock);
+		server->UpdateObject();
 		server->Send_AllPacket();
-
 	}
 
 	// 소켓 닫기
@@ -83,16 +87,22 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	case ALLPACKET:
 		break;
 	}
-	//playerMng->printPlayerInfo();
+#ifdef TEST__PRT_PLAYER_INFO__PINFO_POS
+	PlayerInfo* pInfo = playerMng->HandOverInfo();
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		std::cout << "id: " << pInfo[i].id << ", x: " <<
+			pInfo[i].pos.x << ", y: " << pInfo[i].pos.y << endl;
+	}
+	std::cout << std::endl;
+#endif
 
 	SetEvent(ReadEvent);
 }
 
 void SERVER::Send_AllPacket()
 {
-	//waveMng->update();
-	//Spawn();
-	////플레이어 받아오면 player->getcore() 넘겨준다.
+	//플레이어 받아오면 player->getcore() 넘겨준다.
 	//enemyManager->move({ 50,50,50,50 });
 
 	WaitForSingleObject(ReadEvent, INFINITE);
@@ -106,6 +116,22 @@ void SERVER::Send_AllPacket()
 	{
 		cout << packet.P_info->id << ": " <<
 			packet.P_info->pos.x << ", " << packet.P_info->pos.y << endl;
+	}
+#endif
+
+#if defined(TEST__PRT_ENEMY_INFO) && defined(TEST__DEBUG_TIMER_SETTING)
+	QueryPerformanceCounter(&end);
+	if (GetTime() > 2.5f)
+	{
+		QueryPerformanceFrequency(&timer);
+		QueryPerformanceCounter(&start);
+
+		for (int i = 0; i < MAX_MOB; ++i)
+		{
+			cout << "enemyList[" << i << "]'s SpawnState: " << packet.enemyList[i].isSpawned() <<
+				", enemyPos: " << packet.enemyList[i].getPos().x << ", " << packet.enemyList[i].getPos().y << endl;
+		}
+		cout << endl;
 	}
 #endif
 
@@ -124,10 +150,17 @@ void SERVER::ClientLogin(SOCKET& clientsock)
 	ClientCount++;
 }
 
+void SERVER::UpdateObject()
+{
+	waveMng->update();
+	Spawn();
+}
+
 EnemyManager* SERVER::getList()
 {
 	return enemyManager;
 }
+
 void SERVER::Spawn()
 {
 	int mobNum = enemyManager->getEnemyNumber();
@@ -179,3 +212,16 @@ int SERVER::Update()
 	WSACleanup();
 	return 0;
 }
+
+#ifdef TEST__DEBUG_TIMER_SETTING
+float SERVER::GetTime()
+{
+	return (end.QuadPart - start.QuadPart) / (float)timer.QuadPart;
+}
+
+void SERVER::SetTimer()
+{
+	QueryPerformanceFrequency(&timer);
+	QueryPerformanceCounter(&start);
+}
+#endif
