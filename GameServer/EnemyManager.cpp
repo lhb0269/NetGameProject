@@ -37,48 +37,60 @@ EnemyManager::~EnemyManager()
 //	//if (boss != nullptr)
 //	//	boss->draw(hdc);
 //}
-
 void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 {
 	if (mobNum >= MAX_MOB)
 		return;
 	switch (typeSwitch) {
 	case HEADED:
-		enemyList[mobNum].setShape(0);
+		enemyList[mobNum] = new HeadedMob();
 		break;
 	case HEADLESS:
-		enemyList[mobNum].setShape(1);
+		enemyList[mobNum] = new HeadlessMob();
 		break;
 	case TOWER:
-		enemyList[mobNum].setShape(2);
+		enemyList[mobNum] = new Tower();
 		break;
 	case BOMBER:
-		enemyList[mobNum].setShape(3);
+		enemyList[mobNum] = new Bomber();
 		break;
 	case SLUG:
-		enemyList[mobNum].setShape(4);
+		enemyList[mobNum] = new Slug();
 		break;
 	default:
-		enemyList[mobNum].setShape(0);
+		enemyList[mobNum] = new HeadedMob();
 		break;
 	}
-	enemyList[mobNum].start(spawnPos);
-	enemyList[mobNum].protectOnOff(isProtect);
-	if (!enemyList[mobNum].isSpawned())
-		enemyList[mobNum].spawnSignal();
+	enemyList[mobNum]->start(spawnPos);
+	enemyList[mobNum]->protectOnOff(isProtect);
+	if (!enemyList[mobNum]->isSpawned())
+		enemyList[mobNum]->spawnSignal();
 	//printf("mobnum= %d, x = %d, y = %d angle = %d, force.x = %f, force.y = %f, size = %ld, velocity.x = %f, velocity.y = %f, weight = %f \n", mobNum, enemyList[mobNum]->getPos().x, enemyList[mobNum]->getPos().y, enemyList[mobNum]->getAngle(), enemyList[mobNum]->getForce().x, enemyList[mobNum]->getForce().y, enemyList[mobNum]->getSize(), enemyList[mobNum]->getVelocity().x, enemyList[mobNum]->getVelocity().y, enemyList[mobNum]->getWeight());
 	mobNum++;
 	//effectMng.add(spawnPos, Create);
 }
 
-void EnemyManager::move(const RECT& player)
+void EnemyManager::move(const PlayerInfo* pInfo)
 {
-	POINT playerSize = { player.right - player.left, player.bottom - player.top };
-	POINT playerPos = { player.left + playerSize.x / 2, player.top + playerSize.y / 2 };
+	LONG x = 0; 
+	LONG y = 0; 
+	const LONG size = 20;	// player half size - 20
+
+	
 	//RECT WholeMapRect = mapMng.getWholeMapRect();
 	for (int i = 0; i < mobNum; ++i) {
-		if (enemyList[i].isSpawned()) {
-			enemyList[i].move(playerPos);
+		if (enemyList[i]->isSpawned()) {
+			int shortest_n = 0;
+			for (int n = 0, k = INT_MAX; n < MAX_PLAYER; ++n)
+			{
+				int len = pow((pInfo[n].pos.x - enemyList[i]->getPos().x), 2) + pow((pInfo[n].pos.y - enemyList[i]->getPos().y), 2);
+				if (len < k)
+				{
+					k = len;
+					shortest_n = n;
+				}
+			}
+			enemyList[i]->move(pInfo[shortest_n].pos);
 			/*if (!PtInRect(&WholeMapRect, enemyList[i]->getPos())) {
 				if (enemyList[i]->goOut()) {
 					destroy(i);
@@ -106,8 +118,8 @@ BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox)
 {
 	bool result = false;
 	for (int i = 0; i < mobNum; ++i) {
-		if (enemyList[i].isSpawned() && enemyList[i].beAttacked(bitBox)) {
-			if (!enemyList[i].isProtect()) {
+		if (enemyList[i]->isSpawned() && enemyList[i]->beAttacked(bitBox)) {
+			if (!enemyList[i]->isProtect()) {
 				//effectMng.add(enemyList[i]->getPos(), BOSS_DAMAGED);
 				//destroy(i);
 				i--;
@@ -115,7 +127,7 @@ BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox)
 			}
 			else {
 				result = true;
-				enemyList[i].protectOnOff(false);
+				enemyList[i]->protectOnOff(false);
 				//effectMng.add(enemyList[i]->getPos(), Break);
 			}
 			break;
@@ -158,7 +170,7 @@ int EnemyManager::getEnemyNumber()
 void EnemyManager::init()
 {
 	for (int i = 0; i < MAX_MOB; ++i) {
-		//enemyList[i] = NULL;
+		enemyList[i] = NULL;
 	}
 	for (int i = 0; i < 10; ++i) {
 		typeList[i] = i % 6 ? false : true;
@@ -177,7 +189,7 @@ void EnemyManager::EnemtState(const Enemy& enemy)
 {
 
 }
-Enemy* EnemyManager::HandOverInfo()
+Enemy* EnemyManager::HandOverInfo(int n)
 {
-	return enemyList;
+	return enemyList[n];
 }

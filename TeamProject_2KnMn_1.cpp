@@ -137,7 +137,7 @@ static Player player;
 Player OtherPlayers[3];
 
 PlayerBulletManager OtherPlayerBulletMng;
-EnemyManager *enemyMng = new EnemyManager;
+EnemyManager* enemyMng = new EnemyManager;
 MapManager mapMng({ WHOLE_MAP, WHOLE_MAP });
 WaveManager* waveMng = new WaveManager;
 UIManager* UIMng = new UIManager;
@@ -180,8 +180,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_CREATE:
-    Client.Init(&player,enemyMng,OtherPlayers,UIMng,&OtherPlayerBulletMng); // 서버와 연결
-		//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
+		Client.Init(&player, enemyMng, OtherPlayers, UIMng, &OtherPlayerBulletMng); // 서버와 연결
+			//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 		screen = { GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN) };
 		MoveWindow(hWnd, 0, 0, mapMng.getCameraSize().x, mapMng.getCameraSize().y, FALSE);
 		GetClientRect(hWnd, &win);
@@ -367,15 +367,6 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 void spawn() {
-	int mobNum = enemyMng->getEnemyNumber();
-
-	if (waveMng->isSpawn()) {
-		Monster* now = waveMng->getMob();
-		if (now != nullptr) {
-			enemyMng->spawn(now->start, now->type, now->protect);
-		}
-	}
-
 	static int shootTerm = 100;
 	static int shootStock = shootTerm;
 	shootStock++;
@@ -448,7 +439,7 @@ void update(HWND hWnd, BOOL buffer[])
 
 	//move
 	//waveMng->update();
-	//enemyMng->move(player.getCore());
+	enemyMng->move(player.getCore());
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
 	player.move(&map, &whole, NULL);
@@ -458,13 +449,18 @@ void update(HWND hWnd, BOOL buffer[])
 	Client.Send_Packet(UIPACKET);
 	Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 	Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
+	Client.UpdateEnemy();
+	//for (int i = 0; i < MAX_MOB; ++i)
+	//{
+	//	cout << "enemyList[" << i << "]'s SpawnState: " << enemyMng->enemyList[i].isSpawned() << endl;
+	//}
 	//collide 검사
 	collide();
 	//Collide after
 
 	//spawn 진행
 	//spawn();
-	Client.UpdateUIInfo(waveMng->getLevel(),10);
+	Client.UpdateUIInfo(waveMng->getLevel(), 10);
 }
 
 
@@ -490,7 +486,7 @@ void draw(HDC hdc)
 		OtherPlayers[i].draw(hdc);
 
 	OtherPlayerBulletMng.draw(hdc);
-	//enemyMng->draw(hdc);
+	enemyMng->draw(hdc);
 	moniter(hdc);
 }
 

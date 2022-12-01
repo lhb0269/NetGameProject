@@ -31,6 +31,7 @@ class SERVER {
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
+
 public:
 	int Init();
 	int Update();
@@ -45,4 +46,12 @@ public:
 	void printPlayerInfo();
 	EnemyManager* getList();
 
+	void UpdateObject();
+
+#ifdef TEST__DEBUG_TIMER_SETTING
+	LARGE_INTEGER timer, start, end;
+
+	float GetTime();
+	void SetTimer();
+#endif
 };

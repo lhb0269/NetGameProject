@@ -9,7 +9,7 @@ enum STATE {
 };
 
 class Enemy : public RealObject
-{ 
+{
 	char spawnStack;
 	int type = 0;
 	int shape = 0;
@@ -36,5 +36,8 @@ public:
 	void spawnSignal();
 	bool isProtect();
 	void setShape(int num);
+
+	int getShape() const { return shape; }
+	virtual bool IsChildClass() { return false; }
 };
 

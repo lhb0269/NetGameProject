@@ -75,9 +75,9 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 	}
 	case UIPACKET:
 		uiinfo = UIMng.HandOverInfo();
-		printf("%d\n", uiinfo.PlayerID);
-		printf("%d\n", uiinfo.score);
-		printf("%d\n", uiinfo.Stage);
+		//printf("%d\n", uiinfo.PlayerID);
+		//printf("%d\n", uiinfo.score);
+		//printf("%d\n", uiinfo.Stage);
 		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
 		retval = send(sock, (char*)&uiinfo, sizeof(UI), 0);
 		break;
@@ -159,6 +159,10 @@ void CLIENT::printUI(POINT& point, HDC hdc)
 		wsprintf(score[i], L"score : %d", All_packet.Ui[i].score);
 		TextOut(hdc, point.x + 900, point.y + i * 10, score[i], _tcslen(score[i]));
 	}
+void CLIENT::UpdateEnemy()
+{
+	enemyMng->EnemyInfoUpdate(All_packet.enemyList);
+
 }
 
 void CLIENT::Recv_Packet(SOCKET& sock)
@@ -168,6 +172,14 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 	retval = recv(sock, (char*)&All_packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
 
+	//for (int i = 0; i < MAX_MOB; ++i)
+	//{
+	//	cout << "enemyList[" << i << "]'s SpawnState: " << All_packet.enemyList[i].isSpawned() << endl;
+	//}
+	/*for (int i = 0; i < 4; ++i) {
+		printf("%d Player ID = %d \n",i, All_packet.Ui[i].PlayerID);
+		printf("%d Score : %d \n",i, All_packet.Ui[i].score);
+		printf("%d Stage : %d \n",i, All_packet.Ui[i].Stage);
 }
 
 int CLIENT::Init(Player* p, EnemyManager* e, Player* o, UIManager* u, PlayerBulletManager* b)
@@ -185,8 +197,10 @@ int CLIENT::Init(Player* p, EnemyManager* e, Player* o, UIManager* u, PlayerBull
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) err_quit("socket()");
 
-	int opt_val = 1;
-	setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(const char*)opt_val, sizeof(opt_val));
+
+	DWORD optval = 1;
+	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (const char*)&optval, sizeof(optval));
+
 	// connect()
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;

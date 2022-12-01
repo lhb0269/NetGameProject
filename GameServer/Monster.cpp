@@ -50,14 +50,35 @@ BOOL HeadedMob::goOut()
 //{
 //	bm.addBullet(body.ptls[2], playerPos, type);
 //}
-
+#ifdef TEST__DEBUG_TIMER_SETTING
+#include "Server.h"
+extern SERVER server;
+#endif
 void HeadedMob::move(const POINT& p)
 {
 	POINT directoin = { p.x - pos.x, pos.y - p.y };
 	angle = (FLOAT)atan2(directoin.y, directoin.x);
 	velocity = { (cos(angle) * speed), - (sin(angle) * speed) };
+#if defined(TEST__DEBUG_TIMER_SETTING) && defined(TEST__ENEMY_MOVE)
+	QueryPerformanceCounter(&server.end);
+	if (server.GetTime() > 2.5f)
+	{
+		cout << "translocateÀü / pos: " << pos.x << ", " << pos.y << ", angle: " << angle << ", velocity: " << velocity.x << ", " << velocity.y << endl;
+		cout << endl;
+	}
+#endif
 	translocate(10);
+#if defined(TEST__DEBUG_TIMER_SETTING) && defined(TEST__ENEMY_MOVE)
+	QueryPerformanceCounter(&server.end);
+	if (server.GetTime() > 2.5f)
+	{
+		QueryPerformanceFrequency(&server.timer);
+		QueryPerformanceCounter(&server.start);
 
+		cout << "translocateÈÄ / pos: " << pos.x << ", " << pos.y << ", angle: " << angle << ", velocity: " << velocity.x << ", " << velocity.y << endl;
+		cout << endl;
+	}
+#endif
 	RECT bodyRect = getBody();
 	body.ptls[0] = { bodyRect.left, bodyRect.top };
 	body.ptls[1] = { bodyRect.right, bodyRect.top };

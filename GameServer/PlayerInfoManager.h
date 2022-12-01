@@ -18,6 +18,4 @@ public:
 	int GetPlayerNum();
 
 	PlayerInfo* HandOverInfo();
-	void ErrorInfoCheck();
-	void printPlayerInfo();
 };
