@@ -17,7 +17,7 @@ using namespace std;
 
 class CLIENT {
 private:
-	char* SERVERIP = (char*)"127.0.0.1";
+	char* SERVERIP = (char*)"192.168.203.94";
 	WSADATA wsa;
 	SOCKET sock;
 	struct sockaddr_in serveraddr;
@@ -34,9 +34,9 @@ private:
 	UIManager UIMng;
 	UI uiinfo;
 
+public:
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
-public:
 	void err_quit(const char* msg);
 	void err_display(const char* msg);
 	
