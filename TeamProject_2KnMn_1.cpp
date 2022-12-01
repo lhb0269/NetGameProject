@@ -474,6 +474,7 @@ void moniter(HDC hdc) {
 	*/
 	wsprintf(word, L"Level : %d", waveMng->getLevel());
 	TextOut(hdc, point.x + 600, point.y, word, _tcslen(word));
+	Client.printUI(point,hdc);
 }
 
 
