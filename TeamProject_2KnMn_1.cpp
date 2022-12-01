@@ -453,6 +453,7 @@ void update(HWND hWnd, BOOL buffer[])
 	RECT whole = mapMng.getWholeMapRect();
 	player.move(&map, &whole, NULL);
 
+	WaitForSingleObject(Client.ReadEvent, INFINITE);
 	Client.Send_Packet(PLAYERINFO);
 	//moveAfter
 	Client.Send_Packet(UIPACKET);
@@ -465,6 +466,8 @@ void update(HWND hWnd, BOOL buffer[])
 	//spawn 진행
 	//spawn();
 	Client.UpdateUIInfo(waveMng->getLevel(),10);
+
+	SetEvent(Client.SendEvent);
 }
 
 

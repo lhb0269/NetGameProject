@@ -151,10 +151,12 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;
-
+	
+	WaitForSingleObject(SendEvent, INFINITE);
 	retval = recv(sock, (char*)&All_packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
 	
+	SetEvent(ReadEvent);
 	/*for (int i = 0; i < 4; ++i) {
 		printf("%d Player ID = %d \n",i, All_packet.Ui[i].PlayerID);
 		printf("%d Score : %d \n",i, All_packet.Ui[i].score);
@@ -184,6 +186,9 @@ int CLIENT::Init(Player* p, EnemyManager* e,Player* o,UIManager* u, PlayerBullet
 	serveraddr.sin_port = htons(SERVERPORT);
 	retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
+
+	SendEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+	ReadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	hThread = CreateThread(NULL, 0, RecvThread,
 		(LPVOID)this, 0, NULL);
