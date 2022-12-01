@@ -159,6 +159,7 @@ void CLIENT::printUI(POINT& point, HDC hdc)
 		wsprintf(score[i], L"score : %d", All_packet.Ui[i].score);
 		TextOut(hdc, point.x + 900, point.y + i * 10, score[i], _tcslen(score[i]));
 	}
+}
 void CLIENT::UpdateEnemy()
 {
 	enemyMng->EnemyInfoUpdate(All_packet.enemyList);
@@ -180,6 +181,7 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 		printf("%d Player ID = %d \n",i, All_packet.Ui[i].PlayerID);
 		printf("%d Score : %d \n",i, All_packet.Ui[i].score);
 		printf("%d Stage : %d \n",i, All_packet.Ui[i].Stage);
+		*/
 }
 
 int CLIENT::Init(Player* p, EnemyManager* e, Player* o, UIManager* u, PlayerBulletManager* b)
