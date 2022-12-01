@@ -4,5 +4,5 @@
 //#define TEST__PRT_PLAYER_INFO__PINFO_POS
 
 
-// <¾ç½Ä>  TEST__(fuc Name)__(acctive)   Shorten function names if they are long(ÀÌ¸§ ±æ¸é Ãà¾à¤¡¤¡). ctrl + f.
+// <ï¿½ï¿½ï¿½>  TEST__(fuc Name)__(acctive)   Shorten function names if they are long(ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½à¤¡ï¿½ï¿½). ctrl + f.
 #endif //test debugging 

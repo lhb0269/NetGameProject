@@ -52,4 +52,5 @@ public:
 	void UpdateUIInfo(int level, int score);
 	void UpdateOtherPlayers();
 	void UpdateOtherPlayerBullets(RECT *map);
+	void printUI(POINT& point,HDC hdc);
 };

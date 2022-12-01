@@ -106,7 +106,7 @@ void CLIENT::UpdatePlayerInfo()
 	pInfo.velocity = player->GetVelocity();
 }
 
-void CLIENT::UpdateUIInfo(int level,int score)
+void CLIENT::UpdateUIInfo(int level, int score)
 {
 	UIMng.UpdateLevel(player, level);
 	UIMng.UpdateScore(player, score);
@@ -133,7 +133,7 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[i].SetbangMotion(All_packet.P_info[i].bangMotion);
 		Otherplayers[i].SetBangpos(All_packet.P_info[i].Bangpos);
 		Otherplayers[i].SetVelocity(All_packet.P_info[i].velocity);
-		
+
 		if (Otherplayers[i].GetbangMotion() == 10) //총을 발사 했을때
 		{
 			POINT bulletpos = Otherplayers[i].GetBangpos();
@@ -148,21 +148,29 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 	OtherPlayerBullets->move(map);
 }
 
+void CLIENT::printUI(POINT& point, HDC hdc)
+{
+	TCHAR playerID[4][10];
+	TCHAR score[4][10];
+
+	for (int i = 0; i < 4; ++i) {
+		wsprintf(playerID[i], L"Player %d", All_packet.Ui[i].PlayerID);
+		TextOut(hdc, point.x + 800, point.y + i * 10, playerID[i], _tcslen(playerID[i]));
+		wsprintf(score[i], L"score : %d", All_packet.Ui[i].score);
+		TextOut(hdc, point.x + 900, point.y + i * 10, score[i], _tcslen(score[i]));
+	}
+}
+
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;
 
 	retval = recv(sock, (char*)&All_packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
-	
-	/*for (int i = 0; i < 4; ++i) {
-		printf("%d Player ID = %d \n",i, All_packet.Ui[i].PlayerID);
-		printf("%d Score : %d \n",i, All_packet.Ui[i].score);
-		printf("%d Stage : %d \n",i, All_packet.Ui[i].Stage);
-	}*/
+
 }
 
-int Init(Player* p, EnemyManager* e,Player* o,UIManager* u, PlayerBulletManager* b);
+int CLIENT::Init(Player* p, EnemyManager* e, Player* o, UIManager* u, PlayerBulletManager* b)
 {
 	player = p;
 	enemyMng = e;
@@ -177,6 +185,8 @@ int Init(Player* p, EnemyManager* e,Player* o,UIManager* u, PlayerBulletManager*
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) err_quit("socket()");
 
+	int opt_val = 1;
+	setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(const char*)opt_val, sizeof(opt_val));
 	// connect()
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
