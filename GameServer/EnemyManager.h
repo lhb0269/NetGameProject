@@ -4,7 +4,7 @@
 #include"global.h"
 class EnemyManager
 {
-	Enemy enemyList[MAX_MOB];
+	Enemy* enemyList[MAX_MOB];
 	int mobNum;
 	bool typeList[10];
 	int nowBulletType;
@@ -15,7 +15,7 @@ public:
 	~EnemyManager();
 	//void draw(HDC hdc);
 	void spawn(const POINT spawnPos, int monsyer, bool isProtect);
-	void move(const RECT& player);
+	void move(const PlayerInfo* pInfo);
 	BOOL isAttacked(const LKM::Shape* sword);
 	//void shoot(POINT player);
 	int getEnemyNumber();
@@ -25,5 +25,5 @@ public:
 	void init();
 	void Recv(const CollideEnemy& ce);
 	void EnemtState(const Enemy& enemy);
-	Enemy* HandOverInfo();
+	Enemy* HandOverInfo(int n);
 };
