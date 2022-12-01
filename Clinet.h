@@ -28,7 +28,7 @@ private:
 	Player* Otherplayers;
 	PlayerInfo pInfo;
 
-	PlayerBulletManager *OtherPlayerBullets;
+	PlayerBulletManager* OtherPlayerBullets;
 	UI uinfo;
 	ALL_PACKET All_packet;
 	UIManager UIMng;
@@ -39,17 +39,18 @@ private:
 public:
 	void err_quit(const char* msg);
 	void err_display(const char* msg);
-	
+
 	SOCKET& GetSock() { return sock; }
 
-	int Init(Player* p, EnemyManager* e,Player* o,UIManager* u, PlayerBulletManager* b);
+	int Init(Player* p, EnemyManager* e, Player* o, UIManager* u, PlayerBulletManager* b);
 
 	void Login();
-	void Send_Packet(void* pakcet,int size,PACKET_TYPE type);
+	void Send_Packet(void* pakcet, int size, PACKET_TYPE type);
 	void Send_Packet(PACKET_TYPE type);
 	void Recv_Packet(SOCKET& sock);
 	void UpdatePlayerInfo();
 	void UpdateUIInfo(int level, int score);
 	void UpdateOtherPlayers();
-	void UpdateOtherPlayerBullets(RECT *map);
+	void UpdateOtherPlayerBullets(RECT* map);
+	void UpdateEnemy();
 };

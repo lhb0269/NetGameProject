@@ -75,9 +75,9 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 	}
 	case UIPACKET:
 		uiinfo = UIMng.HandOverInfo();
-		printf("%d\n", uiinfo.PlayerID);
-		printf("%d\n", uiinfo.score);
-		printf("%d\n", uiinfo.Stage);
+		//printf("%d\n", uiinfo.PlayerID);
+		//printf("%d\n", uiinfo.score);
+		//printf("%d\n", uiinfo.Stage);
 		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
 		retval = send(sock, (char*)&uiinfo, sizeof(UI), 0);
 		break;
@@ -106,7 +106,7 @@ void CLIENT::UpdatePlayerInfo()
 	pInfo.velocity = player->GetVelocity();
 }
 
-void CLIENT::UpdateUIInfo(int level,int score)
+void CLIENT::UpdateUIInfo(int level, int score)
 {
 	UIMng.UpdateLevel(player, level);
 	UIMng.UpdateScore(player, score);
@@ -133,7 +133,7 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[i].SetbangMotion(All_packet.P_info[i].bangMotion);
 		Otherplayers[i].SetBangpos(All_packet.P_info[i].Bangpos);
 		Otherplayers[i].SetVelocity(All_packet.P_info[i].velocity);
-		
+
 		if (Otherplayers[i].GetbangMotion() == 10) //총을 발사 했을때
 		{
 			POINT bulletpos = Otherplayers[i].GetBangpos();
@@ -148,13 +148,21 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 	OtherPlayerBullets->move(map);
 }
 
+void CLIENT::UpdateEnemy()
+{
+	enemyMng->EnemyInfoUpdate(All_packet.enemyList);
+}
+
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;
 
 	retval = recv(sock, (char*)&All_packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
-	
+	//for (int i = 0; i < MAX_MOB; ++i)
+	//{
+	//	cout << "enemyList[" << i << "]'s SpawnState: " << All_packet.enemyList[i].isSpawned() << endl;
+	//}
 	/*for (int i = 0; i < 4; ++i) {
 		printf("%d Player ID = %d \n",i, All_packet.Ui[i].PlayerID);
 		printf("%d Score : %d \n",i, All_packet.Ui[i].score);
@@ -162,7 +170,7 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 	}*/
 }
 
-int CLIENT::Init(Player* p, EnemyManager* e,Player* o,UIManager* u, PlayerBulletManager* b)
+int CLIENT::Init(Player* p, EnemyManager* e, Player* o, UIManager* u, PlayerBulletManager* b)
 {
 	player = p;
 	enemyMng = e;
@@ -176,6 +184,9 @@ int CLIENT::Init(Player* p, EnemyManager* e,Player* o,UIManager* u, PlayerBullet
 	// ���� ����
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) err_quit("socket()");
+
+	DWORD optval = 1;
+	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (const char*)&optval, sizeof(optval));
 
 	// connect()
 	memset(&serveraddr, 0, sizeof(serveraddr));
