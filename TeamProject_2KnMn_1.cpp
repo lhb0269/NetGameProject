@@ -264,16 +264,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_ESCAPE:
 			bStart = false;
 			break;
-		case VK_TAB:
+		case VK_CAPITAL:
 		{
 			static bool bCursorShow = false;
 			ShowCursor(bCursorShow);
 			bCursorShow = !bCursorShow;
 		}
 		break;
-		/*case 'B':
+		case VK_TAB:
 			break;
-		*/
 		}
 		break;
 	case WM_KEYUP:

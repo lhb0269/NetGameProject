@@ -159,14 +159,18 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 
 void CLIENT::printUI(POINT& point, HDC hdc)
 {
-	TCHAR playerID[4][10];
+	TCHAR playerID[4][25];
 	TCHAR score[4][10];
-
+	WCHAR playerColor[4][20] = { { L"Black" },{ L"Red" },{ L"Green" },{ L"Blue" } };
 	for (int i = 0; i < 4; ++i) {
-		wsprintf(playerID[i], L"Player %d", All_packet.Ui[i].PlayerID);
-		TextOut(hdc, point.x + 800, point.y + i * 10, playerID[i], _tcslen(playerID[i]));
+		if (All_packet.Ui[i].PlayerID == -1)
+			wsprintf(playerID[i], L"Disconnected");
+		else
+			wsprintf(playerID[i], L"Player %d", All_packet.Ui[i].PlayerID+1);
+		TextOut(hdc, point.x + 970, point.y + i * 10, playerID[i], _tcslen(playerID[i]));
+		TextOut(hdc, point.x + 1100, point.y + i * 10, playerColor[i], _tcslen(playerID[i]));
 		wsprintf(score[i], L"score : %d", All_packet.Ui[i].score);
-		TextOut(hdc, point.x + 900, point.y + i * 10, score[i], _tcslen(score[i]));
+		TextOut(hdc, point.x + 1150, point.y + i * 10, score[i], _tcslen(score[i]));
 	}
 }
 void CLIENT::UpdateEnemy()
