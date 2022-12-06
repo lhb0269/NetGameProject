@@ -63,6 +63,7 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 	}
 	enemyList[mobNum]->start(spawnPos);
 	enemyList[mobNum]->protectOnOff(isProtect);
+	enemyList[mobNum]->setShape(typeSwitch);
 	if (!enemyList[mobNum]->isSpawned())
 		enemyList[mobNum]->spawnSignal();
 	//printf("mobnum= %d, x = %d, y = %d angle = %d, force.x = %f, force.y = %f, size = %ld, velocity.x = %f, velocity.y = %f, weight = %f \n", mobNum, enemyList[mobNum]->getPos().x, enemyList[mobNum]->getPos().y, enemyList[mobNum]->getAngle(), enemyList[mobNum]->getForce().x, enemyList[mobNum]->getForce().y, enemyList[mobNum]->getSize(), enemyList[mobNum]->getVelocity().x, enemyList[mobNum]->getVelocity().y, enemyList[mobNum]->getWeight());

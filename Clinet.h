@@ -34,6 +34,7 @@ private:
 	UI uiinfo;
 
 	ClientInfo Clientinfo;
+	RECT mapsize;
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
@@ -49,12 +50,17 @@ public:
 	void Send_Packet(void* pakcet, int size, PACKET_TYPE type);
 	void Send_Packet(PACKET_TYPE type);
 	void Recv_Packet(SOCKET& sock);
+	
+	void SetMapSize(RECT r) { mapsize = r; }
+	RECT& GetMapSize() { return mapsize; }
+
 	void UpdatePlayerInfo();
 	void UpdateUIInfo(int level, int score);
 	void UpdateOtherPlayers();
-	void printUI(POINT& point,HDC hdc);
 	void UpdateOtherPlayerBullets(RECT* map);
 	void UpdateEnemy();
 	void UpdateClientUiInfo();
 	void UpdateClientPacketData();
+	
+	void printUI(POINT& point,HDC hdc);
 };

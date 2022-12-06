@@ -194,6 +194,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			for (int i = 0; i < 3; ++i)
 				OtherPlayers[i].start(temp);
 
+			Client.SetMapSize(mapMng.getMapRect());
+
 			HDC hdc = GetDC(hWnd);
 			hbm = CreateCompatibleBitmap(hdc, mapMng.getWholeMapSize().x, mapMng.getWholeMapSize().y);
 			ReleaseDC(hWnd, hdc);
@@ -430,15 +432,11 @@ void collide() {
 
 void update(HWND hWnd, BOOL buffer[])
 {
-	//서로간 정보 전달 
-	//waveMng->update();
 	mapMng.update(hWnd, player.getPos());
 
 	if (player.gameovercheck())
 		return;
 
-	//move
-	//waveMng->update();
 	enemyMng->move(player.getCore());
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
@@ -446,19 +444,10 @@ void update(HWND hWnd, BOOL buffer[])
 
 	Client.Send_Packet(CLIENTINFO);
 
-	Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
-	Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
-	Client.UpdateEnemy();
-	//for (int i = 0; i < MAX_MOB; ++i)
-	//{
-	//	cout << "enemyList[" << i << "]'s SpawnState: " << enemyMng->enemyList[i].isSpawned() << endl;
-	//}
-	//collide 검사
-	collide();
-	//Collide after
-
-	//spawn 진행
-	//spawn();
+	//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
+	//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
+	//Client.UpdateEnemy();
+	
 	Client.UpdateUIInfo(waveMng->getLevel(), 10);
 }
 

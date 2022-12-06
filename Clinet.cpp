@@ -38,6 +38,12 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	while (true)
 	{
 		pClient->Recv_Packet(sock);
+		pClient->UpdateOtherPlayers();
+		pClient->UpdateEnemy();
+		pClient->UpdateOtherPlayerBullets(&pClient->GetMapSize());
+		//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
+		//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
+		//Client.UpdateEnemy();
 	}
 }
 
@@ -166,7 +172,6 @@ void CLIENT::printUI(POINT& point, HDC hdc)
 void CLIENT::UpdateEnemy()
 {
 	enemyMng->EnemyInfoUpdate(All_packet.enemyList);
-
 }
 
 void CLIENT::Recv_Packet(SOCKET& sock)
@@ -175,16 +180,6 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 
 	retval = recv(sock, (char*)&All_packet, sizeof(ALL_PACKET), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("send()");
-
-	//for (int i = 0; i < MAX_MOB; ++i)
-	//{
-	//	cout << "enemyList[" << i << "]'s SpawnState: " << All_packet.enemyList[i].isSpawned() << endl;
-	//}
-	/*for (int i = 0; i < 4; ++i) {
-		printf("%d Player ID = %d \n",i, All_packet.Ui[i].PlayerID);
-		printf("%d Score : %d \n",i, All_packet.Ui[i].score);
-		printf("%d Stage : %d \n",i, All_packet.Ui[i].Stage);
-		*/
 }
 
 int CLIENT::Init(Player* p, EnemyManager* e, Player* o, UIManager* u, PlayerBulletManager* b)
