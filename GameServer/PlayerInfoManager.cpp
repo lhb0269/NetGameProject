@@ -40,6 +40,21 @@ void PlayerInfoManager::RecvPlayer(SOCKET& clientsock)
 	pInfo[Recv_pInfo.id].velocity = Recv_pInfo.velocity;
 }
 
+void PlayerInfoManager::RecvPlayer(PlayerInfo& pinfo)
+{
+	pInfo[pinfo.id].id			= pinfo.id;
+	pInfo[pinfo.id].pos			= pinfo.pos;
+	pInfo[pinfo.id].sword		= pinfo.sword;
+	pInfo[pinfo.id].isTouched	= pinfo.isTouched;
+	pInfo[pinfo.id].numOfShell	= pinfo.numOfShell;
+	pInfo[pinfo.id].orbitRay	= pinfo.orbitRay;
+	pInfo[pinfo.id].shellStack	= pinfo.shellStack;
+	pInfo[pinfo.id].isdamaged	= pinfo.isdamaged;
+	pInfo[pinfo.id].bangMotion	= pinfo.bangMotion;
+	pInfo[pinfo.id].Bangpos		= pinfo.Bangpos;
+	pInfo[pinfo.id].velocity	= pinfo.velocity;
+}
+
 void PlayerInfoManager::SetPlayerNum(int num)
 {
 	player_num = num;

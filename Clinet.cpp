@@ -66,21 +66,13 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 	int retval = 0;
 	switch (type)
 	{
-	case PLAYERINFO:
+	case CLIENTINFO:
 	{
-		UpdatePlayerInfo();
+		UpdateClientPacketData();
 		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
-		retval = send(sock, (char*)&pInfo, sizeof(PlayerInfo), 0);
+		retval = send(sock, (char*)&Clientinfo, sizeof(ClientInfo), 0);
 		break;
 	}
-	case UIPACKET:
-		uiinfo = UIMng.HandOverInfo();
-		//printf("%d\n", uiinfo.PlayerID);
-		//printf("%d\n", uiinfo.score);
-		//printf("%d\n", uiinfo.Stage);
-		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
-		retval = send(sock, (char*)&uiinfo, sizeof(UI), 0);
-		break;
 	case LOBBYPACKET:
 		break;
 	case COLLIDEENEMY:
@@ -91,19 +83,30 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 	if (retval == SOCKET_ERROR) err_display("send()");
 }
 
+void CLIENT::UpdateClientPacketData()
+{
+	UpdateClientUiInfo();
+	UpdatePlayerInfo();
+}
+
 void CLIENT::UpdatePlayerInfo()
 {
-	pInfo.id = player->GetId();
-	pInfo.pos = player->getPos();
-	pInfo.sword = player->getSword();
-	pInfo.numOfShell = player->GetNumOfShell();
-	pInfo.orbitRay = player->GetorbitRay();
-	pInfo.shellStack = player->GetshellStack();
-	pInfo.isTouched = player->GetisTouched();
-	pInfo.isdamaged = player->Getisdamaged();
-	pInfo.bangMotion = player->GetbangMotion();
-	pInfo.Bangpos = player->GetBangpos();
-	pInfo.velocity = player->GetVelocity();
+	Clientinfo.Pinfo.id = player->GetId();
+	Clientinfo.Pinfo.pos = player->getPos();
+	Clientinfo.Pinfo.sword = player->getSword();
+	Clientinfo.Pinfo.numOfShell = player->GetNumOfShell();
+	Clientinfo.Pinfo.orbitRay = player->GetorbitRay();
+	Clientinfo.Pinfo.shellStack = player->GetshellStack();
+	Clientinfo.Pinfo.isTouched = player->GetisTouched();
+	Clientinfo.Pinfo.isdamaged = player->Getisdamaged();
+	Clientinfo.Pinfo.bangMotion = player->GetbangMotion();
+	Clientinfo.Pinfo.Bangpos = player->GetBangpos();
+	Clientinfo.Pinfo.velocity = player->GetVelocity();
+}
+
+void CLIENT::UpdateClientUiInfo()
+{
+	Clientinfo.Ui = UIMng.HandOverInfo();
 }
 
 void CLIENT::UpdateUIInfo(int level, int score)

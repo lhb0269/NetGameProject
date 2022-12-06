@@ -28,6 +28,7 @@ class SERVER {
 	CollideEnemy recvCollide;
 
 	ALL_PACKET allPacket;
+	ClientInfo Clientinfo;
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;

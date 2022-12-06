@@ -29,10 +29,11 @@ private:
 	PlayerInfo pInfo;
 
 	PlayerBulletManager* OtherPlayerBullets;
-	UI uinfo;
 	ALL_PACKET All_packet;
 	UIManager UIMng;
 	UI uiinfo;
+
+	ClientInfo Clientinfo;
 
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
@@ -54,5 +55,6 @@ public:
 	void printUI(POINT& point,HDC hdc);
 	void UpdateOtherPlayerBullets(RECT* map);
 	void UpdateEnemy();
-
+	void UpdateClientUiInfo();
+	void UpdateClientPacketData();
 };

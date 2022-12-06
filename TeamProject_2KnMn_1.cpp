@@ -444,9 +444,8 @@ void update(HWND hWnd, BOOL buffer[])
 	RECT whole = mapMng.getWholeMapRect();
 	player.move(&map, &whole, NULL);
 
-	Client.Send_Packet(PLAYERINFO);
-	//moveAfter
-	Client.Send_Packet(UIPACKET);
+	Client.Send_Packet(CLIENTINFO);
+
 	Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 	Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 	Client.UpdateEnemy();

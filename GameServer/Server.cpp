@@ -70,29 +70,29 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 
 	switch (type)
 	{
-	case PLAYERINFO:
+	case CLIENTINFO:
 	{
 		if (ClientCount != playerMng->GetPlayerNum())
 			playerMng->SetPlayerNum(ClientCount);
 
-		playerMng->RecvPlayer(clientsock);
+		retval = recv(clientsock, (char*)&Clientinfo, sizeof(ClientInfo), MSG_WAITALL);
+		playerMng->RecvPlayer(Clientinfo.Pinfo);
+		UIMng->Recv_UI(Clientinfo.Ui);
+		
 		break;
 	}
-	case UIPACKET:
-		UIMng->Recv_UI(clientsock);
-		break;
 	case LOBBYPACKET:
 		break;
 	case COLLIDEENEMY:
 	{
 		retval = recv(clientsock, (char*)&recvCollide, sizeof(CollideEnemy), MSG_WAITALL);
-		if (retval == SOCKET_ERROR) err_display("recv()");
 		//enemyManager->Recv(recvCollide);
 		break;
 	}
 	case ALLPACKET:
 		break;
 	}
+	if (retval == SOCKET_ERROR) err_display("recv()");
 #ifdef TEST__PRT_PLAYER_INFO__PINFO_POS
 	PlayerInfo* pInfo = playerMng->HandOverInfo();
 	for (int i = 0; i < MAX_PLAYER; ++i)

@@ -13,6 +13,7 @@ public:
 
 	void InitPlayer(int pNum);
 	void RecvPlayer(SOCKET& clientsock);
+	void RecvPlayer(PlayerInfo& pinfo);
 
 	void SetPlayerNum(int num);
 	int GetPlayerNum();

@@ -4,7 +4,7 @@
 #define MAX_MOB 30
 
 enum PACKET_TYPE {
-	PLAYERINFO, UIPACKET, LOBBYPACKET, COLLIDEENEMY, ALLPACKET
+	PLAYERINFO, UIPACKET, LOBBYPACKET, COLLIDEENEMY, CLIENTINFO,ALLPACKET
 };
 
 struct PlayerInfo {
@@ -45,4 +45,9 @@ struct CollideEnemy {
 	int Enemyid;
 	int Playerid;
 	POINT pos;
+};
+
+struct ClientInfo {
+	PlayerInfo	Pinfo;
+	UI			Ui;
 };
