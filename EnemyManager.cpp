@@ -172,6 +172,7 @@ void EnemyManager::EnemyInfoUpdate(const Enemy* enm)
 				enemyList[i] = new HeadedMob();
 				break;
 			}
+			mobNum++;
 		}
 		*enemyList[i] = enm[i];
 	}

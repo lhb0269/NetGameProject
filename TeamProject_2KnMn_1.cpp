@@ -446,7 +446,7 @@ void update(HWND hWnd, BOOL buffer[])
 	//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 	//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 	//Client.UpdateEnemy();
-	
+	collide();
 	Client.UpdateUIInfo(waveMng->getLevel(), 10);
 }
 
