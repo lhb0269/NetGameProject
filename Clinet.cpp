@@ -115,13 +115,15 @@ void CLIENT::UpdateClientUiInfo()
 	Clientinfo.Ui = UIMng.HandOverInfo();
 }
 
-void CLIENT::UpdateUIInfo(int level, int score)
+void CLIENT::UpdateUIInfo(int level)
 {
 	UIMng.UpdateLevel(player, level);
-	UIMng.UpdateScore(player, score);
 	UIMng.Print();
 }
-
+void CLIENT::UpdateScore(int score)
+{
+	UIMng.UpdateScore(player, score);
+}
 void CLIENT::UpdateOtherPlayers()
 {
 	for (int i = 0; i < 4; ++i)

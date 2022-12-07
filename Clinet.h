@@ -55,12 +55,12 @@ public:
 	RECT& GetMapSize() { return mapsize; }
 
 	void UpdatePlayerInfo();
-	void UpdateUIInfo(int level, int score);
+	void UpdateUIInfo(int level);
 	void UpdateOtherPlayers();
 	void UpdateOtherPlayerBullets(RECT* map);
 	void UpdateEnemy();
 	void UpdateClientUiInfo();
 	void UpdateClientPacketData();
-	
+	void UpdateScore(int score);
 	void printUI(POINT& point,HDC hdc);
 };
