@@ -36,14 +36,14 @@ EnemyManager::~EnemyManager()
 
 void EnemyManager::draw(HDC hdc)
 {
-	for (int i = 0; i < /*mobNum*/MAX_MOB; ++i)
+	for (int i = 0; i < mobNum; ++i)
 		if (enemyList[i] && enemyList[i]->isSpawned())
 		{
 			enemyList[i]->draw(hdc);
 		}
 	bulletMng->drawAll(hdc, mapMng.getThemaColor());
 	effectMng.draw(hdc);
-	for (int i = 0; i < /*mobNum*/MAX_MOB; ++i) {
+	for (int i = 0; i < mobNum; ++i) {
 		if (enemyList[i] && !enemyList[i]->isSpawned()) {
 			enemyList[i]->spawnSignal();
 		}
@@ -57,7 +57,7 @@ void EnemyManager::move(const RECT& player)
 	POINT playerSize = { player.right - player.left, player.bottom - player.top };
 	POINT playerPos = { player.left + playerSize.x / 2, player.top + playerSize.y / 2 };
 	RECT WholeMapRect = mapMng.getWholeMapRect();
-	for (int i = 0; i < /*mobNum*/MAX_MOB; ++i) {
+	for (int i = 0; i < mobNum; ++i) {
 		if (enemyList[i] && enemyList[i]->isSpawned()) {
 			enemyList[i]->move(playerPos);
 			if (!PtInRect(&WholeMapRect, enemyList[i]->getPos())) {

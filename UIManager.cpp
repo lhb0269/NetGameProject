@@ -2,7 +2,7 @@
 #include "UIManager.h"
 UIManager::UIManager()
 {
-
+	ui.score = 0;
 }
 UIManager::~UIManager()
 {
@@ -34,7 +34,7 @@ void UIManager::UpdateLevel(Player* player, int in)
 
 void UIManager::UpdateScore(Player* player, int in)
 {
-	ui.score = in;
+	ui.score += in;
 }
 void UIManager::Print()
 {

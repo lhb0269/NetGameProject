@@ -386,10 +386,12 @@ void collide() {
 	int addLength = 0;
 	if (enemyMng->isAttacked(&sword)) { // Sword to Enemy
 		waveMng->addScore(11);
+		Client.UpdateScore(11);
 		addLength++;
 	}
 	if (enemyMng->bulletMng->isCollideToSword(&sword)) { // Sword to Enemy's Bullet
 		waveMng->addScore(1);
+		Client.UpdateScore(1);
 		addLength++;
 	}
 	//player.sword.addLength(addLength);
@@ -399,9 +401,11 @@ void collide() {
 		bool result = false;
 		if (enemyMng->isAttacked(bullet)) {
 			waveMng->addScore(6);
+			Client.UpdateScore(6);
 		}
 		if (enemyMng->bulletMng->isCollideToBullet(bullet)) {
 			waveMng->addScore(2);
+			Client.UpdateScore(2);
 		}
 		if (result) {
 			player.pbManager.destroy(i);
@@ -447,7 +451,7 @@ void update(HWND hWnd, BOOL buffer[])
 	//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 	//Client.UpdateEnemy();
 	collide();
-	Client.UpdateUIInfo(waveMng->getLevel(), 10);
+	Client.UpdateUIInfo(waveMng->getLevel());
 }
 
 
