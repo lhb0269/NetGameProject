@@ -135,7 +135,6 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[i].SetId(All_packet.P_info[i].id);
 		Otherplayers[i].setPos(All_packet.P_info[i].pos);
 		Otherplayers[i].SetSword(All_packet.P_info[i].sword);
-		Otherplayers[i].setSwordShape();
 		Otherplayers[i].SetNumOfShell(All_packet.P_info[i].numOfShell);
 		Otherplayers[i].SetisTouched(All_packet.P_info[i].isTouched);
 		Otherplayers[i].SetorbitRay(All_packet.P_info[i].orbitRay);
@@ -144,6 +143,7 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[i].SetbangMotion(All_packet.P_info[i].bangMotion);
 		Otherplayers[i].SetBangpos(All_packet.P_info[i].Bangpos);
 		Otherplayers[i].SetVelocity(All_packet.P_info[i].velocity);
+		Otherplayers[i].setSwordShape();
 
 		if (Otherplayers[i].GetbangMotion() == 10) //총을 발사 했을때
 		{

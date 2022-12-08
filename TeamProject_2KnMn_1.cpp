@@ -134,7 +134,7 @@ std::mt19937_64 mte(uid_int(sid));
 
 
 static Player player;
-Player OtherPlayers[3];
+static Player OtherPlayers[4];
 
 PlayerBulletManager OtherPlayerBulletMng;
 EnemyManager* enemyMng = new EnemyManager;
@@ -191,7 +191,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			temp.x /= 2; temp.y /= 2;
 			player.start(temp);
 
-			for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < 4; ++i)
 				OtherPlayers[i].start(temp);
 
 			Client.SetMapSize(mapMng.getMapRect());
@@ -473,7 +473,7 @@ void draw(HDC hdc)
 {
 	mapMng.draw(hdc);
 	player.draw(hdc);
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 		OtherPlayers[i].draw(hdc);
 
 	OtherPlayerBulletMng.draw(hdc);

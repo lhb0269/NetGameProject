@@ -72,9 +72,6 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	{
 	case CLIENTINFO:
 	{
-		if (ClientCount != playerMng->GetPlayerNum())
-			playerMng->SetPlayerNum(ClientCount);
-
 		retval = recv(clientsock, (char*)&Clientinfo, sizeof(ClientInfo), MSG_WAITALL);
 		playerMng->RecvPlayer(Clientinfo.Pinfo);
 		UIMng->Recv_UI(Clientinfo.Ui);
@@ -154,6 +151,8 @@ void SERVER::ClientLogin(SOCKET& clientsock)
 	v_clients.push_back(clientsock);
 	retval = send(clientsock, (char*)&ClientCount, sizeof(int), 0);
 	if (retval == SOCKET_ERROR) err_display("send()");
+
+	cout << v_clients.size() << endl;
 	ClientCount++;
 }
 
