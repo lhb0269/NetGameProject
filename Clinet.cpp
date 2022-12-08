@@ -158,7 +158,10 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 {
 	OtherPlayerBullets->move(map);
 }
-
+void CLIENT::setCollideEnemy(int in)
+{
+	Clientinfo.ce.Enemyid = in;
+}
 void CLIENT::printUI(POINT& point, HDC hdc)
 {
 	TCHAR playerID[4][25];

@@ -4,7 +4,7 @@
 #define MAX_MOB 30
 
 enum PACKET_TYPE {
-	PLAYERINFO, UIPACKET, LOBBYPACKET, COLLIDEENEMY, CLIENTINFO,ALLPACKET
+	PLAYERINFO, UIPACKET, LOBBYPACKET, COLLIDEENEMY, CLIENTINFO, ALLPACKET
 };
 
 struct PlayerInfo {
@@ -25,7 +25,7 @@ struct UI {
 	int PlayerNum;	// 현재 접속중인 플레이어 수
 	int Stage;		// 현재 진행중인 Stage 단계
 	int score;
-	int MSG_TYPE;	
+	int MSG_TYPE;
 	int PlayerID;
 };
 
@@ -42,7 +42,7 @@ struct ALL_PACKET {
 };
 
 struct CollideEnemy {
-	int Enemyid;
+	int Enemyid = -1;
 	int Playerid;
 	POINT pos;
 };
@@ -50,4 +50,5 @@ struct CollideEnemy {
 struct ClientInfo {
 	PlayerInfo	Pinfo;
 	UI			Ui;
+	CollideEnemy ce;
 };

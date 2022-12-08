@@ -1,11 +1,11 @@
 #pragma once
+#include "Tower.h"
 #include "MapManager.h"
 #include "EffectManager.h"
 #include "Monster.h"
-#include "Tower.h"
-
 #define MAX_MOB 30
 
+class CLIENT;
 class EnemyManager
 {
 public:
@@ -21,7 +21,7 @@ public:
 	~EnemyManager();
 	void draw(HDC hdc);
 	void move(const RECT& player);
-	BOOL isAttacked(const LKM::Shape* sword);
+	BOOL isAttacked(const LKM::Shape* sword,CLIENT* client);
 	void shoot(POINT player);
 	int getEnemyNumber();
 	Bomber* getBomb(int index);

@@ -384,7 +384,7 @@ void collide() {
 	player.getSwordCollider(&sword);
 
 	int addLength = 0;
-	if (enemyMng->isAttacked(&sword)) { // Sword to Enemy
+	if (enemyMng->isAttacked(&sword,&Client)) { // Sword to Enemy
 		waveMng->addScore(11);
 		Client.UpdateScore(11);
 		addLength++;
@@ -399,7 +399,7 @@ void collide() {
 	for (int i = 0; i < player.pbManager.getNum(); ++i) {
 		LKM::Shape* bullet = player.pbManager.getBulletShape(i);
 		bool result = false;
-		if (enemyMng->isAttacked(bullet)) {
+		if (enemyMng->isAttacked(bullet,&Client)) {
 			waveMng->addScore(6);
 			Client.UpdateScore(6);
 		}
@@ -465,7 +465,7 @@ void moniter(HDC hdc) {
 	*/
 	wsprintf(word, L"Level : %d", waveMng->getLevel());
 	TextOut(hdc, point.x + 600, point.y, word, _tcslen(word));
-	Client.printUI(point,hdc);
+	Client.printUI(point, hdc);
 }
 
 

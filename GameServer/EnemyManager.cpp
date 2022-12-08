@@ -182,8 +182,10 @@ void EnemyManager::init()
 
 void EnemyManager::Recv(const CollideEnemy& ce)
 {
-	//delete enemyList[ce.Enemyid];
-	enemyList[ce.Enemyid] = enemyList[--mobNum];
+	if (ce.Enemyid != -1) {
+		delete enemyList[ce.Enemyid];
+		enemyList[ce.Enemyid] = enemyList[--mobNum];
+	}
 }
 
 void EnemyManager::EnemtState(const Enemy& enemy)

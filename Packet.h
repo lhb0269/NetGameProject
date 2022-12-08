@@ -41,7 +41,7 @@ struct ALL_PACKET {
 };
 
 struct CollideEnemy {
-	int Enemyid;
+	int Enemyid = -1;
 	int Playerid;
 	POINT pos;
 };
@@ -49,4 +49,5 @@ struct CollideEnemy {
 struct ClientInfo {
 	PlayerInfo	Pinfo;
 	UI			Ui;
+	CollideEnemy ce;
 };

@@ -63,4 +63,5 @@ public:
 	void UpdateClientPacketData();
 	void UpdateScore(int score);
 	void printUI(POINT& point,HDC hdc);
+	void setCollideEnemy(int in);
 };

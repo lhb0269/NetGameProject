@@ -78,7 +78,8 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 		retval = recv(clientsock, (char*)&Clientinfo, sizeof(ClientInfo), MSG_WAITALL);
 		playerMng->RecvPlayer(Clientinfo.Pinfo);
 		UIMng->Recv_UI(Clientinfo.Ui);
-		
+		enemyManager->Recv(Clientinfo.ce);
+		printf("%d\n", Clientinfo.ce.Enemyid);
 		break;
 	}
 	case LOBBYPACKET:
