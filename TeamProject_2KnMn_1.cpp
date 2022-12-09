@@ -164,7 +164,7 @@ void menu(HDC hdc)
 	DeleteObject(hfont);
 	hfont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, L"Benguiat");
 	oldfont = (HFONT)SelectObject(hdc, hfont);
-	TextOut(hdc, mapMng.getCameraPoint().x + 525, mapMng.getCameraPoint().y + 500, L"Press Any Key", 13);
+	TextOut(hdc, mapMng.getCameraPoint().x + 525, mapMng.getCameraPoint().y + 500, L"Press SpaceBar To Ready", 23);
 	SelectObject(hdc, oldfont);
 	DeleteObject(hfont);
 }
