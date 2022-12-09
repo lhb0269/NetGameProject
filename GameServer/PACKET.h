@@ -19,6 +19,7 @@ struct PlayerInfo {
 	POINTFLOAT	velocity;
 	POINT		pos;
 	Sword		sword;
+	bool		ready;
 };
 
 struct UI {
@@ -35,17 +36,18 @@ struct LOBBYPACKET {
 	int		id;
 };
 
-struct ALL_PACKET {
-	PlayerInfo	P_info[4];
-	Enemy		enemyList[MAX_MOB];
-	UI			Ui[4];
-};
-
 struct CollideEnemy {
 	int Enemyid = -1;
 	int Playerid;
 	POINT pos;
 };
+struct ALL_PACKET {
+	PlayerInfo	P_info[4];
+	Enemy		enemyList[MAX_MOB];
+	UI			Ui[4];
+	CollideEnemy ce;
+};
+
 
 struct ClientInfo {
 	PlayerInfo	Pinfo;

@@ -23,7 +23,7 @@ public:
 	//void destroy(int index);
 	//Server
 	void init();
-	void Recv(const CollideEnemy& ce);
+	void Recv(ClientInfo* ci);
 	void EnemtState(const Enemy& enemy);
 	Enemy* HandOverInfo(int n);
 };

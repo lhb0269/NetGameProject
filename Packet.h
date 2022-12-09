@@ -3,7 +3,7 @@
 #include "Player.h"
 
 enum PACKET_TYPE {
-	PLAYERINFO,UIPACKET,LOBBYPACKET, COLLIDEENEMY,CLIENTINFO,ALLPACKET
+	PLAYERINFO, UIPACKET, LOBBYPACKET, COLLIDEENEMY, CLIENTINFO, ALLPACKET
 };
 
 struct PlayerInfo {
@@ -18,13 +18,14 @@ struct PlayerInfo {
 	POINTFLOAT	velocity;
 	POINT		pos;
 	Sword		sword;
+	bool		ready;
 };
 
 struct UI {
-	int PlayerNum;	
-	int Stage;	
+	int PlayerNum;
+	int Stage;
 	int score;
-	int MSG_TYPE;	
+	int MSG_TYPE;
 	int PlayerID;
 };
 
@@ -34,17 +35,19 @@ struct LOBBYPACKET {
 	int		id;
 };
 
-struct ALL_PACKET {
-	PlayerInfo	P_info[4];
-	Enemy		enemyList[30];
-	UI			Ui[4];
-};
-
 struct CollideEnemy {
 	int Enemyid = -1;
 	int Playerid;
 	POINT pos;
 };
+
+struct ALL_PACKET {
+	PlayerInfo	P_info[4];
+	Enemy		enemyList[30];
+	UI			Ui[4];
+	CollideEnemy ce;
+};
+
 
 struct ClientInfo {
 	PlayerInfo	Pinfo;
