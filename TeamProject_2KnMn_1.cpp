@@ -445,7 +445,7 @@ void update(HWND hWnd, BOOL buffer[])
 	enemyMng->move(player.getCore());
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
-	if (Client.getReady())
+	if (Client.AllReady())
 		player.move(&map, &whole, NULL);
 
 	Client.Send_Packet(CLIENTINFO);

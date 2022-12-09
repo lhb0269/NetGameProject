@@ -67,4 +67,5 @@ public:
 	void setCollideEnemy(int in);
 	void setReady();
 	bool getReady();
+	bool AllReady();
 };

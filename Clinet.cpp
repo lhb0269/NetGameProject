@@ -176,20 +176,47 @@ bool CLIENT::getReady()
 {
 	return Clientinfo.Pinfo.ready;
 }
+bool CLIENT::AllReady()
+{
+	int count = -1;
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (All_packet.P_info[i].id != -1) {
+			count++;
+		}
+	}
+	int j = -1;
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (All_packet.P_info[i].ready) {
+			++j;
+			if (j >= count) {
+				return true;
+			}
+		}
+	}
+	printf("\n");
+	return false;
+}
 void CLIENT::printUI(POINT& point, HDC hdc)
 {
 	TCHAR playerID[MAX_PLAYER][25];
+	TCHAR playerReady[MAX_PLAYER][10];
 	TCHAR score[MAX_PLAYER][15];
 	WCHAR playerColor[MAX_PLAYER][20] = { { L"Black" },{ L"Red" },{ L"Green" },{ L"Blue" } };
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (All_packet.Ui[i].PlayerID == -1)
 			wsprintf(playerID[i], L"Disconnected");
 		else
-			wsprintf(playerID[i], L"Player %d", All_packet.Ui[i].PlayerID+1);
-		TextOut(hdc, point.x + 970, point.y + i * 10, playerID[i], _tcslen(playerID[i]));
+			wsprintf(playerID[i], L"Player %d", All_packet.Ui[i].PlayerID + 1);
+		TextOut(hdc, point.x + 850, point.y + i * 10, playerID[i], _tcslen(playerID[i]));
+		if (All_packet.P_info[i].ready)
+			wsprintf(playerReady[i], L"is Ready");
+		else
+			wsprintf(playerReady[i], L"is not Ready");
+		TextOut(hdc, point.x + 980, point.y + i * 10, playerReady[i], _tcslen(playerReady[i]));
 		TextOut(hdc, point.x + 1100, point.y + i * 10, playerColor[i], _tcslen(playerID[i]));
 		wsprintf(score[i], L"score : %d", All_packet.Ui[i].score);
-		TextOut(hdc, point.x + 1150, point.y + i * 10, score[i], _tcslen(score[i]));
+		TextOut(hdc, point.x + 1170, point.y + i * 10, score[i], _tcslen(score[i]));
+
 	}
 }
 void CLIENT::UpdateEnemy()
