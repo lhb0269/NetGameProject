@@ -154,6 +154,7 @@ void SERVER::ClientLogin(SOCKET& clientsock)
 
 	cout << v_clients.size() << endl;
 	ClientCount++;
+	playerMng->SetPlayerNum(ClientCount);
 }
 
 void SERVER::UpdateObject()
