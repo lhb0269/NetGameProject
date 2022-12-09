@@ -140,7 +140,7 @@ void SERVER::Send_AllPacket()
 
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
-	enemyManager->Recv(&Clientinfo);
+	//enemyManager->Recv(&Clientinfo);
 	SetEvent(SendEvent);
 
 }
