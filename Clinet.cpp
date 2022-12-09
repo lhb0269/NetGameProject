@@ -78,7 +78,6 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 		UpdateClientPacketData();
 		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
 		retval = send(sock, (char*)&Clientinfo, sizeof(ClientInfo), 0);
-		printf("%d\n", Clientinfo.Pinfo.ready);
 		break;
 	}
 	case LOBBYPACKET:

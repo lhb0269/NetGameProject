@@ -158,6 +158,7 @@
     <ClInclude Include="EffectManager.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="HP.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="LKM_Physics.h" />
     <ClInclude Include="MapManager.h" />
@@ -185,6 +186,7 @@
     <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="HP.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="LKM_Physics.cpp" />
     <ClCompile Include="MapManager.cpp" />

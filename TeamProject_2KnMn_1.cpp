@@ -277,6 +277,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
+		
 	case WM_KEYUP:
 		switch (wParam) {
 		case 'A':

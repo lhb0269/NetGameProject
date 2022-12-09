@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EffectManager.h"
 #include "Player.h"
+#include "HP.h"
 
 //#pragma comment(lib, "msimg32.lib")
 
@@ -298,6 +299,7 @@ void Player::draw(HDC hdc)
 	drawShell(hdc);
 	drawSword(hdc);
 	drawCore(hdc);
+	hp.draw(hdc);
 	//	POINT temp = { (LONG)(pos.x + cos(sword.nowAngle) * (sword.swordLength + coreRay)),
 	//(LONG)(pos.y - sin(sword.nowAngle) * (sword.swordLength + coreRay)) };
 	//	const LKM::Shape& swordf = getSwordCollider();
@@ -361,6 +363,8 @@ void Player::move(RECT* sanctaury, RECT* wholeMap, RECT* block)
 	sword.swordPos.y += (LONG)(sin(sword.nowAngle) * bangMotion + 0.5f);
 	setSwordShape();
 	pbManager.move(wholeMap);
+
+	hp.update();
 }
 
 void Player::mouseInput(BOOL lbtn, BOOL rbtn, POINT mPos)

@@ -1,6 +1,8 @@
 #pragma once
 #include "LKM_Physics.h"
 #include "Object.h"
+#include "HP.h"
+
 //#include"TeamProject_2KnMn_1.h"
 class Sword {
 	FLOAT rotMoment;
@@ -85,6 +87,7 @@ class Player : public RealObject
 
 	int id;
 	BOOL isdamaged;
+	
 
 	void drawCore(HDC);
 	void drawSword(HDC);
@@ -98,6 +101,7 @@ public:
 	Player();
 	~Player();
 
+	HP	hp{this,15,7};
 	Sword sword;
 	PlayerBulletManager pbManager;
 
