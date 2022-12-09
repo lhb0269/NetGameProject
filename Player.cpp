@@ -178,7 +178,7 @@ void Player::bang(POINT sub)
 void Player::drawCore(HDC hdc)
 {
 	//RECT rect = getCore();
-	HBRUSH brush = CreateSolidBrush(RGB(0xe, 0xe, 0xe));
+	HBRUSH brush = NULL;
 
 	switch (id) //id에 따른 플레이어 색깔 구분
 	{
@@ -195,15 +195,19 @@ void Player::drawCore(HDC hdc)
 		brush = CreateSolidBrush(RGB(0, 0, 255));
 		break;
 	}
-	HBRUSH old = (HBRUSH)SelectObject(hdc, brush);
-	HPEN  oldpen = (HPEN)SelectObject(hdc, GetStockObject(NULL_PEN));
-	LKM::Shape core(6);
-	LKM::shapeHexagon(coreRay, pos, core);
-	Polygon(hdc, core.ptls, core.nPt);
-	//Ellipse(hdc, rect.left, rect.top, rect.right, rect.bottom);
-	SelectObject(hdc, old);
-	SelectObject(hdc, oldpen);
-	DeleteObject(brush);
+
+	if (brush)
+	{
+		HBRUSH old = (HBRUSH)SelectObject(hdc, brush);
+		HPEN  oldpen = (HPEN)SelectObject(hdc, GetStockObject(NULL_PEN));
+		LKM::Shape core(6);
+		LKM::shapeHexagon(coreRay, pos, core);
+		Polygon(hdc, core.ptls, core.nPt);
+		//Ellipse(hdc, rect.left, rect.top, rect.right, rect.bottom);
+		SelectObject(hdc, old);
+		SelectObject(hdc, oldpen);
+		DeleteObject(brush);
+	}
 }
 
 void Player::drawSword(HDC hdc)

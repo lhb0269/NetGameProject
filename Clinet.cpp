@@ -126,31 +126,33 @@ void CLIENT::UpdateScore(int score)
 }
 void CLIENT::UpdateOtherPlayers()
 {
-	for (int i = 0; i < 4; ++i)
+	int count = 0;
+	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		int pid = All_packet.P_info[i].id;
 		//아직 접속하지 않는 플레이어의 아이디 이거나 자기 자신의 id값이 아닐 경우
 		if (pid == player->GetId() || pid == -1) continue;
 
-		Otherplayers[i].SetId(All_packet.P_info[i].id);
-		Otherplayers[i].setPos(All_packet.P_info[i].pos);
-		Otherplayers[i].SetSword(All_packet.P_info[i].sword);
-		Otherplayers[i].setSwordShape();
-		Otherplayers[i].SetNumOfShell(All_packet.P_info[i].numOfShell);
-		Otherplayers[i].SetisTouched(All_packet.P_info[i].isTouched);
-		Otherplayers[i].SetorbitRay(All_packet.P_info[i].orbitRay);
-		Otherplayers[i].SetshellStack(All_packet.P_info[i].shellStack);
-		Otherplayers[i].Setisdamaged(All_packet.P_info[i].isdamaged);
-		Otherplayers[i].SetbangMotion(All_packet.P_info[i].bangMotion);
-		Otherplayers[i].SetBangpos(All_packet.P_info[i].Bangpos);
-		Otherplayers[i].SetVelocity(All_packet.P_info[i].velocity);
+		Otherplayers[count].SetId(All_packet.P_info[i].id);
+		Otherplayers[count].setPos(All_packet.P_info[i].pos);
+		Otherplayers[count].SetSword(All_packet.P_info[i].sword);
+		Otherplayers[count].setSwordShape();
+		Otherplayers[count].SetNumOfShell(All_packet.P_info[i].numOfShell);
+		Otherplayers[count].SetisTouched(All_packet.P_info[i].isTouched);
+		Otherplayers[count].SetorbitRay(All_packet.P_info[i].orbitRay);
+		Otherplayers[count].SetshellStack(All_packet.P_info[i].shellStack);
+		Otherplayers[count].Setisdamaged(All_packet.P_info[i].isdamaged);
+		Otherplayers[count].SetbangMotion(All_packet.P_info[i].bangMotion);
+		Otherplayers[count].SetBangpos(All_packet.P_info[i].Bangpos);
+		Otherplayers[count].SetVelocity(All_packet.P_info[i].velocity);
 
-		if (Otherplayers[i].GetbangMotion() == 10) //총을 발사 했을때
+		if (Otherplayers[count].GetbangMotion() == 10) //총을 발사 했을때
 		{
-			POINT bulletpos = Otherplayers[i].GetBangpos();
-			POINTFLOAT bulletVelocity = Otherplayers[i].GetVelocity();
+			POINT bulletpos = Otherplayers[count].GetBangpos();
+			POINTFLOAT bulletVelocity = Otherplayers[count].GetVelocity();
 			OtherPlayerBullets->add(bulletpos, bulletVelocity);
 		}
+		count++;
 	}
 }
 
@@ -161,10 +163,10 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 
 void CLIENT::printUI(POINT& point, HDC hdc)
 {
-	TCHAR playerID[4][25];
-	TCHAR score[4][10];
-	WCHAR playerColor[4][20] = { { L"Black" },{ L"Red" },{ L"Green" },{ L"Blue" } };
-	for (int i = 0; i < 4; ++i) {
+	TCHAR playerID[MAX_PLAYER][25];
+	TCHAR score[MAX_PLAYER][15];
+	WCHAR playerColor[MAX_PLAYER][20] = { { L"Black" },{ L"Red" },{ L"Green" },{ L"Blue" } };
+	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (All_packet.Ui[i].PlayerID == -1)
 			wsprintf(playerID[i], L"Disconnected");
 		else
