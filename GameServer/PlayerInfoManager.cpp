@@ -70,13 +70,11 @@ int PlayerInfoManager::GetPlayerNum()
 bool PlayerInfoManager::getReady()
 {
 	int j = 0;
-	for (int i = 0; i < player_num; ++i) {
+	for (int i = 0; i <= player_num; ++i) {
 		if (pInfo[i].ready) {
 			++j;
 			if (j >= player_num)
 				return true;
-			printf("%d\n", player_num);
-			printf("%d\n", j);
 		}
 	}
 	return false;
