@@ -38,21 +38,23 @@ void PlayerInfoManager::RecvPlayer(SOCKET& clientsock)
 	pInfo[Recv_pInfo.id].bangMotion = Recv_pInfo.bangMotion;
 	pInfo[Recv_pInfo.id].Bangpos = Recv_pInfo.Bangpos;
 	pInfo[Recv_pInfo.id].velocity = Recv_pInfo.velocity;
+	pInfo[Recv_pInfo.id].ready = Recv_pInfo.ready;
 }
 
 void PlayerInfoManager::RecvPlayer(PlayerInfo& pinfo)
 {
-	pInfo[pinfo.id].id			= pinfo.id;
-	pInfo[pinfo.id].pos			= pinfo.pos;
-	pInfo[pinfo.id].sword		= pinfo.sword;
-	pInfo[pinfo.id].isTouched	= pinfo.isTouched;
-	pInfo[pinfo.id].numOfShell	= pinfo.numOfShell;
-	pInfo[pinfo.id].orbitRay	= pinfo.orbitRay;
-	pInfo[pinfo.id].shellStack	= pinfo.shellStack;
-	pInfo[pinfo.id].isdamaged	= pinfo.isdamaged;
-	pInfo[pinfo.id].bangMotion	= pinfo.bangMotion;
-	pInfo[pinfo.id].Bangpos		= pinfo.Bangpos;
-	pInfo[pinfo.id].velocity	= pinfo.velocity;
+	pInfo[pinfo.id].id = pinfo.id;
+	pInfo[pinfo.id].pos = pinfo.pos;
+	pInfo[pinfo.id].sword = pinfo.sword;
+	pInfo[pinfo.id].isTouched = pinfo.isTouched;
+	pInfo[pinfo.id].numOfShell = pinfo.numOfShell;
+	pInfo[pinfo.id].orbitRay = pinfo.orbitRay;
+	pInfo[pinfo.id].shellStack = pinfo.shellStack;
+	pInfo[pinfo.id].isdamaged = pinfo.isdamaged;
+	pInfo[pinfo.id].bangMotion = pinfo.bangMotion;
+	pInfo[pinfo.id].Bangpos = pinfo.Bangpos;
+	pInfo[pinfo.id].velocity = pinfo.velocity;
+	pInfo[pinfo.id].ready = pinfo.ready;
 }
 
 void PlayerInfoManager::SetPlayerNum(int num)
@@ -63,6 +65,21 @@ void PlayerInfoManager::SetPlayerNum(int num)
 int PlayerInfoManager::GetPlayerNum()
 {
 	return player_num;
+}
+
+bool PlayerInfoManager::getReady()
+{
+	int j = 0;
+	for (int i = 0; i < player_num; ++i) {
+		if (pInfo[i].ready) {
+			++j;
+			if (j >= player_num)
+				return true;
+			printf("%d\n", player_num);
+			printf("%d\n", j);
+		}
+	}
+	return false;
 }
 
 PlayerInfo* PlayerInfoManager::HandOverInfo()

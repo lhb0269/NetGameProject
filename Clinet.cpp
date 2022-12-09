@@ -41,6 +41,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		pClient->UpdateOtherPlayers();
 		pClient->UpdateEnemy();
 		pClient->UpdateOtherPlayerBullets(&pClient->GetMapSize());
+		pClient->DistroyEnemy();
 		//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 		//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 		//Client.UpdateEnemy();
@@ -77,6 +78,7 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 		UpdateClientPacketData();
 		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
 		retval = send(sock, (char*)&Clientinfo, sizeof(ClientInfo), 0);
+		printf("%d\n", Clientinfo.Pinfo.ready);
 		break;
 	}
 	case LOBBYPACKET:
@@ -87,6 +89,7 @@ void CLIENT::Send_Packet(PACKET_TYPE type)
 		break;
 	}
 	if (retval == SOCKET_ERROR) err_display("send()");
+	Clientinfo.ce.Enemyid = -1;
 }
 
 void CLIENT::UpdateClientPacketData()
@@ -158,7 +161,18 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 {
 	OtherPlayerBullets->move(map);
 }
-
+void CLIENT::setCollideEnemy(int in)
+{
+	Clientinfo.ce.Enemyid = in;
+}
+void CLIENT::setReady()
+{
+	Clientinfo.Pinfo.ready = true;
+}
+bool CLIENT::getReady()
+{
+	return Clientinfo.Pinfo.ready;
+}
 void CLIENT::printUI(POINT& point, HDC hdc)
 {
 	TCHAR playerID[4][25];
@@ -179,7 +193,11 @@ void CLIENT::UpdateEnemy()
 {
 	enemyMng->EnemyInfoUpdate(All_packet.enemyList);
 }
-
+void CLIENT::DistroyEnemy()
+{
+	if (All_packet.ce.Enemyid != -1)
+		enemyMng->destroy(All_packet.ce.Enemyid);
+}
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;

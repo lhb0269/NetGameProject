@@ -18,7 +18,7 @@ EnemyManager::~EnemyManager()
 {
 	/*for (int i = 0; i < mobNum; ++i)
 		delete enemyList[i];*/
-	//delete bulletMng;
+		//delete bulletMng;
 }
 
 //void EnemyManager::draw(HDC hdc)
@@ -73,11 +73,11 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 
 void EnemyManager::move(const PlayerInfo* pInfo)
 {
-	LONG x = 0; 
-	LONG y = 0; 
+	LONG x = 0;
+	LONG y = 0;
 	const LONG size = 20;	// player half size - 20
 
-	
+
 	//RECT WholeMapRect = mapMng.getWholeMapRect();
 	for (int i = 0; i < mobNum; ++i) {
 		if (enemyList[i]->isSpawned()) {
@@ -180,10 +180,12 @@ void EnemyManager::init()
 	mobNum = 0;
 }
 
-void EnemyManager::Recv(const CollideEnemy& ce)
+void EnemyManager::Recv(ClientInfo* ci)
 {
-	//delete enemyList[ce.Enemyid];
-	enemyList[ce.Enemyid] = enemyList[--mobNum];
+	if (ci->ce.Enemyid != -1 && enemyList[ci->ce.Enemyid] != NULL) {
+		delete enemyList[ci->ce.Enemyid];
+		enemyList[ci->ce.Enemyid] = enemyList[--mobNum];
+	}
 }
 
 void EnemyManager::EnemtState(const Enemy& enemy)

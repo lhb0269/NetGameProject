@@ -17,6 +17,7 @@ public:
 
 	void SetPlayerNum(int num);
 	int GetPlayerNum();
+	bool getReady();
 
 	PlayerInfo* HandOverInfo();
 };

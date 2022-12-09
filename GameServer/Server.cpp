@@ -75,7 +75,6 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 		retval = recv(clientsock, (char*)&Clientinfo, sizeof(ClientInfo), MSG_WAITALL);
 		playerMng->RecvPlayer(Clientinfo.Pinfo);
 		UIMng->Recv_UI(Clientinfo.Ui);
-		
 		break;
 	}
 	case LOBBYPACKET:
@@ -114,7 +113,7 @@ void SERVER::Send_AllPacket()
 		memcpy(&packet.enemyList[i], enemyManager->HandOverInfo(i), sizeof(Enemy));
 	}
 	memcpy(packet.Ui, UIMng->HandOverInfo(), sizeof(UI) * MAX_PLAYER);
-
+	packet.ce.Enemyid = Clientinfo.ce.Enemyid;
 #ifdef TEST__SEND_ALLPACKET__PINFO_POS
 	for (int i = 0; i < ClientCount; ++i)
 	{
@@ -141,6 +140,7 @@ void SERVER::Send_AllPacket()
 
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
+	enemyManager->Recv(&Clientinfo);
 	SetEvent(SendEvent);
 
 }
@@ -158,11 +158,13 @@ void SERVER::ClientLogin(SOCKET& clientsock)
 
 void SERVER::UpdateObject()
 {
-	waveMng->update();
-	Spawn();
+	if (playerMng->getReady()) {
+		waveMng->update();
+		Spawn();
 
-	enemyManager->move(playerMng->HandOverInfo());
-	//플레이어 받아오면 player->getcore() 넘겨준다.
+		enemyManager->move(playerMng->HandOverInfo());
+		//플레이어 받아오면 player->getcore() 넘겨준다.
+	}
 }
 
 EnemyManager* SERVER::getList()

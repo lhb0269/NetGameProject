@@ -181,7 +181,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		Client.Init(&player, enemyMng, OtherPlayers, UIMng, &OtherPlayerBulletMng); // 서버와 연결
-			//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
+		//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 		screen = { GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN) };
 		MoveWindow(hWnd, 0, 0, mapMng.getCameraSize().x, mapMng.getCameraSize().y, FALSE);
 		GetClientRect(hWnd, &win);
@@ -260,6 +260,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case VK_RIGHT:
 			playerKeyInput[5] = TRUE;
+			break;
+		case VK_SPACE:
+			Client.setReady();
 			break;
 		case VK_ESCAPE:
 			bStart = false;
@@ -384,7 +387,7 @@ void collide() {
 	player.getSwordCollider(&sword);
 
 	int addLength = 0;
-	if (enemyMng->isAttacked(&sword)) { // Sword to Enemy
+	if (enemyMng->isAttacked(&sword, &Client)) { // Sword to Enemy
 		waveMng->addScore(11);
 		Client.UpdateScore(11);
 		addLength++;
@@ -399,7 +402,7 @@ void collide() {
 	for (int i = 0; i < player.pbManager.getNum(); ++i) {
 		LKM::Shape* bullet = player.pbManager.getBulletShape(i);
 		bool result = false;
-		if (enemyMng->isAttacked(bullet)) {
+		if (enemyMng->isAttacked(bullet, &Client)) {
 			waveMng->addScore(6);
 			Client.UpdateScore(6);
 		}
@@ -443,7 +446,8 @@ void update(HWND hWnd, BOOL buffer[])
 	enemyMng->move(player.getCore());
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
-	player.move(&map, &whole, NULL);
+	if (Client.getReady())
+		player.move(&map, &whole, NULL);
 
 	Client.Send_Packet(CLIENTINFO);
 
@@ -465,7 +469,7 @@ void moniter(HDC hdc) {
 	*/
 	wsprintf(word, L"Level : %d", waveMng->getLevel());
 	TextOut(hdc, point.x + 600, point.y, word, _tcslen(word));
-	Client.printUI(point,hdc);
+	Client.printUI(point, hdc);
 }
 
 

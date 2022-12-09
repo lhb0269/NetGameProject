@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "EnemyManager.h"
 #include "Boss.h"
-#include <time.h>
 
+#include"Clinet.h"
+#include <time.h>
 std::random_device rd;
 std::mt19937_64 re(rd());
 std::uniform_int_distribution<int> uid(100, 2900);
@@ -90,16 +91,17 @@ void EnemyManager::Recv(Enemy* recvList)
 	memcpy(enemyList, recvList, sizeof(enemyList));
 }
 
-BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox)
+BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox, CLIENT* client)
 {
 	bool result = false;
 	for (int i = 0; i < mobNum; ++i) {
 		if (enemyList[i]->isSpawned() && enemyList[i]->beAttacked(bitBox)) {
 			if (!enemyList[i]->isProtect()) {
 				effectMng.add(enemyList[i]->getPos(), BOSS_DAMAGED);
-				destroy(i);
+				//destroy(i);
 				i--;
 				result = true;
+				client->setCollideEnemy(i);
 			}
 			else {
 				result = true;
