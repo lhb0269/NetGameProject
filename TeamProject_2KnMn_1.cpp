@@ -191,9 +191,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			temp.x /= 2; temp.y /= 2;
 			player.start(temp);
 
-			for (int i = 0; i < 4; ++i)
+			for (int i = 0; i < MAX_PLAYER - 1; ++i)
 				OtherPlayers[i].start(temp);
-
 			Client.SetMapSize(mapMng.getMapRect());
 
 			HDC hdc = GetDC(hWnd);
@@ -477,8 +476,9 @@ void draw(HDC hdc)
 {
 	mapMng.draw(hdc);
 	player.draw(hdc);
-	for (int i = 0; i < 4; ++i)
-		OtherPlayers[i].draw(hdc);
+	for (int i = 0; i < MAX_PLAYER - 1; ++i)
+		if (OtherPlayers[i].GetId() != -1)OtherPlayers[i].draw(hdc);
+
 
 	OtherPlayerBulletMng.draw(hdc);
 	enemyMng->draw(hdc);

@@ -61,6 +61,7 @@ enum PLAYER_STATE {
 	USUAL, SLASH, BANG, DAMAGED, DISEXIST
 };
 
+#define MAX_PLAYER 4
 class Player : public RealObject
 {
 	LONG coreRay;
