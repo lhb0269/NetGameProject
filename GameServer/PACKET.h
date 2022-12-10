@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include "Enemy.h"
+#include "HP.h"
+
 #define MAX_MOB 30
 
 enum PACKET_TYPE {
@@ -19,6 +21,7 @@ struct PlayerInfo {
 	POINTFLOAT	velocity;
 	POINT		pos;
 	Sword		sword;
+	HP			hp;
 	bool		ready;
 };
 

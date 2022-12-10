@@ -273,6 +273,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			bCursorShow = !bCursorShow;
 		}
 		break;
+		case 'G':
+		{
+			player.hp.Add_damage(10);
+		}
+			break;
 		case VK_TAB:
 			break;
 		}
@@ -478,7 +483,14 @@ void draw(HDC hdc)
 	mapMng.draw(hdc);
 	player.draw(hdc);
 	for (int i = 0; i < MAX_PLAYER - 1; ++i)
-		if (OtherPlayers[i].GetId() != -1)OtherPlayers[i].draw(hdc);
+	{
+		if (OtherPlayers[i].GetId() != -1)
+		{
+			OtherPlayers[i].draw(hdc);
+		}
+			
+	}
+		
 
 
 	OtherPlayerBulletMng.draw(hdc);

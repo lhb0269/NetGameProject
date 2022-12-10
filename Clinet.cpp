@@ -110,6 +110,7 @@ void CLIENT::UpdatePlayerInfo()
 	Clientinfo.Pinfo.bangMotion = player->GetbangMotion();
 	Clientinfo.Pinfo.Bangpos = player->GetBangpos();
 	Clientinfo.Pinfo.velocity = player->GetVelocity();
+	Clientinfo.Pinfo.hp = player->hp;
 }
 
 void CLIENT::UpdateClientUiInfo()
@@ -147,9 +148,10 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[count].SetbangMotion(All_packet.P_info[i].bangMotion);
 		Otherplayers[count].SetBangpos(All_packet.P_info[i].Bangpos);
 		Otherplayers[count].SetVelocity(All_packet.P_info[i].velocity);
+		Otherplayers[count].hp.SetHP(All_packet.P_info[i].hp.GetHP());
+		Otherplayers[count].hp.update();
 
 		if (Otherplayers[count].GetbangMotion() == 10) //총을 발사 했을때
-
 		{
 			POINT bulletpos = Otherplayers[count].GetBangpos();
 			POINTFLOAT bulletVelocity = Otherplayers[count].GetVelocity();

@@ -18,6 +18,7 @@ struct PlayerInfo {
 	POINTFLOAT	velocity;
 	POINT		pos;
 	Sword		sword;
+	HP			hp;
 	bool		ready;
 };
 

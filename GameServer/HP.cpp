@@ -1,8 +1,6 @@
-#include "stdafx.h"
 #include "HP.h"
-#include <iostream>
 
-HP::HP(Object* owner,int Width, int height) : Owner(owner),Width(Width), Height(height)
+HP::HP(Object* owner, int Width, int height) : Owner(owner), Width(Width), Height(height)
 {
 	MaxHp = 100;
 	NowHP = 100;
@@ -28,7 +26,7 @@ void HP::SetHP(int x)
 }
 
 void HP::Add_damage(int d)
-{ 
+{
 	if (NowHP > 0)
 	{
 		NowHP -= d;
@@ -47,11 +45,6 @@ void HP::draw(HDC hdc)
 	Rectangle(hdc, OwnerPos.x - Width + Pos.x, OwnerPos.y + Pos.y,
 		OwnerPos.x + Width + Pos.x, OwnerPos.y + Pos.y + Height);
 
-	SelectObject(hdc, old_brush);
-	DeleteObject(h_brush);
-	SelectObject(hdc, oldpen);
-	DeleteObject(pen);
-
 	//HP bar
 	pen = CreatePen(PS_SOLID, 1, RGB(HPColor.R, HPColor.G, HPColor.B));
 	h_brush = (HBRUSH)CreateSolidBrush(RGB(HPColor.R, HPColor.G, HPColor.B));
@@ -60,7 +53,7 @@ void HP::draw(HDC hdc)
 
 	Rectangle(hdc, OwnerPos.x - Width + Pos.x, OwnerPos.y + Pos.y,
 		OwnerPos.x - Width + AnimationHp + Pos.x, OwnerPos.y + Pos.y + Height);
-	
+
 	SelectObject(hdc, old_brush);
 	DeleteObject(h_brush);
 	SelectObject(hdc, oldpen);

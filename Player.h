@@ -87,7 +87,6 @@ class Player : public RealObject
 
 	int id;
 	BOOL isdamaged;
-	
 
 	void drawCore(HDC);
 	void drawSword(HDC);
