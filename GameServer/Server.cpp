@@ -236,7 +236,7 @@ void SERVER::UpdateFrequent()
 	if (playerMng->getReady()) {
 		waveMng->update();
 		Spawn();
-
+	}
 	//플레이어 받아오면 player->getcore() 넘겨준다.
 }
 

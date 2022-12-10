@@ -64,7 +64,6 @@ struct ALL_PACKET {
 	UINT		mob_num;
 	UINT		bullet_num;
 	UI			Ui[4];
-	CollideEnemy ce;
 };
 
 struct CollideInfo {

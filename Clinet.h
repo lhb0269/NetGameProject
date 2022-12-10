@@ -62,12 +62,10 @@ public:
 	void UpdateOtherPlayers();
 	void UpdateOtherPlayerBullets(RECT* map);
 	void UpdateEnemy();
-	void DistroyEnemy();
 	void UpdateClientUiInfo();
 	void UpdateClientPacketData();
 	void UpdateScore(int score);
 	void printUI(POINT& point,HDC hdc);
-	void setCollideEnemy(int in);
 	void setReady();
 	bool getReady();
 	bool AllReady();

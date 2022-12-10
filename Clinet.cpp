@@ -41,7 +41,6 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		pClient->UpdateOtherPlayers();
 		pClient->UpdateEnemy();
 		pClient->UpdateOtherPlayerBullets(&pClient->GetMapSize());
-		pClient->DistroyEnemy();
 		//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 		//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 		//Client.UpdateEnemy();
@@ -87,7 +86,6 @@ void CLIENT::Send_Packet(PREPARE_INFO pre_info)
 		break;
 	}
 	if (retval == SOCKET_ERROR) err_display("send()");
-	Clientinfo.ce.Enemyid = -1;
 }
 
 void CLIENT::UpdateClientPacketData()
@@ -164,10 +162,6 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 {
 	OtherPlayerBullets->move(map);
 }
-void CLIENT::setCollideEnemy(int in)
-{
-	Clientinfo.ce.Enemyid = in;
-}
 void CLIENT::setReady()
 {
 	Clientinfo.Pinfo.ready = true;
@@ -230,11 +224,6 @@ void CLIENT::UpdateEnemy()
 		enemyMng->bulletMng->setBulletNum(All_packet.bullet_num);
 	}
 	enemyMng->EnemyInfoUpdate(All_packet.enemyList, All_packet.bulletList);
-}
-void CLIENT::DistroyEnemy()
-{
-	if (All_packet.ce.Enemyid != -1)
-		enemyMng->destroy(All_packet.ce.Enemyid);
 }
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
