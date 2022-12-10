@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EffectManager.h"
 #include "Player.h"
+#include "HP.h"
 
 //#pragma comment(lib, "msimg32.lib")
 
@@ -109,18 +110,20 @@ void Player::beAttacked()
 
 void Player::setSwordShape()
 {
-	const POINT& swordPos = sword.swordPos;
-	fsword.ptls[0] = { swordPos.x + sword.swordRay + sword.swordLength, swordPos.y }; // ���� �� ������������ �ð� �������� ��ǥ �ο�
+	if (fsword.ptls != nullptr)
+	{
+	fsword.ptls[0] = { sword.swordPos.x + sword.swordRay + sword.swordLength, sword.swordPos.y }; // ���� �� ������������ �ð� �������� ��ǥ �ο�
 	fsword.ptls[1] = { fsword.ptls[0].x - sword.swordWidth * 2, fsword.ptls[0].y + sword.swordWidth };
-	fsword.ptls[2] = { swordPos.x + sword.swordRay, fsword.ptls[1].y };
-	fsword.ptls[3] = { swordPos.x + sword.swordRay - sword.swordWidth * 2, swordPos.y };
+	fsword.ptls[2] = { sword.swordPos.x + sword.swordRay, fsword.ptls[1].y };
+	fsword.ptls[3] = { sword.swordPos.x + sword.swordRay - sword.swordWidth * 2, sword.swordPos.y };
 	fsword.ptls[4] = { fsword.ptls[2].x, fsword.ptls[0].y - sword.swordWidth };
 	fsword.ptls[5] = { fsword.ptls[1].x, fsword.ptls[4].y };
 
-	for (int i = 0; i < fsword.nPt; ++i) {
-		fsword.ptls[i] = LKM::rotatePoint(swordPos, fsword.ptls[i], sword.nowAngle);
+	
+		for (int i = 0; i < fsword.nPt; ++i) {
+			fsword.ptls[i] = LKM::rotatePoint(sword.swordPos, fsword.ptls[i], sword.nowAngle);
+		}
 	}
-
 }
 
 
@@ -291,10 +294,12 @@ void Player::stab(POINT targetPos, int charge)
 
 void Player::draw(HDC hdc)
 {
+	if (id == -1) return;
 	drawBullet(hdc);
 	drawShell(hdc);
 	drawSword(hdc);
 	drawCore(hdc);
+	hp.draw(hdc);
 	//	POINT temp = { (LONG)(pos.x + cos(sword.nowAngle) * (sword.swordLength + coreRay)),
 	//(LONG)(pos.y - sin(sword.nowAngle) * (sword.swordLength + coreRay)) };
 	//	const LKM::Shape& swordf = getSwordCollider();
@@ -358,6 +363,8 @@ void Player::move(RECT* sanctaury, RECT* wholeMap, RECT* block)
 	sword.swordPos.y += (LONG)(sin(sword.nowAngle) * bangMotion + 0.5f);
 	setSwordShape();
 	pbManager.move(wholeMap);
+
+	hp.update();
 }
 
 void Player::mouseInput(BOOL lbtn, BOOL rbtn, POINT mPos)

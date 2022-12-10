@@ -41,6 +41,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		pClient->UpdateOtherPlayers();
 		pClient->UpdateEnemy();
 		pClient->UpdateOtherPlayerBullets(&pClient->GetMapSize());
+		pClient->DistroyEnemy();
 		//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 		//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 		//Client.UpdateEnemy();
@@ -86,6 +87,7 @@ void CLIENT::Send_Packet(PREPARE_INFO pre_info)
 		break;
 	}
 	if (retval == SOCKET_ERROR) err_display("send()");
+	Clientinfo.ce.Enemyid = -1;
 }
 
 void CLIENT::UpdateClientPacketData()
@@ -107,6 +109,7 @@ void CLIENT::UpdatePlayerInfo()
 	Clientinfo.Pinfo.bangMotion = player->GetbangMotion();
 	Clientinfo.Pinfo.Bangpos = player->GetBangpos();
 	Clientinfo.Pinfo.velocity = player->GetVelocity();
+	Clientinfo.Pinfo.hp = player->hp;
 }
 
 void CLIENT::UpdateClientUiInfo()
@@ -144,6 +147,8 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[count].SetbangMotion(All_packet.P_info[i].bangMotion);
 		Otherplayers[count].SetBangpos(All_packet.P_info[i].Bangpos);
 		Otherplayers[count].SetVelocity(All_packet.P_info[i].velocity);
+		Otherplayers[count].hp.SetHP(All_packet.P_info[i].hp.GetHP());
+		Otherplayers[count].hp.update();
 
 		if (Otherplayers[count].GetbangMotion() == 10) //총을 발사 했을때
 		{
@@ -159,21 +164,59 @@ void CLIENT::UpdateOtherPlayerBullets(RECT* map)
 {
 	OtherPlayerBullets->move(map);
 }
-
+void CLIENT::setCollideEnemy(int in)
+{
+	Clientinfo.ce.Enemyid = in;
+}
+void CLIENT::setReady()
+{
+	Clientinfo.Pinfo.ready = true;
+}
+bool CLIENT::getReady()
+{
+	return Clientinfo.Pinfo.ready;
+}
+bool CLIENT::AllReady()
+{
+	int count = -1;
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (All_packet.P_info[i].id != -1) {
+			count++;
+		}
+	}
+	int j = -1;
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (All_packet.P_info[i].ready) {
+			++j;
+			if (j >= count) {
+				return true;
+			}
+		}
+	}
+	printf("\n");
+	return false;
+}
 void CLIENT::printUI(POINT& point, HDC hdc)
 {
 	TCHAR playerID[MAX_PLAYER][25];
+	TCHAR playerReady[MAX_PLAYER][10];
 	TCHAR score[MAX_PLAYER][15];
 	WCHAR playerColor[MAX_PLAYER][20] = { { L"Black" },{ L"Red" },{ L"Green" },{ L"Blue" } };
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (All_packet.Ui[i].PlayerID == -1)
 			wsprintf(playerID[i], L"Disconnected");
 		else
-			wsprintf(playerID[i], L"Player %d", All_packet.Ui[i].PlayerID+1);
-		TextOut(hdc, point.x + 970, point.y + i * 10, playerID[i], _tcslen(playerID[i]));
+			wsprintf(playerID[i], L"Player %d", All_packet.Ui[i].PlayerID + 1);
+		TextOut(hdc, point.x + 850, point.y + i * 10, playerID[i], _tcslen(playerID[i]));
+		if (All_packet.P_info[i].ready)
+			wsprintf(playerReady[i], L"is Ready");
+		else
+			wsprintf(playerReady[i], L"is not Ready");
+		TextOut(hdc, point.x + 980, point.y + i * 10, playerReady[i], _tcslen(playerReady[i]));
 		TextOut(hdc, point.x + 1100, point.y + i * 10, playerColor[i], _tcslen(playerID[i]));
 		wsprintf(score[i], L"score : %d", All_packet.Ui[i].score);
-		TextOut(hdc, point.x + 1150, point.y + i * 10, score[i], _tcslen(score[i]));
+		TextOut(hdc, point.x + 1170, point.y + i * 10, score[i], _tcslen(score[i]));
+
 	}
 }
 void CLIENT::UpdateEnemy()
@@ -188,7 +231,11 @@ void CLIENT::UpdateEnemy()
 	}
 	enemyMng->EnemyInfoUpdate(All_packet.enemyList, All_packet.bulletList);
 }
-
+void CLIENT::DistroyEnemy()
+{
+	if (All_packet.ce.Enemyid != -1)
+		enemyMng->destroy(All_packet.ce.Enemyid);
+}
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;

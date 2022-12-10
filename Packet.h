@@ -33,13 +33,15 @@ struct PlayerInfo {
 	POINTFLOAT	velocity;
 	POINT		pos;
 	Sword		sword;
+	HP			hp;
+	bool		ready;
 };
 
 struct UI {
-	int PlayerNum;	
-	int Stage;	
+	int PlayerNum;
+	int Stage;
 	int score;
-	int MSG_TYPE;	
+	int MSG_TYPE;
 	int PlayerID;
 };
 
@@ -47,6 +49,12 @@ struct LOBBYPACKET {
 	int		PlayerCount;
 	bool	Ready, Start;
 	int		id;
+};
+
+struct CollideEnemy {
+	int Enemyid = -1;
+	int Playerid;
+	POINT pos;
 };
 
 struct ALL_PACKET {

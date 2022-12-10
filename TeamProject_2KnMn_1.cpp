@@ -165,7 +165,7 @@ void menu(HDC hdc)
 	DeleteObject(hfont);
 	hfont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, L"Benguiat");
 	oldfont = (HFONT)SelectObject(hdc, hfont);
-	TextOut(hdc, mapMng.getCameraPoint().x + 525, mapMng.getCameraPoint().y + 500, L"Press Any Key", 13);
+	TextOut(hdc, mapMng.getCameraPoint().x + 525, mapMng.getCameraPoint().y + 500, L"Press SpaceBar To Ready", 23);
 	SelectObject(hdc, oldfont);
 	DeleteObject(hfont);
 }
@@ -182,7 +182,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		Client.Init(&player, enemyMng, OtherPlayers, UIMng, &OtherPlayerBulletMng); // 서버와 연결
-			//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
+		//PlaySound(MAKEINTRESOURCE(IDR_WAVE1), hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP);
 		screen = { GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN) };
 		MoveWindow(hWnd, 0, 0, mapMng.getCameraSize().x, mapMng.getCameraSize().y, FALSE);
 		GetClientRect(hWnd, &win);
@@ -194,7 +194,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			for (int i = 0; i < MAX_PLAYER - 1; ++i)
 				OtherPlayers[i].start(temp);
-
 			Client.SetMapSize(mapMng.getMapRect());
 
 			HDC hdc = GetDC(hWnd);
@@ -262,6 +261,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_RIGHT:
 			playerKeyInput[5] = TRUE;
 			break;
+		case VK_SPACE:
+			Client.setReady();
+			break;
 		case VK_ESCAPE:
 			bStart = false;
 			break;
@@ -272,10 +274,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			bCursorShow = !bCursorShow;
 		}
 		break;
+		case 'G':
+		{
+			player.hp.Add_damage(10);
+		}
+			break;
 		case VK_TAB:
 			break;
 		}
 		break;
+		
 	case WM_KEYUP:
 		switch (wParam) {
 		case 'A':
@@ -475,7 +483,8 @@ void update(HWND hWnd, BOOL buffer[])
 	//enemyMng->move(player.getCore());
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
-	player.move(&map, &whole, NULL);
+	if (Client.AllReady())
+		player.move(&map, &whole, NULL);
 
 	collide();
 	Client.Send_Packet(prepare_info);
@@ -497,7 +506,7 @@ void moniter(HDC hdc) {
 	*/
 	wsprintf(word, L"Level : %d", waveMng->getLevel());
 	TextOut(hdc, point.x + 600, point.y, word, _tcslen(word));
-	Client.printUI(point,hdc);
+	Client.printUI(point, hdc);
 }
 
 

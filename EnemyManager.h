@@ -1,11 +1,11 @@
 #pragma once
+#include "Tower.h"
 #include "MapManager.h"
 #include "EffectManager.h"
 #include "Monster.h"
-#include "Tower.h"
-
 #define MAX_MOB 30
 
+class CLIENT;
 class EnemyManager
 {
 public:

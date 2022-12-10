@@ -4,6 +4,8 @@
 #include <vector>
 #include "Enemy.h"
 #include "BulletManager.h"
+#include "HP.h"
+
 #define MAX_MOB 30
 
 enum PACKET_TYPE {
@@ -37,13 +39,15 @@ struct PlayerInfo {
 	POINTFLOAT	velocity;
 	POINT		pos;
 	Sword		sword;
+	HP			hp;
+	bool		ready;
 };
 
 struct UI {
 	int PlayerNum;	// 현재 접속중인 플레이어 수
 	int Stage;		// 현재 진행중인 Stage 단계
 	int score;
-	int MSG_TYPE;	
+	int MSG_TYPE;
 	int PlayerID;
 };
 
@@ -60,6 +64,7 @@ struct ALL_PACKET {
 	UINT		mob_num;
 	UINT		bullet_num;
 	UI			Ui[4];
+	CollideEnemy ce;
 };
 
 struct CollideInfo {

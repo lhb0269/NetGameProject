@@ -201,6 +201,9 @@ void SERVER::Send_AllPacket()
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
 	if (ClientCount > 1) SetEvent(SendEvent);
+	//enemyManager->Recv(&Clientinfo);
+	SetEvent(SendEvent);
+
 }
 
 void SERVER::ClientLogin(SOCKET& clientsock, UINT& nThreadEvent, HANDLE& ThreadEvent)
@@ -215,6 +218,7 @@ void SERVER::ClientLogin(SOCKET& clientsock, UINT& nThreadEvent, HANDLE& ThreadE
 	Thread_UpdateEvent.push_back(ThreadEvent);
 
 	ClientCount++;
+	playerMng->SetPlayerNum(ClientCount);
 }
 
 void SERVER::UpdateInitVariable()
@@ -229,8 +233,9 @@ void SERVER::UpdateMovement()
 
 void SERVER::UpdateFrequent()
 {
-	waveMng->update();
-	Spawn();
+	if (playerMng->getReady()) {
+		waveMng->update();
+		Spawn();
 
 	//플레이어 받아오면 player->getcore() 넘겨준다.
 }

@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "EnemyManager.h"
 #include "Boss.h"
-#include <time.h>
 
+#include"Clinet.h"
+#include <time.h>
 std::random_device rd;
 std::mt19937_64 re(rd());
 std::uniform_int_distribution<int> uid(100, 2900);
