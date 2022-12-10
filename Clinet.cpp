@@ -67,21 +67,20 @@ void CLIENT::Send_Packet(void* pakcet, int size, PACKET_TYPE type)
 	if (retval == SOCKET_ERROR) err_display("send()");
 }
 
-void CLIENT::Send_Packet(PACKET_TYPE type)
+void CLIENT::Send_Packet(PREPARE_INFO pre_info)
 {
 	int retval = 0;
-	switch (type)
+	switch (pre_info.packet_type)
 	{
 	case CLIENTINFO:
 	{
 		UpdateClientPacketData();
-		retval = send(sock, (char*)&type, sizeof(PACKET_TYPE), 0);
+		retval = send(sock, (char*)&pre_info, sizeof(PREPARE_INFO), 0);
 		retval = send(sock, (char*)&Clientinfo, sizeof(ClientInfo), 0);
+		if (Collideinfo.size()) retval = send(sock, (char*)&Collideinfo[0], sizeof(CollideInfo) * Collideinfo.size(), 0);
 		break;
 	}
 	case LOBBYPACKET:
-		break;
-	case COLLIDEENEMY:
 		break;
 	case ALLPACKET:
 		break;
@@ -179,7 +178,15 @@ void CLIENT::printUI(POINT& point, HDC hdc)
 }
 void CLIENT::UpdateEnemy()
 {
-	enemyMng->EnemyInfoUpdate(All_packet.enemyList);
+	if (enemyMng->mobNum != All_packet.mob_num)
+	{
+		enemyMng->mobNum = All_packet.mob_num;
+	}
+	if (enemyMng->bulletMng->getBulletNum() != All_packet.bullet_num)
+	{
+		enemyMng->bulletMng->setBulletNum(All_packet.bullet_num);
+	}
+	enemyMng->EnemyInfoUpdate(All_packet.enemyList, All_packet.bulletList);
 }
 
 void CLIENT::Recv_Packet(SOCKET& sock)

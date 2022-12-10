@@ -46,10 +46,11 @@ BOOL HeadedMob::goOut()
 	return false;
 }
 
-//void HeadedMob::bang(const POINT & playerPos, BulletManager & bm, bool type)
-//{
-//	bm.addBullet(body.ptls[2], playerPos, type);
-//}
+void HeadedMob::bang(const POINT & playerPos, BulletManager & bm, bool type)
+{
+	bm.addBullet(body.ptls[2], playerPos, type);
+}
+
 #ifdef TEST__DEBUG_TIMER_SETTING
 #include "Server.h"
 extern SERVER server;

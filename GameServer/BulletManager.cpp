@@ -1,16 +1,12 @@
-#include "stdafx.h"
+#include "global.h"
 #include "BulletManager.h"
-#include "EffectManager.h"
+//#include "EffectManager.h"
 
-extern EffectManager effectMng;
+//extern EffectManager effectMng;
 
 BulletManager::BulletManager()
 {
 	numBullet = 0;
-	for (int i = 0; i < MAX_BULLET; ++i)
-	{
-		bulletList[i] = NULL;
-	}
 }
 
 
@@ -27,12 +23,7 @@ int BulletManager::getBulletNum()
 	return numBullet;
 }
 
-void BulletManager::setBulletNum(int n)
-{
-	numBullet = n;
-}
-
-Bullet* BulletManager::getBulletPtr(int index)
+Bullet * BulletManager::getBulletPtr(int index)
 {
 	return bulletList[index];
 }
@@ -52,36 +43,31 @@ void BulletManager::addBullet(POINT start, POINT target, bool type)
 	}
 }
 
-void BulletManager::addBullet(const Bullet& blet, int n)
-{
-	bulletList[n] = new Bullet();
-	*bulletList[n] = blet;
-}
-
 void BulletManager::destroy(int index) {
 	delete bulletList[index];
 	bulletList[index] = bulletList[--numBullet];
+	//std::cout << "»èÁ¦µÈ bullet index: " << index << std::endl;
 }
 
-void BulletManager::moveAll(RECT* camera, RECT* map)
+void BulletManager::moveAll(RECT* map)
 {
 	for (int i = 0; i < numBullet; ++i) {
-		bulletList[i]->move(camera);
+		bulletList[i]->move();
 		if (!PtInRect(map, bulletList[i]->getPos())) {
 			destroy(i);
 		}
 	}
 }
 
-int BulletManager::isCollideToSword(const LKM::Shape * sword)
+BOOL BulletManager::isCollideToSword(const LKM::Shape * sword)
 {
-	int result = -1;
+	bool result = false;
 	for (int i = 0; i < numBullet; ++i) {
 		Bullet& bullet = *bulletList[i];
 		if (bullet.visible) {
 			if (bullet.collideTo(sword)) {
-				result = i;
-				effectMng.add(bullet.getPos(), bullet.getType() ? Particle_Normal : Particle_Super );
+				result = true;
+				//effectMng.add(bullet.getPos(), bullet.getType() ? Particle_Normal : Particle_Super );
 				destroy(i);
 				break;
 			}
@@ -90,19 +76,20 @@ int BulletManager::isCollideToSword(const LKM::Shape * sword)
 	return result;
 }
 
-int BulletManager::isCollideToBullet(const LKM::Shape * bullet)
+BOOL BulletManager::isCollideToBullet(const LKM::Shape * bullet)
 {
-	int result = -1;
+	bool result = false;
 	for (int i = 0; i < numBullet; ++i) {
 		Bullet& now = *bulletList[i];
 		if (now.visible && now.getType()) {
 			if (now.collideTo(bullet)) {
-				result = i;
-				effectMng.add(now.getPos(), now.getType() ? Particle_Normal : Particle_Super);
+				result = true;
+				//effectMng.add(now.getPos(), now.getType() ? Particle_Normal : Particle_Super);
 				destroy(i);
 				break;
 			}
 		}
 	}
 	return result;
+	return 0;
 }

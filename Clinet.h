@@ -34,6 +34,7 @@ private:
 	UI uiinfo;
 
 	ClientInfo Clientinfo;
+	vector<CollideInfo> Collideinfo;
 	RECT mapsize;
 
 	HANDLE ReadEvent;
@@ -48,9 +49,11 @@ public:
 
 	void Login();
 	void Send_Packet(void* pakcet, int size, PACKET_TYPE type);
-	void Send_Packet(PACKET_TYPE type);
+	void Send_Packet(PREPARE_INFO pre_info);
 	void Recv_Packet(SOCKET& sock);
 	
+	ClientInfo* GetClientInfo() { return &Clientinfo; }
+	vector<CollideInfo>& GetCollideInfo() { return Collideinfo; }
 	void SetMapSize(RECT r) { mapsize = r; }
 	RECT& GetMapSize() { return mapsize; }
 

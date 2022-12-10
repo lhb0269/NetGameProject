@@ -23,31 +23,40 @@ class SERVER {
 	UIManager* UIMng = new UIManager;
 	int ClientCount = 0;
 
+	vector<HANDLE> Thread_UpdateEvent;
+	HANDLE ServerEvent;
+
 	PlayerInfo recvPlayerInfo;
 	UI ui[4];
-	CollideEnemy recvCollide;
 
 	ALL_PACKET allPacket;
 	ClientInfo Clientinfo;
+	vector<CollideInfo> Collideinfo;
 
-	HANDLE ReadEvent;
+	HANDLE RecvEvent;
 	HANDLE SendEvent;
+	HANDLE UpdateEvent;
 
 public:
 	int Init();
 	int Update();
 	void Spawn();
+	void Processing(SOCKET& client_sock, HANDLE& ThreadEvent);
+
+	const vector<HANDLE>& GetThreadUpdateEvent() { return Thread_UpdateEvent; }
+	const HANDLE& GetServerEvent() { return ServerEvent; }
 
 	SOCKET& GetClinetSock() { return client_sock; }
 	void Send_AllPacket();
 	void Recv_Packet(SOCKET& clientsock);
 
-	void ClientLogin(SOCKET& clientsock);
-	void UpdateAllPacket();
-	void printPlayerInfo();
+	void ClientLogin(SOCKET& clientsock, UINT& nThreadEvent, HANDLE& ThreadEvent);
 	EnemyManager* getList();
 
-	void UpdateObject();
+	void UpdateInitVariable();
+	void UpdateMovement();
+	void UpdateFrequent();
+	void UpdateImmediately();
 
 #ifdef TEST__DEBUG_TIMER_SETTING
 	LARGE_INTEGER timer, start, end;

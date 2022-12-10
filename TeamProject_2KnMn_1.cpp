@@ -132,6 +132,7 @@ std::random_device sid;
 std::uniform_int_distribution<int> uid_int(TERM, WHOLE_MAP - TERM);
 std::mt19937_64 mte(uid_int(sid));
 
+PREPARE_INFO prepare_info{ CLIENTINFO, 0 };
 
 static Player player;
 Player OtherPlayers[3];
@@ -379,34 +380,59 @@ void spawn() {
 
 
 void collide() {
+	//count collided enemy's index
+	prepare_info.collide_ememy_num = 0;
+	if (Client.GetCollideInfo().size())
+		Client.GetCollideInfo().clear();
+
 	//Player -> Enemy
 	LKM::Shape sword(6);
 	player.getSwordCollider(&sword);
 
 	int addLength = 0;
-	if (enemyMng->isAttacked(&sword)) { // Sword to Enemy
+	int index = enemyMng->isAttacked(&sword);
+	if (0 <= index) { // Sword to Enemy
 		waveMng->addScore(11);
 		Client.UpdateScore(11);
 		addLength++;
+
+		Client.GetCollideInfo().push_back(CollideInfo(index, COLLIDE_TYPE::SWORD_TO_ENEMY));
+		prepare_info.collide_ememy_num++;
 	}
-	if (enemyMng->bulletMng->isCollideToSword(&sword)) { // Sword to Enemy's Bullet
+
+	index = enemyMng->bulletMng->isCollideToSword(&sword);
+	if (0 <= index) { // Sword to Enemy's Bullet
 		waveMng->addScore(1);
 		Client.UpdateScore(1);
 		addLength++;
+
+		Client.GetCollideInfo().push_back(CollideInfo(index, COLLIDE_TYPE::SWORD_TO_ENEMYS_BULLET));
+		prepare_info.collide_ememy_num++;
 	}
 	//player.sword.addLength(addLength);
 	//Player's Bullet -> Enemy
 	for (int i = 0; i < player.pbManager.getNum(); ++i) {
 		LKM::Shape* bullet = player.pbManager.getBulletShape(i);
 		bool result = false;
-		if (enemyMng->isAttacked(bullet)) {
+
+		index = enemyMng->isAttacked(bullet);
+		if (0 <= index) {
 			waveMng->addScore(6);
 			Client.UpdateScore(6);
+
+			Client.GetCollideInfo().push_back(CollideInfo(index, COLLIDE_TYPE::BULLET_TO_ENEMY));
+			prepare_info.collide_ememy_num++;
 		}
-		if (enemyMng->bulletMng->isCollideToBullet(bullet)) {
+
+		index = enemyMng->bulletMng->isCollideToBullet(bullet);
+		if (0 <= index) {
 			waveMng->addScore(2);
 			Client.UpdateScore(2);
+
+			Client.GetCollideInfo().push_back(CollideInfo(index, COLLIDE_TYPE::BULLET_TO_ENEMYS_BULLET));
+			prepare_info.collide_ememy_num++;
 		}
+
 		if (result) {
 			player.pbManager.destroy(i);
 		}
@@ -419,6 +445,9 @@ void collide() {
 			enemyMng->bulletMng->destroy(i);
 			player.beAttacked();
 			collideTime++;
+
+			Client.GetCollideInfo().push_back(CollideInfo(i, COLLIDE_TYPE::ENEMYS_BULLET_TO_PLAYER));
+			prepare_info.collide_ememy_num++;
 		}
 	}
 	for (int i = 0; i < enemyMng->getEnemyNumber(); ++i) {
@@ -428,7 +457,10 @@ void collide() {
 				player.beAttacked();
 				collideTime++;
 				effectMng.add(bomb->getPos(), BTOOM);
-				enemyMng->destroy(i);
+				//enemyMng->destroy(i);
+
+				Client.GetCollideInfo().push_back(CollideInfo(i, COLLIDE_TYPE::ENEMYS_BOMB_TO_PLAYER));
+				prepare_info.collide_ememy_num++;
 			}
 	}
 }
@@ -440,17 +472,17 @@ void update(HWND hWnd, BOOL buffer[])
 	if (player.gameovercheck())
 		return;
 
-	enemyMng->move(player.getCore());
+	//enemyMng->move(player.getCore());
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
 	player.move(&map, &whole, NULL);
 
-	Client.Send_Packet(CLIENTINFO);
+	collide();
+	Client.Send_Packet(prepare_info);
 
 	//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 	//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 	//Client.UpdateEnemy();
-	collide();
 	Client.UpdateUIInfo(waveMng->getLevel());
 }
 

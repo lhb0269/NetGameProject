@@ -23,6 +23,18 @@ HeadedMob::~HeadedMob()
 {
 }
 
+void HeadedMob::UpdateBody()
+{
+	RECT bodyRect = getBody();
+	body.ptls[0] = { bodyRect.left, bodyRect.top };
+	body.ptls[1] = { bodyRect.right, bodyRect.top };
+	body.ptls[2] = { pos.x + size * 2, pos.y };
+	body.ptls[3] = { bodyRect.right, bodyRect.bottom };
+	body.ptls[4] = { bodyRect.left, bodyRect.bottom };
+	for (int i = 0; i < body.nPt; ++i) {
+		body.ptls[i] = LKM::rotatePoint(pos, body.ptls[i], angle);
+	}
+}
 
 void HeadedMob::draw(HDC hdc) {
 	HPEN oldpen = (HPEN)SelectObject(hdc, GetStockObject(BLACK_BRUSH));

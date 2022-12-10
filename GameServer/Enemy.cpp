@@ -108,10 +108,10 @@ BOOL Enemy::isShoot()
 	return true;
 }
 
-//void Enemy::bang(const POINT & playerPos, BulletManager & bm, bool type)
-//{
-//	bm.addBullet(pos, playerPos, type);
-//}
+void Enemy::bang(const POINT & playerPos, BulletManager & bm, bool type)
+{
+	bm.addBullet(pos, playerPos, type);
+}
 
 void Enemy::protectOnOff(bool in)
 {

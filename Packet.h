@@ -3,7 +3,22 @@
 #include "Player.h"
 
 enum PACKET_TYPE {
-	PLAYERINFO,UIPACKET,LOBBYPACKET, COLLIDEENEMY,CLIENTINFO,ALLPACKET
+	PLAYERINFO,UIPACKET, LOBBYPACKET, CLIENTINFO, ALLPACKET
+};
+
+enum class COLLIDE_TYPE {
+	NON_COLLIDE,
+	SWORD_TO_ENEMY,
+	SWORD_TO_ENEMYS_BULLET,
+	BULLET_TO_ENEMY,
+	BULLET_TO_ENEMYS_BULLET,
+	ENEMYS_BULLET_TO_PLAYER,
+	ENEMYS_BOMB_TO_PLAYER,
+};
+
+struct PREPARE_INFO {
+	PACKET_TYPE packet_type;
+	int collide_ememy_num;
 };
 
 struct PlayerInfo {
@@ -37,13 +52,18 @@ struct LOBBYPACKET {
 struct ALL_PACKET {
 	PlayerInfo	P_info[4];
 	Enemy		enemyList[30];
+	Bullet		bulletList[MAX_BULLET];
+	UINT		mob_num;
+	UINT		bullet_num;
 	UI			Ui[4];
 };
 
-struct CollideEnemy {
-	int Enemyid;
-	int Playerid;
-	POINT pos;
+class CollideInfo {
+private:
+	int index;
+	COLLIDE_TYPE collide_type;
+public:
+	CollideInfo(int idx, COLLIDE_TYPE cld_typ) :index(idx), collide_type(cld_typ) {}
 };
 
 struct ClientInfo {

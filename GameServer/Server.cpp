@@ -2,6 +2,9 @@
 #include "Server.h"
 #include "global.h"
 
+DWORD WINAPI ServerUpdate(LPVOID arg);
+DWORD WINAPI ProcessClient(LPVOID arg);
+
 int SERVER::Init()
 {
 #ifdef	TEST__DEBUG_TIMER_SETTING
@@ -10,6 +13,8 @@ int SERVER::Init()
 
 	enemyManager->init();
 	int retval = 0;
+
+	enemyManager->playerMng = playerMng;
 
 	playerMng->InitPlayer(ClientCount);
 	UIMng->init();
@@ -30,8 +35,47 @@ int SERVER::Init()
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
 
-	ReadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	RecvEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+	UpdateEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 	SendEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+	ServerEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	hThread = CreateThread(NULL, 0, ServerUpdate,
+		(LPVOID)this, 0, NULL);
+	if (hThread == NULL) { closesocket(client_sock); }
+	else { CloseHandle(hThread); }
+}
+
+DWORD WINAPI ServerUpdate(LPVOID arg)
+{
+	int retval;
+	SERVER* server = (SERVER*)arg;
+	while (1)
+	{
+		int nCount = server->GetThreadUpdateEvent().size();
+		const HANDLE* lpHandles = NULL;
+		if(nCount) lpHandles = (const HANDLE*)&server->GetThreadUpdateEvent()[0];
+
+		WaitForMultipleObjects(nCount, lpHandles, TRUE, INFINITE);
+		
+		server->UpdateInitVariable();
+		if (server->GetTime() > 0.005f)
+		{
+			QueryPerformanceFrequency(&server->timer);
+			QueryPerformanceCounter(&server->start);
+
+			server->UpdateFrequent();
+		}
+		server->UpdateMovement();
+
+		SetEvent(server->GetServerEvent());
+
+		WaitForMultipleObjects(nCount, lpHandles, TRUE, INFINITE);
+
+		ResetEvent(server->GetServerEvent());
+	}
+
+	return 0;
 }
 
 DWORD WINAPI ProcessClient(LPVOID arg)
@@ -39,20 +83,13 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	int retval;
 	SERVER* server = (SERVER*)arg;
 	SOCKET client_sock = server->GetClinetSock();
+	HANDLE ThreadEvent;
+	UINT nThreadEvent;
 
-	server->ClientLogin(client_sock);
+	server->ClientLogin(client_sock, nThreadEvent, ThreadEvent);
+
 	while (1) {
-		QueryPerformanceCounter(&server->end);
-		server->Recv_Packet(client_sock);
-		if (server->GetTime() > 0.008f)
-		{
-			QueryPerformanceFrequency(&server->timer);
-			QueryPerformanceCounter(&server->start);
-
-			//send recv 구현필요
-			server->UpdateObject();
-		}
-		server->Send_AllPacket();
+		server->Processing(client_sock, ThreadEvent);
 	}
 
 	// 소켓 닫기
@@ -61,21 +98,37 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 void SERVER::Recv_Packet(SOCKET& clientsock)
 {
-	WaitForSingleObject(SendEvent, INFINITE);
+	if(ClientCount > 1) WaitForSingleObject(RecvEvent, INFINITE);
 	int retval;
 	//패킷 type 이랑 크기 받고 type에 따라 처리해야함
-	PACKET_TYPE type;
-	retval = recv(clientsock, (char*)&type, sizeof(type), MSG_WAITALL);
+	PREPARE_INFO pre_info;
+	retval = recv(clientsock, (char*)&pre_info, sizeof(PREPARE_INFO), MSG_WAITALL);
+	//PACKET_TYPE type;
+	//retval = recv(clientsock, (char*)&type, sizeof(type), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) err_display("recv()");
 
-	switch (type)
+	switch (pre_info.packet_type)
 	{
 	case CLIENTINFO:
 	{
+
 		if (ClientCount != playerMng->GetPlayerNum())
 			playerMng->SetPlayerNum(ClientCount);
 
 		retval = recv(clientsock, (char*)&Clientinfo, sizeof(ClientInfo), MSG_WAITALL);
+		if (pre_info.collide_ememy_num)
+		{
+			Collideinfo.resize(pre_info.collide_ememy_num);
+			retval = recv(clientsock, (char*)&Collideinfo[0], sizeof(CollideInfo) * Collideinfo.size(), MSG_WAITALL);
+#ifdef TEST__SWORD_TO_ENEMY_PRT
+			std::cout << "Collideinfo Size: " << Collideinfo.size() << std::endl;
+			for (int i = 0; i < Collideinfo.size(); ++i)
+			{
+				std::cout << "index: " << Collideinfo[i].index << std::endl;
+				std::cout << "type: " << (int)Collideinfo[i].collide_type << std::endl << std::endl;
+			}
+#endif
+		}
 		playerMng->RecvPlayer(Clientinfo.Pinfo);
 		UIMng->Recv_UI(Clientinfo.Ui);
 		
@@ -83,12 +136,6 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	}
 	case LOBBYPACKET:
 		break;
-	case COLLIDEENEMY:
-	{
-		retval = recv(clientsock, (char*)&recvCollide, sizeof(CollideEnemy), MSG_WAITALL);
-		//enemyManager->Recv(recvCollide);
-		break;
-	}
 	case ALLPACKET:
 		break;
 	}
@@ -103,19 +150,28 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	std::cout << std::endl;
 #endif
 
-	SetEvent(ReadEvent);
+	if (ClientCount > 1) SetEvent(RecvEvent);
 }
 
 void SERVER::Send_AllPacket()
 {
-	WaitForSingleObject(ReadEvent, INFINITE);
+	if (ClientCount > 1) WaitForSingleObject(SendEvent, INFINITE);
 	ALL_PACKET packet;
 	memcpy(packet.P_info, playerMng->HandOverInfo(), sizeof(PlayerInfo) * MAX_PLAYER);
-	for (int i = 0; i < MAX_MOB; ++i)
+	for (int i = 0; i < enemyManager->bulletMng->getBulletNum(); ++i)
+	{
+		if (!enemyManager->bulletMng->getBulletPtr(i)) break;
+		memcpy(&packet.bulletList[i], enemyManager->bulletMng->getBulletPtr(i), sizeof(Bullet));
+	}
+
+	for (int i = 0; i < enemyManager->getEnemyNumber(); ++i)
 	{
 		if (!enemyManager->HandOverInfo(i)) break;
 		memcpy(&packet.enemyList[i], enemyManager->HandOverInfo(i), sizeof(Enemy));
 	}
+	packet.mob_num = enemyManager->getEnemyNumber();
+	//std::cout << "bulletNum: " << enemyManager->bulletMng->getBulletNum() << std::endl;
+	packet.bullet_num = enemyManager->bulletMng->getBulletNum();
 	memcpy(packet.Ui, UIMng->HandOverInfo(), sizeof(UI) * MAX_PLAYER);
 
 #ifdef TEST__SEND_ALLPACKET__PINFO_POS
@@ -144,26 +200,46 @@ void SERVER::Send_AllPacket()
 
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
-	SetEvent(SendEvent);
-
+	if (ClientCount > 1) SetEvent(SendEvent);
 }
 
-void SERVER::ClientLogin(SOCKET& clientsock)
+void SERVER::ClientLogin(SOCKET& clientsock, UINT& nThreadEvent, HANDLE& ThreadEvent)
 {
 	int retval;
 	v_clients.push_back(clientsock);
 	retval = send(clientsock, (char*)&ClientCount, sizeof(int), 0);
 	if (retval == SOCKET_ERROR) err_display("send()");
+
+	ThreadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	nThreadEvent = Thread_UpdateEvent.size();
+	Thread_UpdateEvent.push_back(ThreadEvent);
+
 	ClientCount++;
 }
 
-void SERVER::UpdateObject()
+void SERVER::UpdateInitVariable()
+{
+	enemyManager->UpdateState();
+}
+
+void SERVER::UpdateMovement()
+{
+	enemyManager->move(playerMng->HandOverInfo());
+}
+
+void SERVER::UpdateFrequent()
 {
 	waveMng->update();
 	Spawn();
 
-	enemyManager->move(playerMng->HandOverInfo());
 	//플레이어 받아오면 player->getcore() 넘겨준다.
+}
+
+void SERVER::UpdateImmediately()
+{
+	if (ClientCount > 1) WaitForSingleObject(UpdateEvent, INFINITE);
+	enemyManager->UpdateCollide(Collideinfo);
+	if (ClientCount > 1) SetEvent(UpdateEvent);
 }
 
 EnemyManager* SERVER::getList()
@@ -182,13 +258,27 @@ void SERVER::Spawn()
 		}
 	}
 
-	/*static int shootTerm = 100;
-	static int shootStock = shootTerm;
+	static int shootTerm = 50;
+	static int shootStock = 0;
 	shootStock++;
 	if (shootStock > shootTerm) {
 		shootStock = 0;
-		enemyManager->shoot(player.getPos());
-	}*/
+		enemyManager->shoot();
+	}
+}
+
+void SERVER::Processing(SOCKET& client_sock, HANDLE& ThreadEvent)
+{
+	QueryPerformanceCounter(&end);
+	Recv_Packet(client_sock);
+	// if all thread's recved packet, start server update
+	SetEvent(ThreadEvent);
+	WaitForSingleObject(GetServerEvent(), INFINITE);
+	//
+	UpdateImmediately();
+	SetEvent(ThreadEvent);
+	// if the server has been updated, start sending packets
+	Send_AllPacket();
 }
 
 int SERVER::Update()

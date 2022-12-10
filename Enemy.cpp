@@ -31,6 +31,10 @@ void Enemy::setShape(int num)
 	shape = num;
 }
 
+void Enemy::UpdateBody()
+{
+}
+
 //bool Enemy::getBulletType()
 //{
 //	type %= 10;

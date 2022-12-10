@@ -1,10 +1,28 @@
 #pragma once
 #include <Windows.h>
+#include <map>
+#include <vector>
 #include "Enemy.h"
+#include "BulletManager.h"
 #define MAX_MOB 30
 
 enum PACKET_TYPE {
-	PLAYERINFO, UIPACKET, LOBBYPACKET, COLLIDEENEMY, CLIENTINFO,ALLPACKET
+	PLAYERINFO, UIPACKET, LOBBYPACKET, CLIENTINFO, ALLPACKET
+};
+
+enum class COLLIDE_TYPE {
+	NON_COLLIDE,
+	SWORD_TO_ENEMY,
+	SWORD_TO_ENEMYS_BULLET,
+	BULLET_TO_ENEMY,
+	BULLET_TO_ENEMYS_BULLET,
+	ENEMYS_BULLET_TO_PLAYER,
+	ENEMYS_BOMB_TO_PLAYER,
+};
+
+struct PREPARE_INFO {
+	PACKET_TYPE packet_type;
+	int collide_ememy_num;
 };
 
 struct PlayerInfo {
@@ -38,13 +56,15 @@ struct LOBBYPACKET {
 struct ALL_PACKET {
 	PlayerInfo	P_info[4];
 	Enemy		enemyList[MAX_MOB];
+	Bullet		bulletList[MAX_BULLET];
+	UINT		mob_num;
+	UINT		bullet_num;
 	UI			Ui[4];
 };
 
-struct CollideEnemy {
-	int Enemyid;
-	int Playerid;
-	POINT pos;
+struct CollideInfo {
+	int index;
+	COLLIDE_TYPE collide_type;
 };
 
 struct ClientInfo {

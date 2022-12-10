@@ -61,9 +61,9 @@ void EnemyManager::move(const RECT& player)
 		if (enemyList[i] && enemyList[i]->isSpawned()) {
 			enemyList[i]->move(playerPos);
 			if (!PtInRect(&WholeMapRect, enemyList[i]->getPos())) {
-				if (enemyList[i]->goOut()) {
-					destroy(i);
-				}
+				//if (enemyList[i]->goOut()) {
+				//	destroy(i);
+				//}
 			}
 		}
 	}
@@ -90,19 +90,19 @@ void EnemyManager::Recv(Enemy* recvList)
 	memcpy(enemyList, recvList, sizeof(enemyList));
 }
 
-BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox)
+int EnemyManager::isAttacked(const LKM::Shape* bitBox)
 {
-	bool result = false;
+	int result = -1;
 	for (int i = 0; i < mobNum; ++i) {
 		if (enemyList[i]->isSpawned() && enemyList[i]->beAttacked(bitBox)) {
 			if (!enemyList[i]->isProtect()) {
 				effectMng.add(enemyList[i]->getPos(), BOSS_DAMAGED);
-				destroy(i);
+				//destroy(i);
+				result = i;
 				i--;
-				result = true;
 			}
 			else {
-				result = true;
+				result = i;
 				enemyList[i]->protectOnOff(false);
 				effectMng.add(enemyList[i]->getPos(), Break);
 			}
@@ -143,9 +143,13 @@ Bomber* EnemyManager::getBomb(int index)
 	return dynamic_cast<Bomber*>(enemyList[index]);
 }
 
-void EnemyManager::EnemyInfoUpdate(const Enemy* enm)
+void EnemyManager::EnemyInfoUpdate(const Enemy* enm, const Bullet* blet)
 {
-	for (int i = 0; i < MAX_MOB; ++i)
+	for (int i = 0; i < bulletMng->getBulletNum(); ++i)
+	{
+		bulletMng->addBullet(blet[i], i);
+	}
+	for (int i = 0; i < mobNum; ++i)
 	{
 		if (!enemyList[i])
 		{
@@ -172,9 +176,21 @@ void EnemyManager::EnemyInfoUpdate(const Enemy* enm)
 				enemyList[i] = new HeadedMob();
 				break;
 			}
-			mobNum++;
+			//mobNum++;
+		}
+		switch (enm[i].GetState())
+		{
+		case be_spawn:
+			effectMng.add(enm[i].GetPrePos(), Create);
+		case be_breaken:
+			effectMng.add(enm[i].GetPrePos(), Break);
+			break;
+		case be_destroyed:
+			effectMng.add(enm[i].GetPrePos(), Destroy);
+			break;
 		}
 		*enemyList[i] = enm[i];
+		enemyList[i]->UpdateBody();	//현재 HeadedMob만 만들어둠.
 	}
 }
 

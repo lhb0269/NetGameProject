@@ -8,6 +8,7 @@
 #include <random>
 #include <time.h>
 #include <vector>
+#include <iostream>
 #include "gWinSock.h"
 #include "PACKET.h"
 #include "EnemyManager.h"

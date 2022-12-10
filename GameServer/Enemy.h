@@ -1,11 +1,11 @@
 #pragma once
 #include "LKM_Physics.h"
 #include "Object.h"
-//#include "BulletManager.h"
+#include "BulletManager.h"
 
 
 enum STATE {
-	DEACTIVE = 0xe0, ACTIVE, DYING
+	none, be_spawn, be_breaken, be_destroyed
 };
 
 class Enemy : public RealObject
@@ -17,6 +17,8 @@ protected:
 	LONG size;
 	RECT getBody();
 	BOOL isSpawn;
+	POINT previous_pos;
+	int	 state;
 	bool bProtected;
 
 	virtual void drawProtector(HDC hdc);
@@ -29,12 +31,16 @@ public:
 	virtual BOOL start(const POINT& spawnPoint);
 	virtual BOOL goOut();
 	virtual BOOL isShoot();
-	//virtual void bang(const POINT& playerPos, BulletManager& bm, bool type);
+	virtual void bang(const POINT& playerPos, BulletManager& bm, bool type);
 	virtual void protectOnOff(bool);
 	LONG getSize();
 	bool isSpawned();
 	void spawnSignal();
 	bool isProtect();
 	void setShape(int num);
+	void SetState(int n) { state = n; }
+	int GetState() const { return state; };
+	void SetPrePos(POINT pos) { previous_pos = pos; }
+	POINT GetPrePos() const { return previous_pos; };
 };
 

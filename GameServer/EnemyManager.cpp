@@ -1,9 +1,11 @@
 #include "global.h"
 #include<iostream>
+#include "PlayerInfoManager.h"
 std::random_device rd;
 std::mt19937_64 re(rd());
 std::uniform_int_distribution<int> uid(100, 2900);
 
+#define WHOLE_MAP 2500
 
 //BulletManager EnemyManager::* bulletMng;
 
@@ -19,6 +21,7 @@ EnemyManager::~EnemyManager()
 	/*for (int i = 0; i < mobNum; ++i)
 		delete enemyList[i];*/
 	//delete bulletMng;
+	delete bulletMng;
 }
 
 //void EnemyManager::draw(HDC hdc)
@@ -66,18 +69,32 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 	enemyList[mobNum]->setShape(typeSwitch);
 	if (!enemyList[mobNum]->isSpawned())
 		enemyList[mobNum]->spawnSignal();
+	enemyList[mobNum]->SetState(be_spawn);
+	enemyList[mobNum]->SetPrePos(enemyList[mobNum]->getPos());
+
 	//printf("mobnum= %d, x = %d, y = %d angle = %d, force.x = %f, force.y = %f, size = %ld, velocity.x = %f, velocity.y = %f, weight = %f \n", mobNum, enemyList[mobNum]->getPos().x, enemyList[mobNum]->getPos().y, enemyList[mobNum]->getAngle(), enemyList[mobNum]->getForce().x, enemyList[mobNum]->getForce().y, enemyList[mobNum]->getSize(), enemyList[mobNum]->getVelocity().x, enemyList[mobNum]->getVelocity().y, enemyList[mobNum]->getWeight());
 	mobNum++;
+
+#ifdef TEST__SWORD_TO_ENEMY_PRT
+	std::cout << "생성된 메모리 [" << mobNum - 1 << "] = " << enemyList[mobNum - 1] << std::endl;
+	std::cout << std::endl;
+	for (int i = 0; i < mobNum; ++i)
+	{
+		if (enemyList[i])
+			std::cout << "현재 메모리 [" << i << "] = " << enemyList[i] << std::endl;
+	}
+	std::cout << std::endl;
+#endif
 	//effectMng.add(spawnPos, Create);
 }
 
 void EnemyManager::move(const PlayerInfo* pInfo)
 {
-	LONG x = 0; 
-	LONG y = 0; 
+	LONG x = 0;
+	LONG y = 0;
 	const LONG size = 20;	// player half size - 20
 
-	
+
 	//RECT WholeMapRect = mapMng.getWholeMapRect();
 	for (int i = 0; i < mobNum; ++i) {
 		if (enemyList[i]->isSpawned()) {
@@ -91,6 +108,7 @@ void EnemyManager::move(const PlayerInfo* pInfo)
 					shortest_n = n;
 				}
 			}
+			targetPlayer[i] = shortest_n;
 			enemyList[i]->move(pInfo[shortest_n].pos);
 			/*if (!PtInRect(&WholeMapRect, enemyList[i]->getPos())) {
 				if (enemyList[i]->goOut()) {
@@ -99,9 +117,8 @@ void EnemyManager::move(const PlayerInfo* pInfo)
 			}*/
 		}
 	}
-	//RECT camera = mapMng.getCameraRect();
-	//RECT map = mapMng.getWholeMapRect();
-	//bulletMng->moveAll(&camera, &map);
+	RECT map = { 0, 0, WHOLE_MAP, WHOLE_MAP };
+	bulletMng->moveAll(&map);
 
 	//if (boss != nullptr) {
 	//	boss->move(playerPos);
@@ -143,19 +160,19 @@ BOOL EnemyManager::isAttacked(const LKM::Shape* bitBox)
 	return result;
 }
 //
-//void EnemyManager::shoot(POINT player)
-//{
-//	for (int i = 0; i < mobNum; ++i) {
-//		if (enemyList[i]->isSpawned() && enemyList[i]->isShoot()) {
-//			enemyList[i]->bang(player, *bulletMng, typeList[nowBulletType]);
-//			nowBulletType++;
-//			nowBulletType %= 10;
-//		}
-//	}
-//	//if (boss != nullptr) {
-//	//	boss->bang(player, bulletMng, typeList[nowBulletType]);
-//	//}
-//}
+void EnemyManager::shoot()
+{
+	for (int i = 0; i < mobNum; ++i) {
+		if (enemyList[i]->isSpawned() && enemyList[i]->isShoot()) {
+			enemyList[i]->bang(playerMng->HandOverInfo()[targetPlayer[i]].pos, *bulletMng, typeList[nowBulletType]);
+			nowBulletType++;
+			nowBulletType %= 10;
+		}
+	}
+	//if (boss != nullptr) {
+	//	boss->bang(player, bulletMng, typeList[nowBulletType]);
+	//}
+}
 
 
 int EnemyManager::getEnemyNumber()
@@ -172,6 +189,7 @@ void EnemyManager::init()
 {
 	for (int i = 0; i < MAX_MOB; ++i) {
 		enemyList[i] = NULL;
+		targetPlayer[i] = 0;
 	}
 	for (int i = 0; i < 10; ++i) {
 		typeList[i] = i % 6 ? false : true;
@@ -180,16 +198,83 @@ void EnemyManager::init()
 	mobNum = 0;
 }
 
-void EnemyManager::Recv(const CollideEnemy& ce)
+void EnemyManager::UpdateCollide(vector<CollideInfo>& ce)
 {
-	//delete enemyList[ce.Enemyid];
-	enemyList[ce.Enemyid] = enemyList[--mobNum];
+	for (int i = 0; i < ce.size(); ++i)
+	{
+		switch (ce.back().collide_type)
+		{
+		case COLLIDE_TYPE::SWORD_TO_ENEMY:
+		{
+			int index = ce.back().index;
+
+#ifdef TEST__SWORD_TO_ENEMY_PRT
+			int count = std::count_if(ce.begin(), ce.end(), [index](const CollideInfo& cinfo) { return cinfo.index == index; });
+			std::cout << "같은 인덱스 수 [" << index << "] = " << count << std::endl;
+			if (count > 1) std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
+			std::cout << "변경될 메모리 [" << index << "] = " << enemyList[index] << std::endl;
+			std::cout << "삭제된 메모리 [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
+#endif
+			POINT previous_pos = enemyList[index]->getPos();
+			*enemyList[index] = *enemyList[--mobNum];
+			enemyList[index]->SetState(be_destroyed);
+			enemyList[index]->SetPrePos(previous_pos);
+			delete enemyList[mobNum];
+		}
+		break;
+		case COLLIDE_TYPE::SWORD_TO_ENEMYS_BULLET:
+
+			break;
+		case COLLIDE_TYPE::BULLET_TO_ENEMY:
+		{
+			int index = ce.back().index;
+
+#ifdef TEST__SWORD_TO_ENEMY_PRT
+			int count = std::count_if(ce.begin(), ce.end(), [index](const CollideInfo& cinfo) { return cinfo.index == index; });
+			std::cout << "같은 인덱스 수 [" << index << "] = " << count << std::endl;
+			if (count > 1) std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
+			std::cout << "변경될 메모리 [" << index << "] = " << enemyList[index] << std::endl;
+			std::cout << "삭제된 메모리 [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
+#endif
+			POINT previous_pos = enemyList[index]->getPos();
+			* enemyList[index] = *enemyList[--mobNum];
+			enemyList[index]->SetState(be_destroyed);
+			enemyList[index]->SetPrePos(previous_pos);
+			delete enemyList[mobNum];
+		}
+		break;
+		case COLLIDE_TYPE::BULLET_TO_ENEMYS_BULLET:
+
+			break;
+		case COLLIDE_TYPE::ENEMYS_BULLET_TO_PLAYER:
+
+			break;
+		case COLLIDE_TYPE::ENEMYS_BOMB_TO_PLAYER:
+			break;
+		default:
+			break;
+		}
+		ce.pop_back();
+	}
+}
+
+void EnemyManager::UpdateState()
+{
+	for (int i = 0; i < MAX_MOB; ++i)
+	{
+		if (enemyList[i]) enemyList[i]->SetState(none);
+	}
 }
 
 void EnemyManager::EnemtState(const Enemy& enemy)
 {
 
 }
+Enemy** EnemyManager::HandOverInfo()
+{
+	return enemyList;
+}
+
 Enemy* EnemyManager::HandOverInfo(int n)
 {
 	return enemyList[n];

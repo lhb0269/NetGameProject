@@ -21,14 +21,14 @@ public:
 	~EnemyManager();
 	void draw(HDC hdc);
 	void move(const RECT& player);
-	BOOL isAttacked(const LKM::Shape* sword);
+	int isAttacked(const LKM::Shape* sword);
 	void shoot(POINT player);
 	int getEnemyNumber();
 	Bomber* getBomb(int index);
 	void destroy(int index);
 
 	//update
-	void EnemyInfoUpdate(const Enemy* enm);
+	void EnemyInfoUpdate(const Enemy* enm, const Bullet* blet);
 	void SetMosterType(int n);
 
 	//client

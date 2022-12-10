@@ -13,7 +13,7 @@ public:
 	void move(const POINT&) override;
 	BOOL beAttacked(const LKM::Shape* hitBox) override;
 	BOOL goOut() override;
-	//void bang(const POINT& playerPos, BulletManager& bm, bool type) override;
+	void bang(const POINT& playerPos, BulletManager& bm, bool type) override;
 };
 
 class HeadlessMob : public Enemy

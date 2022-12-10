@@ -9,6 +9,7 @@ class HeadedMob : public Enemy
 public:
 	HeadedMob();
 	~HeadedMob();
+	void UpdateBody() override;
 	void draw(HDC) override;
 	void move(const POINT&) override;
 	BOOL beAttacked(const LKM::Shape* hitBox) override;

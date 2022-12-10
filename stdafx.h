@@ -24,6 +24,7 @@
 #include <math.h>
 #include <random>	
 #include <time.h>
+#include <map>
 
 enum Enemy_Kind {
 	HEADED, HEADLESS, TOWER, BOMBER, SLUG, SUN, ENEMY_KIND

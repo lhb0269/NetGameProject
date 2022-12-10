@@ -21,7 +21,7 @@ public:
 	LONG getSize();
 	bool getType();
 	void draw(HDC, COLORREF);
-	void move(RECT* camera);
+	void move();
 	bool collideTo(const LKM::Shape*);
 };
 
@@ -37,13 +37,11 @@ public:
 	BulletManager();
 	~BulletManager();
 	int getBulletNum();
-	void setBulletNum(int n);
 	Bullet* getBulletPtr(int index);
 	void destroy(int i);
-	void moveAll(RECT* camera, RECT* map);
+	void moveAll(RECT* map);
 	BOOL isCollideToSword(const LKM::Shape* sword);
-	int isCollideToBullet(const LKM::Shape* bullet);
+	BOOL isCollideToBullet(const LKM::Shape* bullet);
 	void drawAll(HDC, COLORREF);
 	void addBullet(POINT start, POINT target, bool type);
-	void addBullet(const Bullet& blet, int n);
 };
