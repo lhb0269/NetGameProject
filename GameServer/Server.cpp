@@ -129,6 +129,12 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 			}
 #endif
 		}
+		if (pre_info.collide_player_num)
+		{
+			PlayerCollideinfo.resize(pre_info.collide_player_num);
+			retval = recv(clientsock, (char*)&PlayerCollideinfo[0], sizeof(CollideInfo) * PlayerCollideinfo.size(), MSG_WAITALL);
+		}
+
 		playerMng->RecvPlayer(Clientinfo.Pinfo);
 		UIMng->Recv_UI(Clientinfo.Ui);
 		
@@ -243,6 +249,7 @@ void SERVER::UpdateFrequent()
 void SERVER::UpdateImmediately()
 {
 	if (ClientCount > 1) WaitForSingleObject(UpdateEvent, INFINITE);
+	playerMng->UpdateCollide(PlayerCollideinfo);
 	enemyManager->UpdateCollide(Collideinfo);
 	if (ClientCount > 1) SetEvent(UpdateEvent);
 }

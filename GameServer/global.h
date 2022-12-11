@@ -4,6 +4,10 @@
 #define MAX_PLAYER 4
 
 #define MAX_MOB 100
+#define SWORD_DAMAGE 20
+#define PLAYER_BULLET_DAMAGE 20
+#define ENEMY_BULLET_DAMAGE 20
+
 #include <math.h>
 #include <random>
 #include <time.h>
@@ -17,7 +21,6 @@
 #include"UIManager.h"
 #include "Tower.h"
 #include "debug_test.h"
-
 
 using namespace std;
 

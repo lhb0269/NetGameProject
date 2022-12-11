@@ -418,8 +418,12 @@ void spawn() {
 void collide() {
 	//count collided enemy's index
 	prepare_info.collide_ememy_num = 0;
+	prepare_info.collide_player_num = 0;
+
 	if (Client.GetCollideInfo().size())
 		Client.GetCollideInfo().clear();
+	if (Client.GetPlayerCollideInfo().size())
+		Client.GetPlayerCollideInfo().clear();
 
 	//Player -> Enemy
 	LKM::Shape sword(6);
@@ -499,6 +503,18 @@ void collide() {
 				Client.GetCollideInfo().push_back(CollideInfo(i, COLLIDE_TYPE::ENEMYS_BOMB_TO_PLAYER));
 				prepare_info.collide_ememy_num++;
 			}
+	}
+
+	//player -> player
+	for (int i = 0; i < MAX_PLAYER - 1; ++i)
+	{
+		if (OtherPlayers[i].GetId() == -1) continue;
+
+		if (OtherPlayers[i].beAttacked(&sword))
+		{
+			Client.GetPlayerCollideInfo().push_back(CollideInfo(OtherPlayers[i].GetId(), COLLIDE_TYPE::SWORD_TO_PLAYER));
+			prepare_info.collide_player_num++;
+		}
 	}
 }
 

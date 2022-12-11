@@ -198,7 +198,7 @@ void EnemyManager::init()
 	mobNum = 0;
 }
 
-void EnemyManager::UpdateCollide(vector<CollideInfo>& ce)
+void EnemyManager::UpdateCollide(std::vector<CollideInfo>& ce)
 {
 	for (int i = 0; i < ce.size(); ++i)
 	{

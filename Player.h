@@ -145,4 +145,5 @@ public:
 	POINT GetBangpos() { return Bangpos; }
 	POINTFLOAT GetVelocity() { return velocity; }
 
+	BOOL beAttacked(const LKM::Shape* hitBox);
 };
