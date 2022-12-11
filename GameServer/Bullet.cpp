@@ -52,6 +52,11 @@ bool Bullet::getType()
 	return type == NORMAL;
 }
 
+int Bullet::igetType()
+{
+	return type;
+}
+
 void Bullet::draw(HDC hdc, COLORREF mapColor)
 {
 	COLORREF color = getColor();

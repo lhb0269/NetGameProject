@@ -14,6 +14,8 @@ public:
 	BulletManager* bulletMng = new BulletManager;
 	PlayerInfoManager* playerMng;
 
+	CRITICAL_SECTION cs;
+
 	EnemyManager();
 	~EnemyManager();
 	//void draw(HDC hdc);

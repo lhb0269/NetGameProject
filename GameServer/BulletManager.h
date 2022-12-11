@@ -20,6 +20,7 @@ public:
 	RECT getRect();
 	LONG getSize();
 	bool getType();
+	int igetType();
 	void draw(HDC, COLORREF);
 	void move();
 	bool collideTo(const LKM::Shape*);

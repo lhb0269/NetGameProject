@@ -59,8 +59,8 @@ void BulletManager::addBullet(const Bullet& blet, int n)
 }
 
 void BulletManager::destroy(int index) {
-	delete bulletList[index];
 	bulletList[index] = bulletList[--numBullet];
+	delete bulletList[numBullet];
 }
 
 void BulletManager::moveAll(RECT* camera, RECT* map)
@@ -81,7 +81,7 @@ int BulletManager::isCollideToSword(const LKM::Shape * sword)
 		if (bullet.visible) {
 			if (bullet.collideTo(sword)) {
 				result = i;
-				effectMng.add(bullet.getPos(), bullet.getType() ? Particle_Normal : Particle_Super );
+				//effectMng.add(bullet.getPos(), bullet.getType() ? Particle_Normal : Particle_Super );
 				destroy(i);
 				break;
 			}
@@ -98,7 +98,7 @@ int BulletManager::isCollideToBullet(const LKM::Shape * bullet)
 		if (now.visible && now.getType()) {
 			if (now.collideTo(bullet)) {
 				result = i;
-				effectMng.add(now.getPos(), now.getType() ? Particle_Normal : Particle_Super);
+				//effectMng.add(now.getPos(), now.getType() ? Particle_Normal : Particle_Super);
 				destroy(i);
 				break;
 			}

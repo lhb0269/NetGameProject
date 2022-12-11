@@ -9,6 +9,7 @@ std::uniform_int_distribution<int> uid(100, 2900);
 
 //BulletManager EnemyManager::* bulletMng;
 
+
 EnemyManager::EnemyManager()
 {
 
@@ -18,6 +19,7 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager()
 {
+	DeleteCriticalSection(&cs);
 	/*for (int i = 0; i < mobNum; ++i)
 		delete enemyList[i];*/
 	//delete bulletMng;
@@ -118,7 +120,9 @@ void EnemyManager::move(const PlayerInfo* pInfo)
 		}
 	}
 	RECT map = { 0, 0, WHOLE_MAP, WHOLE_MAP };
+	EnterCriticalSection(&cs);
 	bulletMng->moveAll(&map);
+	LeaveCriticalSection(&cs);
 
 	//if (boss != nullptr) {
 	//	boss->move(playerPos);
@@ -187,6 +191,8 @@ int EnemyManager::getEnemyNumber()
 
 void EnemyManager::init()
 {
+	InitializeCriticalSection(&cs);
+
 	for (int i = 0; i < MAX_MOB; ++i) {
 		enemyList[i] = NULL;
 		targetPlayer[i] = 0;
@@ -223,8 +229,20 @@ void EnemyManager::UpdateCollide(vector<CollideInfo>& ce)
 		}
 		break;
 		case COLLIDE_TYPE::SWORD_TO_ENEMYS_BULLET:
-
-			break;
+		{
+			EnterCriticalSection(&cs);
+			int index = ce.back().index;
+			POINT previous_pos = bulletMng->getBulletPtr(index)->getPos();
+			int bullet_type = bulletMng->getBulletPtr(index)->igetType();
+			bulletMng->destroy(index);
+			if (bullet_type == NORMAL)
+				bulletMng->getBulletPtr(index)->SetState(particle_nomal);
+			else
+				bulletMng->getBulletPtr(index)->SetState(particle_super);
+			bulletMng->getBulletPtr(index)->SetPrePos(previous_pos);
+			LeaveCriticalSection(&cs);
+		}
+		break;
 		case COLLIDE_TYPE::BULLET_TO_ENEMY:
 		{
 			int index = ce.back().index;
@@ -244,8 +262,20 @@ void EnemyManager::UpdateCollide(vector<CollideInfo>& ce)
 		}
 		break;
 		case COLLIDE_TYPE::BULLET_TO_ENEMYS_BULLET:
-
-			break;
+		{
+			EnterCriticalSection(&cs);
+			int index = ce.back().index;
+			POINT previous_pos = bulletMng->getBulletPtr(index)->getPos();
+			int bullet_type = bulletMng->getBulletPtr(index)->igetType();
+			bulletMng->destroy(index);
+			if (bullet_type == NORMAL)
+				bulletMng->getBulletPtr(index)->SetState(particle_nomal);
+			else
+				bulletMng->getBulletPtr(index)->SetState(particle_super);
+			bulletMng->getBulletPtr(index)->SetPrePos(previous_pos);
+			LeaveCriticalSection(&cs);
+		}
+		break;
 		case COLLIDE_TYPE::ENEMYS_BULLET_TO_PLAYER:
 
 			break;
@@ -263,6 +293,10 @@ void EnemyManager::UpdateState()
 	for (int i = 0; i < MAX_MOB; ++i)
 	{
 		if (enemyList[i]) enemyList[i]->SetState(none);
+	}
+	for (int i = 0; i < MAX_BULLET; ++i)
+	{
+		if (bulletMng->getBulletPtr(i)) bulletMng->getBulletPtr(i)->SetState(none);
 	}
 }
 

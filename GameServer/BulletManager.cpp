@@ -44,9 +44,8 @@ void BulletManager::addBullet(POINT start, POINT target, bool type)
 }
 
 void BulletManager::destroy(int index) {
-	delete bulletList[index];
-	bulletList[index] = bulletList[--numBullet];
-	//std::cout << "»èÁ¦µÈ bullet index: " << index << std::endl;
+	*bulletList[index] = *bulletList[--numBullet];
+	delete bulletList[numBullet];
 }
 
 void BulletManager::moveAll(RECT* map)

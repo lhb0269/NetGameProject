@@ -5,7 +5,7 @@
 
 
 enum STATE {
-	none, be_spawn, be_breaken, be_destroyed
+	none, be_spawn, be_breaken, be_destroyed, particle_nomal, particle_super
 };
 
 class Enemy : public RealObject
@@ -17,8 +17,6 @@ protected:
 	LONG size;
 	RECT getBody();
 	BOOL isSpawn;
-	POINT previous_pos;
-	int	 state;
 	bool bProtected;
 
 	virtual void drawProtector(HDC hdc);
@@ -38,9 +36,5 @@ public:
 	void spawnSignal();
 	bool isProtect();
 	void setShape(int num);
-	void SetState(int n) { state = n; }
-	int GetState() const { return state; };
-	void SetPrePos(POINT pos) { previous_pos = pos; }
-	POINT GetPrePos() const { return previous_pos; };
 };
 

@@ -149,6 +149,15 @@ void EnemyManager::EnemyInfoUpdate(const Enemy* enm, const Bullet* blet)
 	for (int i = 0; i < bulletMng->getBulletNum(); ++i)
 	{
 		bulletMng->addBullet(blet[i], i);
+		switch (blet[i].GetState())
+		{
+		case particle_nomal:
+			effectMng.add(blet[i].GetPrePos(), Particle_Normal);
+			break;
+		case particle_super:
+			effectMng.add(blet[i].GetPrePos(), Particle_Super);
+			break;
+		}
 	}
 	for (int i = 0; i < mobNum; ++i)
 	{
@@ -183,6 +192,7 @@ void EnemyManager::EnemyInfoUpdate(const Enemy* enm, const Bullet* blet)
 		{
 		case be_spawn:
 			effectMng.add(enm[i].GetPrePos(), Create);
+			break;
 		case be_breaken:
 			effectMng.add(enm[i].GetPrePos(), Break);
 			break;
