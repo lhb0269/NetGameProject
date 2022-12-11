@@ -465,18 +465,19 @@ void collide() {
 		Bullet* const bullet = enemyMng->bulletMng->getBulletPtr(i);
 		if (player.isDamaged() && LKM::collideP2P(player.getPos(), bullet->getPos(), (FLOAT)(player.getCoreRay() + bullet->getSize()))) {
 			enemyMng->bulletMng->destroy(i);
-			player.beAttacked();
+			player.beAttacked(20);
 			collideTime++;
 
 			Client.GetCollideInfo().push_back(CollideInfo(i, COLLIDE_TYPE::ENEMYS_BULLET_TO_PLAYER));
 			prepare_info.collide_ememy_num++;
+
 		}
 	}
 	for (int i = 0; i < enemyMng->getEnemyNumber(); ++i) {
 		Bomber* bomb = enemyMng->getBomb(i);
 		if (bomb != nullptr)
 			if (player.isDamaged() && LKM::collideP2P(player.getPos(), bomb->getPos(), (FLOAT)(player.getCoreRay() + bomb->getBombRange()))) {
-				player.beAttacked();
+				player.beAttacked(40);
 				collideTime++;
 				effectMng.add(bomb->getPos(), BTOOM);
 				//enemyMng->destroy(i);

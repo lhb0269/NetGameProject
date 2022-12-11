@@ -96,10 +96,10 @@ BOOL Player::isDamaged()
 	return isdamaged;
 }
 
-void Player::beAttacked()
+void Player::beAttacked(int damage)
 {
-	if (numOfShell == -1) {
-		bGameOver = true;
+	if (numOfShell == 0) {
+		hp.Add_damage(damage);
 	}
 	numOfShell = numOfShell > 0 ? numOfShell - 1 : 0;
 	effectMng.add(pos, Break);

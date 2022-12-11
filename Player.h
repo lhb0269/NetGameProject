@@ -118,7 +118,7 @@ public:
 	LONG getCoreRay();
 	Sword& getSword();
 	BOOL isDamaged();
-	void beAttacked();
+	void beAttacked(int damage);
 	bool gameovercheck();
 	void setSwordShape();
 
