@@ -120,6 +120,7 @@ public:
 	BOOL isDamaged();
 	void beAttacked(int damage);
 	bool gameovercheck();
+	void SetGameover(bool in);
 	void setSwordShape();
 
 	int GetId() { return id; }

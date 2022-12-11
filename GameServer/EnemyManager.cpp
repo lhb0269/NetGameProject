@@ -76,12 +76,12 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 	mobNum++;
 
 #ifdef TEST__SWORD_TO_ENEMY_PRT
-	std::cout << "»ý¼ºµÈ ¸Þ¸ð¸® [" << mobNum - 1 << "] = " << enemyList[mobNum - 1] << std::endl;
+	std::cout << "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ [" << mobNum - 1 << "] = " << enemyList[mobNum - 1] << std::endl;
 	std::cout << std::endl;
 	for (int i = 0; i < mobNum; ++i)
 	{
 		if (enemyList[i])
-			std::cout << "ÇöÀç ¸Þ¸ð¸® [" << i << "] = " << enemyList[i] << std::endl;
+			std::cout << "ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ [" << i << "] = " << enemyList[i] << std::endl;
 	}
 	std::cout << std::endl;
 #endif
@@ -210,10 +210,10 @@ void EnemyManager::UpdateCollide(vector<CollideInfo>& ce)
 
 #ifdef TEST__SWORD_TO_ENEMY_PRT
 			int count = std::count_if(ce.begin(), ce.end(), [index](const CollideInfo& cinfo) { return cinfo.index == index; });
-			std::cout << "°°Àº ÀÎµ¦½º ¼ö [" << index << "] = " << count << std::endl;
+			std::cout << "ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ [" << index << "] = " << count << std::endl;
 			if (count > 1) std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
-			std::cout << "º¯°æµÉ ¸Þ¸ð¸® [" << index << "] = " << enemyList[index] << std::endl;
-			std::cout << "»èÁ¦µÈ ¸Þ¸ð¸® [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
+			std::cout << "ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ [" << index << "] = " << enemyList[index] << std::endl;
+			std::cout << "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
 #endif
 			POINT previous_pos = enemyList[index]->getPos();
 			*enemyList[index] = *enemyList[--mobNum];
@@ -231,10 +231,10 @@ void EnemyManager::UpdateCollide(vector<CollideInfo>& ce)
 
 #ifdef TEST__SWORD_TO_ENEMY_PRT
 			int count = std::count_if(ce.begin(), ce.end(), [index](const CollideInfo& cinfo) { return cinfo.index == index; });
-			std::cout << "°°Àº ÀÎµ¦½º ¼ö [" << index << "] = " << count << std::endl;
+			std::cout << "ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ [" << index << "] = " << count << std::endl;
 			if (count > 1) std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
-			std::cout << "º¯°æµÉ ¸Þ¸ð¸® [" << index << "] = " << enemyList[index] << std::endl;
-			std::cout << "»èÁ¦µÈ ¸Þ¸ð¸® [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
+			std::cout << "ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ [" << index << "] = " << enemyList[index] << std::endl;
+			std::cout << "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
 #endif
 			POINT previous_pos = enemyList[index]->getPos();
 			* enemyList[index] = *enemyList[--mobNum];

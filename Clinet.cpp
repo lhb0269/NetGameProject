@@ -108,6 +108,7 @@ void CLIENT::UpdatePlayerInfo()
 	Clientinfo.Pinfo.Bangpos = player->GetBangpos();
 	Clientinfo.Pinfo.velocity = player->GetVelocity();
 	Clientinfo.Pinfo.hp = player->hp;
+	Clientinfo.Pinfo.gameover = player->gameovercheck();
 }
 
 void CLIENT::UpdateClientUiInfo()
@@ -147,6 +148,7 @@ void CLIENT::UpdateOtherPlayers()
 		Otherplayers[count].SetVelocity(All_packet.P_info[i].velocity);
 		Otherplayers[count].hp.SetHP(All_packet.P_info[i].hp.GetHP());
 		Otherplayers[count].hp.update();
+		Otherplayers[count].SetGameover(All_packet.P_info[i].gameover);
 
 		if (Otherplayers[count].GetbangMotion() == 10) //총을 발사 했을때
 		{
@@ -187,7 +189,25 @@ bool CLIENT::AllReady()
 			}
 		}
 	}
-	printf("\n");
+	return false;
+}
+bool CLIENT::GameSet()
+{
+	int count = -1;
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (All_packet.P_info[i].id != -1) {
+			count++;
+		}
+	}
+	int j = -1;
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (All_packet.P_info[i].gameover) {
+			++j;
+			if (j >= count-1) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 void CLIENT::printUI(POINT& point, HDC hdc)

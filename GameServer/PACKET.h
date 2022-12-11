@@ -41,6 +41,7 @@ struct PlayerInfo {
 	Sword		sword;
 	HP			hp;
 	bool		ready;
+	bool		gameover;
 };
 
 struct UI {

@@ -69,4 +69,5 @@ public:
 	void setReady();
 	bool getReady();
 	bool AllReady();
+	bool GameSet();
 };

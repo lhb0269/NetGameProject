@@ -100,6 +100,8 @@ void Player::beAttacked(int damage)
 {
 	if (numOfShell == 0) {
 		hp.Add_damage(damage);
+		if (hp.GetHP() <= 0)
+			bGameOver = true;
 	}
 	numOfShell = numOfShell > 0 ? numOfShell - 1 : 0;
 	effectMng.add(pos, Break);
@@ -593,4 +595,9 @@ void PlayerBullet::translocate()
 bool Player::gameovercheck()
 {
 	return bGameOver;
+}
+
+void Player::SetGameover(bool in)
+{
+	bGameOver = in;
 }

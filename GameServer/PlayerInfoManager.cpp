@@ -40,6 +40,7 @@ void PlayerInfoManager::RecvPlayer(SOCKET& clientsock)
 	pInfo[Recv_pInfo.id].velocity		= Recv_pInfo.velocity;
 	pInfo[Recv_pInfo.id].ready			= Recv_pInfo.ready;
 	pInfo[Recv_pInfo.id].hp				= Recv_pInfo.hp;
+	pInfo[Recv_pInfo.id].gameover		= Recv_pInfo.gameover;
 }
 
 void PlayerInfoManager::RecvPlayer(PlayerInfo& pinfo)
@@ -57,6 +58,7 @@ void PlayerInfoManager::RecvPlayer(PlayerInfo& pinfo)
 	pInfo[pinfo.id].velocity		= pinfo.velocity;
 	pInfo[pinfo.id].ready			= pinfo.ready;
 	pInfo[pinfo.id].hp				= pinfo.hp;	
+	pInfo[pinfo.id].gameover = pinfo.gameover;
 }
 
 void PlayerInfoManager::SetPlayerNum(int num)

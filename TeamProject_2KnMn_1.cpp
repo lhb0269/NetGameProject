@@ -183,6 +183,24 @@ void ReadyMenu(HDC hdc)
 	SelectObject(hdc, oldfont);
 	DeleteObject(hfont);
 }
+void GameOverMenu(HDC hdc)
+{
+	HFONT hfont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, L"Benguiat");
+	HFONT oldfont = (HFONT)SelectObject(hdc, hfont);
+	SetBkMode(hdc, TRANSPARENT);
+	TextOut(hdc, mapMng.getCameraPoint().x + 450, mapMng.getCameraPoint().y + 200, L"Game Over", 9);
+	SelectObject(hdc, oldfont);
+	DeleteObject(hfont);
+}
+void GameWinMenu(HDC hdc)
+{
+	HFONT hfont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, L"Benguiat");
+	HFONT oldfont = (HFONT)SelectObject(hdc, hfont);
+	SetBkMode(hdc, TRANSPARENT);
+	TextOut(hdc, mapMng.getCameraPoint().x + 450, mapMng.getCameraPoint().y + 200, L"You Win", 7);
+	SelectObject(hdc, oldfont);
+	DeleteObject(hfont);
+}
 void CALLBACK timeProc(HWND, UINT, UINT, DWORD);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -237,66 +255,57 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	case WM_KEYDOWN:
-		switch (wParam) {
-		case 'A':
-			if (playerKeyInput[0] == FALSE) {
-				playerKeyInput[0] = TRUE;
+		if (!player.gameovercheck()) {
+			switch (wParam) {
+			case 'A':
+				if (playerKeyInput[0] == FALSE) {
+					playerKeyInput[0] = TRUE;
+				}
+				break;
+			case 'D':
+				if (playerKeyInput[1] == FALSE) {
+					playerKeyInput[1] = TRUE;
+				}
+				break;
+			case 'S':
+				if (playerKeyInput[2] == FALSE) {
+					playerKeyInput[2] = TRUE;
+				}
+				break;
+			case 'W':
+				if (playerKeyInput[3] == FALSE) {
+					playerKeyInput[3] = TRUE;
+				}
+				break;
+			case VK_LEFT:
+				playerKeyInput[4] = TRUE;
+				break;
+			case VK_RIGHT:
+				playerKeyInput[5] = TRUE;
+				break;
+			case VK_SPACE:
+				Client.setReady();
+				break;
+			case VK_ESCAPE:
+				bStart = false;
+				break;
+			case VK_CAPITAL:
+			{
+				static bool bCursorShow = false;
+				ShowCursor(bCursorShow);
+				bCursorShow = !bCursorShow;
 			}
 			break;
-		case 'D':
-			if (playerKeyInput[1] == FALSE) {
-				playerKeyInput[1] = TRUE;
+			case 'G':
+			{
+				player.hp.Add_damage(10);
 			}
 			break;
-		case 'S':
-			if (playerKeyInput[2] == FALSE) {
-				playerKeyInput[2] = TRUE;
+			case VK_TAB:
+				break;
 			}
 			break;
-		case 'W':
-			if (playerKeyInput[3] == FALSE) {
-				playerKeyInput[3] = TRUE;
-			}
-			break;
-		case 'R':
-		{
-			POINT temp = mapMng.getWholeMapSize();
-			temp.x /= 2; temp.y /= 2;
-			player.start(temp);
-			delete enemyMng;
-			EnemyManager* enemyMng = new EnemyManager;
-			waveMng->setLevel();
-			break;
-		}
-		case VK_LEFT:
-			playerKeyInput[4] = TRUE;
-			break;
-		case VK_RIGHT:
-			playerKeyInput[5] = TRUE;
-			break;
-		case VK_SPACE:
-			Client.setReady();
-			break;
-		case VK_ESCAPE:
-			bStart = false;
-			break;
-		case VK_CAPITAL:
-		{
-			static bool bCursorShow = false;
-			ShowCursor(bCursorShow);
-			bCursorShow = !bCursorShow;
-		}
-		break;
-		case 'G':
-		{
-			player.hp.Add_damage(10);
-		}
-			break;
-		case VK_TAB:
-			break;
-		}
-		break;
-		
+
 	case WM_KEYUP:
 		switch (wParam) {
 		case 'A':
@@ -320,21 +329,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_LBUTTONDOWN:
-		if (bStart)
+		if (bStart&&!player.gameovercheck())
 			playerKeyInput[5] = TRUE;
 		break;
 	case WM_LBUTTONUP:
-		if (bStart)
+		if (bStart && !player.gameovercheck())
 			playerKeyInput[5] = FALSE;
 		break;
 	case WM_RBUTTONDOWN:
-		if (bStart)
+		if (bStart && !player.gameovercheck())
 			playerKeyInput[4] = TRUE;
 		break;
 	case WM_RBUTTONUP:
-		if (bStart)
+		if (bStart && !player.gameovercheck())
 			playerKeyInput[4] = FALSE;
 		break;
+		}
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
@@ -351,6 +361,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			menu(memDC);
 		if (!Client.AllReady() && Client.getReady())
 			ReadyMenu(memDC);
+		if (player.gameovercheck())
+			GameOverMenu(memDC);
+		if (Client.GameSet() && !player.gameovercheck())
+			GameWinMenu(memDC);
 		POINT camera = mapMng.getCameraPoint();
 		POINT win = mapMng.getCameraSize();
 		BitBlt(hdc, qPos.x, qPos.y, win.x, win.y, memDC, camera.x, camera.y, SRCCOPY);
@@ -494,16 +508,14 @@ void update(HWND hWnd, BOOL buffer[])
 		bStart = true;
 	mapMng.update(hWnd, player.getPos());
 
-	if (player.gameovercheck())
-		return;
-
 	//enemyMng->move(player.getCore());
 	RECT map = mapMng.getMapRect();
 	RECT whole = mapMng.getWholeMapRect();
 	if (Client.AllReady())
 		player.move(&map, &whole, NULL);
 
-	collide();
+	if (!player.gameovercheck())
+		collide();
 	Client.Send_Packet(prepare_info);
 
 	//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
@@ -530,9 +542,10 @@ void moniter(HDC hdc) {
 void draw(HDC hdc)
 {
 	mapMng.draw(hdc);
-	player.draw(hdc);
+	if (!player.gameovercheck())
+		player.draw(hdc);
 	for (int i = 0; i < MAX_PLAYER - 1; ++i)
-		if (OtherPlayers[i].GetId() != -1)OtherPlayers[i].draw(hdc);
+		if (OtherPlayers[i].GetId() != -1 && !OtherPlayers[i].gameovercheck())OtherPlayers[i].draw(hdc);
 
 	OtherPlayerBulletMng.draw(hdc);
 	enemyMng->draw(hdc);
