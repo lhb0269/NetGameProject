@@ -169,6 +169,20 @@ void menu(HDC hdc)
 	SelectObject(hdc, oldfont);
 	DeleteObject(hfont);
 }
+void ReadyMenu(HDC hdc)
+{
+	HFONT hfont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, L"Benguiat");
+	HFONT oldfont = (HFONT)SelectObject(hdc, hfont);
+	SetBkMode(hdc, TRANSPARENT);
+	TextOut(hdc, mapMng.getCameraPoint().x + 350, mapMng.getCameraPoint().y + 200, L"Slash And Shoot", 15);
+	SelectObject(hdc, oldfont);
+	DeleteObject(hfont);
+	hfont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, L"Benguiat");
+	oldfont = (HFONT)SelectObject(hdc, hfont);
+	TextOut(hdc, mapMng.getCameraPoint().x + 700, mapMng.getCameraPoint().y + 500, L"Ready", 5);
+	SelectObject(hdc, oldfont);
+	DeleteObject(hfont);
+}
 void CALLBACK timeProc(HWND, UINT, UINT, DWORD);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -223,7 +237,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	case WM_KEYDOWN:
-		bStart = true;
 		switch (wParam) {
 		case 'A':
 			if (playerKeyInput[0] == FALSE) {
@@ -334,9 +347,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		magnitude += 0.2;
 
 		draw(memDC);
-		if (!bStart)
+		if (!bStart&&!Client.getReady())
 			menu(memDC);
-
+		if (!Client.AllReady() && Client.getReady())
+			ReadyMenu(memDC);
 		POINT camera = mapMng.getCameraPoint();
 		POINT win = mapMng.getCameraSize();
 		BitBlt(hdc, qPos.x, qPos.y, win.x, win.y, memDC, camera.x, camera.y, SRCCOPY);
@@ -475,6 +489,8 @@ void collide() {
 
 void update(HWND hWnd, BOOL buffer[])
 {
+	if (!bStart && Client.AllReady())
+		bStart = true;
 	mapMng.update(hWnd, player.getPos());
 
 	if (player.gameovercheck())
