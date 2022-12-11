@@ -20,4 +20,5 @@ public:
 	bool getReady();
 
 	PlayerInfo* HandOverInfo();
+	void UpdateCollide(std::vector<CollideInfo>& ce);
 };

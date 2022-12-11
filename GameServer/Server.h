@@ -32,6 +32,7 @@ class SERVER {
 	ALL_PACKET allPacket;
 	ClientInfo Clientinfo;
 	vector<CollideInfo> Collideinfo;
+	vector<CollideInfo> PlayerCollideinfo;
 
 	HANDLE RecvEvent;
 	HANDLE SendEvent;

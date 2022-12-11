@@ -14,11 +14,14 @@ enum class COLLIDE_TYPE {
 	BULLET_TO_ENEMYS_BULLET,
 	ENEMYS_BULLET_TO_PLAYER,
 	ENEMYS_BOMB_TO_PLAYER,
+	BULLET_TO_PLAYER,
+	SWORD_TO_PLAYER,
 };
 
 struct PREPARE_INFO {
 	PACKET_TYPE packet_type;
 	int collide_ememy_num;
+	int collide_player_num;
 };
 
 struct PlayerInfo {

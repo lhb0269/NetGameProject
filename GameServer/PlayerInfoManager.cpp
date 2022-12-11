@@ -58,7 +58,7 @@ void PlayerInfoManager::RecvPlayer(PlayerInfo& pinfo)
 	pInfo[pinfo.id].velocity		= pinfo.velocity;
 	pInfo[pinfo.id].ready			= pinfo.ready;
 	pInfo[pinfo.id].hp				= pinfo.hp;	
-	pInfo[pinfo.id].gameover = pinfo.gameover;
+	pInfo[pinfo.id].gameover		= pinfo.gameover;
 }
 
 void PlayerInfoManager::SetPlayerNum(int num)
@@ -87,4 +87,24 @@ bool PlayerInfoManager::getReady()
 PlayerInfo* PlayerInfoManager::HandOverInfo()
 {
 	return pInfo;
+}
+
+void PlayerInfoManager::UpdateCollide(std::vector<CollideInfo>& ce)
+{
+	for (int i = 0; i < ce.size(); ++i)
+	{
+		int id = ce[i].index;
+		switch (ce.back().collide_type)
+		{
+		case COLLIDE_TYPE::SWORD_TO_PLAYER:
+		{
+			if (pInfo[id].numOfShell == 0)
+				pInfo[id].hp.Add_damage(SWORD_DAMAGE);
+			else if (pInfo[id].numOfShell >= 1)
+				pInfo[id].numOfShell--;
+			break;
+		}
+		}
+		ce.pop_back();
+	}
 }

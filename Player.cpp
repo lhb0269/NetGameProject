@@ -110,6 +110,15 @@ void Player::beAttacked(int damage)
 	isTouched = clock();
 }
 
+BOOL Player::beAttacked(const LKM::Shape* hitBox)
+{
+	LKM::Shape temp(8);
+	for (int i = 0; i < temp.nPt; ++i) {
+		LKM::shapeRegularPlg(getCoreRay(), pos, temp);
+	}
+	return temp.Collide2Shape(hitBox);
+}
+
 void Player::setSwordShape()
 {
 	if (fsword.ptls != nullptr)
