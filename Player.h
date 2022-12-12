@@ -103,6 +103,7 @@ public:
 	HP	hp{this,15,7};
 	Sword sword;
 	PlayerBulletManager pbManager;
+	bool collision;
 
 	void setPos(POINT);
 	void start(POINT);
@@ -135,6 +136,7 @@ public:
 	void SetbangMotion(int b) { bangMotion = b; }
 	void SetBangpos(POINT p) { Bangpos = p; }
 	void SetVelocity(POINTFLOAT f) { velocity = f; }
+	void SetCollision(bool x) { collision = x; }
 
 	int GetNumOfShell() { return numOfShell; }
 	clock_t GetisTouched() { return isTouched; }
@@ -144,6 +146,7 @@ public:
 	int GetbangMotion() { return bangMotion; }
 	POINT GetBangpos() { return Bangpos; }
 	POINTFLOAT GetVelocity() { return velocity; }
+	bool GetCollision() { return collision; }
 
 	BOOL beAttacked(const LKM::Shape* hitBox);
 };

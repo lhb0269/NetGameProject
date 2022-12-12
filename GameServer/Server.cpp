@@ -249,7 +249,8 @@ void SERVER::UpdateFrequent()
 void SERVER::UpdateImmediately()
 {
 	if (ClientCount > 1) WaitForSingleObject(UpdateEvent, INFINITE);
-	playerMng->UpdateCollide(PlayerCollideinfo);
+	//playerMng->UpdateCollide(PlayerCollideinfo);
+	playerMng->UpdateCollide();
 	enemyManager->UpdateCollide(Collideinfo);
 	if (ClientCount > 1) SetEvent(UpdateEvent);
 }

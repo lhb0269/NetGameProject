@@ -1,4 +1,4 @@
-#include "PlayerInfoManager.h"
+﻿#include "PlayerInfoManager.h"
 #include <iostream>
 
 PlayerInfoManager::PlayerInfoManager()
@@ -41,6 +41,7 @@ void PlayerInfoManager::RecvPlayer(SOCKET& clientsock)
 	pInfo[Recv_pInfo.id].ready			= Recv_pInfo.ready;
 	pInfo[Recv_pInfo.id].hp				= Recv_pInfo.hp;
 	pInfo[Recv_pInfo.id].gameover		= Recv_pInfo.gameover;
+	pInfo[Recv_pInfo.id].collision		= Recv_pInfo.collision;
 }
 
 void PlayerInfoManager::RecvPlayer(PlayerInfo& pinfo)
@@ -59,6 +60,7 @@ void PlayerInfoManager::RecvPlayer(PlayerInfo& pinfo)
 	pInfo[pinfo.id].ready			= pinfo.ready;
 	pInfo[pinfo.id].hp				= pinfo.hp;	
 	pInfo[pinfo.id].gameover		= pinfo.gameover;
+	pInfo[pinfo.id].collision		= pinfo.collision;
 }
 
 void PlayerInfoManager::SetPlayerNum(int num)
@@ -91,20 +93,81 @@ PlayerInfo* PlayerInfoManager::HandOverInfo()
 
 void PlayerInfoManager::UpdateCollide(std::vector<CollideInfo>& ce)
 {
-	for (int i = 0; i < ce.size(); ++i)
+
+}
+
+void PlayerInfoManager::UpdateCollide()
+{
+	//player sword -> player
+	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		int id = ce[i].index;
-		switch (ce.back().collide_type)
+		if (pInfo[i].id == -1) continue;
+		for (int j = 0; j < MAX_PLAYER; ++j)
 		{
-		case COLLIDE_TYPE::SWORD_TO_PLAYER:
-		{
-			if (pInfo[id].numOfShell == 0)
-				pInfo[id].hp.Add_damage(SWORD_DAMAGE);
-			else if (pInfo[id].numOfShell >= 1)
-				pInfo[id].numOfShell--;
-			break;
+			if (i == j || pInfo[j].id == -1) continue;
+			LKM::Shape fsword(6);
+			setSwordShape(fsword, pInfo[i].sword); //fsword 생성
+
+			LKM::Shape swordCollide(6);
+			getSwordCollider(&swordCollide, fsword, pInfo[i].sword, pInfo[i].pos); //coliide값 갱신
+			
+			//충돌체크
+			if (beAttacked(&swordCollide, pInfo[j].pos) && pInfo[j].isdamaged && pInfo[j].collision == false)
+			{
+				pInfo[j].collision = true;
+			}
 		}
+	}
+}
+BOOL PlayerInfoManager::beAttacked(const LKM::Shape* hitBox,POINT pos)
+{
+	LKM::Shape temp(8);
+	for (int i = 0; i < temp.nPt; ++i) {
+		LKM::shapeRegularPlg(20, pos, temp);
+	}
+	return temp.Collide2Shape(hitBox);
+}
+
+void PlayerInfoManager::getSwordCollider(LKM::Shape* hitBox, LKM::Shape& fsword,Sword& sword, POINT pos)
+{
+	if (hitBox->nPt < fsword.nPt)
+		return;
+	LKM::Shape& swordc = *hitBox;
+	for (int i = 0; i < swordc.nPt; ++i) {
+		swordc.ptls[i] = fsword.ptls[i];
+	}
+	if (sword.isSlash) {
+		if (sword.nowAngle - sword.lastAngle > 0) {
+			swordc.ptls[0].x += (LONG)(cos(sword.nowAngle) * (10.0f));
+			swordc.ptls[0].y -= (LONG)(sin(sword.nowAngle) * (10.0f));
+			swordc.ptls[1] = LKM::rotatePoint(pos, swordc.ptls[1], sword.lastAngle - sword.nowAngle);
+			swordc.ptls[2] = LKM::rotatePoint(pos, swordc.ptls[2], sword.lastAngle - sword.nowAngle);
+			swordc.ptls[3] = pos;
 		}
-		ce.pop_back();
+		else {
+			swordc.ptls[0].x += (LONG)(cos(sword.nowAngle) * (10.0f));
+			swordc.ptls[0].y -= (LONG)(sin(sword.nowAngle) * (10.0f));
+			swordc.ptls[5] = LKM::rotatePoint(pos, swordc.ptls[5], sword.lastAngle - sword.nowAngle);
+			swordc.ptls[4] = LKM::rotatePoint(pos, swordc.ptls[4], sword.lastAngle - sword.nowAngle);
+			swordc.ptls[3] = pos;
+		}
+	}
+}
+
+void PlayerInfoManager::setSwordShape(LKM::Shape& fsword, Sword& sword)
+{
+	if (fsword.ptls != nullptr)
+	{
+		fsword.ptls[0] = { sword.swordPos.x + sword.swordRay + sword.swordLength, sword.swordPos.y };
+		fsword.ptls[1] = { fsword.ptls[0].x - sword.swordWidth * 2, fsword.ptls[0].y + sword.swordWidth };
+		fsword.ptls[2] = { sword.swordPos.x + sword.swordRay, fsword.ptls[1].y };
+		fsword.ptls[3] = { sword.swordPos.x + sword.swordRay - sword.swordWidth * 2, sword.swordPos.y };
+		fsword.ptls[4] = { fsword.ptls[2].x, fsword.ptls[0].y - sword.swordWidth };
+		fsword.ptls[5] = { fsword.ptls[1].x, fsword.ptls[4].y };
+
+
+		for (int i = 0; i < fsword.nPt; ++i) {
+			fsword.ptls[i] = LKM::rotatePoint(sword.swordPos, fsword.ptls[i], sword.nowAngle);
+		}
 	}
 }

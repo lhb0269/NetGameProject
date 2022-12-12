@@ -43,6 +43,7 @@ struct PlayerInfo {
 	POINT		pos;
 	Sword		sword;
 	HP			hp;
+	bool		collision;
 	bool		ready;
 	bool		gameover;
 };

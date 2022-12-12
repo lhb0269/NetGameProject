@@ -110,6 +110,7 @@ void CLIENT::UpdatePlayerInfo()
 	Clientinfo.Pinfo.velocity = player->GetVelocity();
 	Clientinfo.Pinfo.hp = player->hp;
 	Clientinfo.Pinfo.gameover = player->gameovercheck();
+	Clientinfo.Pinfo.collision = player->GetCollision();
 }
 
 void CLIENT::UpdateClientUiInfo()
@@ -132,15 +133,25 @@ void CLIENT::UpdateOtherPlayers()
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		int pid = All_packet.P_info[i].id;
-		//아직 접속하지 않는 플레이어의 아이디 이거나 자기 자신의 id값이 아닐 경우
-		if (pid == player->GetId() || pid == -1) continue;
+		 //자기 자신의 id값일 경우
+		if (pid == player->GetId())
+		{
+			if (All_packet.P_info[i].collision)
+			{
+				player->Setisdamaged(false);
+				player->SetCollision(false);
+				player->beAttacked(3);
+			}
+			continue;
+		}
+		 //아직 접속하지 않는 플레이어의 아이디
+		if (pid == -1) continue;
 
 		Otherplayers[count].SetId(All_packet.P_info[i].id);
 		Otherplayers[count].setPos(All_packet.P_info[i].pos);
 		Otherplayers[count].SetSword(All_packet.P_info[i].sword);
 		Otherplayers[count].setSwordShape();
 		Otherplayers[count].SetNumOfShell(All_packet.P_info[i].numOfShell);
-		Otherplayers[count].SetisTouched(All_packet.P_info[i].isTouched);
 		Otherplayers[count].SetorbitRay(All_packet.P_info[i].orbitRay);
 		Otherplayers[count].SetshellStack(All_packet.P_info[i].shellStack);
 		Otherplayers[count].Setisdamaged(All_packet.P_info[i].isdamaged);

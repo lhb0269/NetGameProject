@@ -50,6 +50,8 @@ Player::Player() : fsword(6)
 	bangMotion = 0;
 
 	id = -1;
+
+	collision = false;
 }
 
 Player::~Player()

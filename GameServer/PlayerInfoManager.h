@@ -21,4 +21,8 @@ public:
 
 	PlayerInfo* HandOverInfo();
 	void UpdateCollide(std::vector<CollideInfo>& ce);
+	void UpdateCollide();
+	BOOL beAttacked(const LKM::Shape* hitBox,POINT pos);
+	void setSwordShape(LKM::Shape& fsword,Sword& sword);
+	void getSwordCollider(LKM::Shape* hitBox, LKM::Shape& fsword,Sword& sword,POINT pos);
 };
