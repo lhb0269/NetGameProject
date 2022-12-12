@@ -45,7 +45,8 @@ void BulletManager::addBullet(POINT start, POINT target, bool type)
 	}
 }
 
-void BulletManager::destroy(int index) {
+void BulletManager::destroy(int index)
+{
 	*bulletList[index] = *bulletList[--numBullet];
 	delete bulletList[numBullet];
 }

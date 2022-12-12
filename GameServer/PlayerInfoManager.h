@@ -8,6 +8,9 @@ private:
 	int player_num;
 
 public:
+	EFFECT_INFO effectInfo[MAX_PLAYER];
+	int effectNum;
+
 	PlayerInfoManager();
 	~PlayerInfoManager();
 

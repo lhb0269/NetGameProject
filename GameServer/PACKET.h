@@ -30,6 +30,11 @@ struct PREPARE_INFO {
 	int collide_player_num;
 };
 
+struct EFFECT_INFO {
+	POINT previous_pos;
+	int state;
+};
+
 struct PlayerInfo {
 	int			id;
 	int			numOfShell;
@@ -65,6 +70,10 @@ struct ALL_PACKET {
 	PlayerInfo	P_info[4];
 	Enemy		enemyList[MAX_MOB];
 	Bullet		bulletList[MAX_BULLET];
+	EFFECT_INFO effectEnemy[MAX_MOB];
+	EFFECT_INFO effectBullet[MAX_BULLET];
+	UINT		effectEnemyNum;
+	UINT		effectBulletNum;
 	UINT		mob_num;
 	UINT		bullet_num;
 	UI			Ui[4];

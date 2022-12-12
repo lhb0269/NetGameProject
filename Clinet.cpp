@@ -37,10 +37,15 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	pClient->Login();
 	while (true)
 	{
+		WaitForSingleObject(pClient->ReadEvent, INFINITE);
+		std::cout << "Recv" << std::endl;
 		pClient->Recv_Packet(sock);
 		pClient->UpdateOtherPlayers();
 		pClient->UpdateEnemy();
+		pClient->UpdateEnemyEffect();
 		pClient->UpdateOtherPlayerBullets(&pClient->GetMapSize());
+		std::cout << "Recv end" << std::endl;
+		SetEvent(pClient->PaintEvent);
 		//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 		//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 		//Client.UpdateEnemy();
@@ -246,6 +251,20 @@ void CLIENT::UpdateEnemy()
 	}
 	enemyMng->EnemyInfoUpdate(All_packet.enemyList, All_packet.bulletList);
 }
+
+void CLIENT::UpdateEnemyEffect()
+{
+	if (enemyMng->effectNum != All_packet.effectEnemyNum)
+	{
+		enemyMng->effectNum = All_packet.effectEnemyNum;
+	}
+	if (enemyMng->effectBulletNum != All_packet.effectBulletNum)
+	{
+		enemyMng->effectBulletNum = All_packet.effectBulletNum;
+	}
+	enemyMng->EnemyEffectUpdate(All_packet.effectEnemy, All_packet.effectBullet);
+}
+
 void CLIENT::Recv_Packet(SOCKET& sock)
 {
 	int retval;
@@ -256,6 +275,10 @@ void CLIENT::Recv_Packet(SOCKET& sock)
 
 int CLIENT::Init(Player* p, EnemyManager* e, Player* o, UIManager* u, PlayerBulletManager* b)
 {
+	SendEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	ReadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	PaintEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+
 	player = p;
 	enemyMng = e;
 	Otherplayers = o;

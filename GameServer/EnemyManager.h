@@ -14,7 +14,11 @@ public:
 	BulletManager* bulletMng = new BulletManager;
 	PlayerInfoManager* playerMng;
 
-	CRITICAL_SECTION cs;
+	EFFECT_INFO effectInfo[MAX_MOB];
+	int effectNum;
+
+	EFFECT_INFO effectBulletInfo[MAX_BULLET];
+	int effectBulletNum;
 
 	EnemyManager();
 	~EnemyManager();
@@ -25,9 +29,10 @@ public:
 	void shoot();
 	int getEnemyNumber();
 	Bomber* getBomb(int index);
-	//void destroy(int index);
+	void destroy(int index);
 	//Server
 	void init();
+	void SetBulletInfo(int index);
 	void UpdateCollide(std::vector<CollideInfo>& ce);
 	void UpdateState();
 	void EnemtState(const Enemy& enemy);

@@ -347,6 +347,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 	case WM_PAINT:
 	{
+		WaitForSingleObject(Client.PaintEvent, INFINITE);
+		std::cout << "PAINT" << std::endl;
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hWnd, &ps);
 		HDC memDC = CreateCompatibleDC(hdc);
@@ -371,6 +373,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		DeleteDC(memDC);
 		EndPaint(hWnd, &ps);
+		std::cout << "PAINT END" << std::endl;
+		SetEvent(Client.SendEvent);
 	}
 	break;
 	case WM_DESTROY:
@@ -520,6 +524,8 @@ void collide() {
 
 void update(HWND hWnd, BOOL buffer[])
 {
+	WaitForSingleObject(Client.SendEvent, INFINITE);
+	std::cout << "update" << std::endl;
 	if (!bStart && Client.AllReady())
 		bStart = true;
 	mapMng.update(hWnd, player.getPos());
@@ -532,12 +538,13 @@ void update(HWND hWnd, BOOL buffer[])
 
 	if (!player.gameovercheck())
 		collide();
+	Client.UpdateUIInfo(waveMng->getLevel());
 	Client.Send_Packet(prepare_info);
-
+	std::cout << "update end" << std::endl;
+	SetEvent(Client.ReadEvent);
 	//Client.UpdateOtherPlayers(); //다른 플레이어들의 정보를 갱신
 	//Client.UpdateOtherPlayerBullets(&whole); //다른 플레이어들이 쏜 총알 갱신
 	//Client.UpdateEnemy();
-	Client.UpdateUIInfo(waveMng->getLevel());
 }
 
 

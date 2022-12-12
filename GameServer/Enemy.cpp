@@ -1,4 +1,5 @@
 #include "global.h"
+#include "BulletManager.h"
 #include "Enemy.h"
 
 

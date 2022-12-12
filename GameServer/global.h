@@ -12,11 +12,13 @@
 #include <random>
 #include <time.h>
 #include <vector>
+#include <array>
 #include <iostream>
 #include "gWinSock.h"
 #include "PACKET.h"
 #include "EnemyManager.h"
 #include "WaveManager.h"
+#include "BulletManager.h"
 #include "PlayerInfoManager.h"
 #include"UIManager.h"
 #include "Tower.h"

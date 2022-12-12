@@ -33,10 +33,11 @@ class SERVER {
 	ClientInfo Clientinfo;
 	vector<CollideInfo> Collideinfo;
 	vector<CollideInfo> PlayerCollideinfo;
+	vector<CollideInfo> Mergeinfo;
 
-	HANDLE RecvEvent;
-	HANDLE SendEvent;
-	HANDLE UpdateEvent;
+	CRITICAL_SECTION csMerge;
+	CRITICAL_SECTION csRecv;
+	CRITICAL_SECTION csSend;
 
 public:
 	int Init();
@@ -57,6 +58,7 @@ public:
 	void UpdateInitVariable();
 	void UpdateMovement();
 	void UpdateFrequent();
+	void UpdateMergeInfo();
 	void UpdateImmediately();
 
 #ifdef TEST__DEBUG_TIMER_SETTING

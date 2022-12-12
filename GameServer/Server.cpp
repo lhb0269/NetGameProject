@@ -35,9 +35,6 @@ int SERVER::Init()
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
 
-	RecvEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-	UpdateEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-	SendEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 	ServerEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
 	hThread = CreateThread(NULL, 0, ServerUpdate,
@@ -57,7 +54,7 @@ DWORD WINAPI ServerUpdate(LPVOID arg)
 		if(nCount) lpHandles = (const HANDLE*)&server->GetThreadUpdateEvent()[0];
 
 		WaitForMultipleObjects(nCount, lpHandles, TRUE, INFINITE);
-		
+		//std::cout << "server" << std::endl;
 		server->UpdateInitVariable();
 		if (server->GetTime() > 0.005f)
 		{
@@ -67,7 +64,7 @@ DWORD WINAPI ServerUpdate(LPVOID arg)
 			server->UpdateFrequent();
 		}
 		server->UpdateMovement();
-
+		server->UpdateImmediately();
 		SetEvent(server->GetServerEvent());
 
 		WaitForMultipleObjects(nCount, lpHandles, TRUE, INFINITE);
@@ -98,7 +95,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 void SERVER::Recv_Packet(SOCKET& clientsock)
 {
-	if(ClientCount > 1) WaitForSingleObject(RecvEvent, INFINITE);
+	EnterCriticalSection(&csRecv);
 	int retval;
 	//패킷 type 이랑 크기 받고 type에 따라 처리해야함
 	PREPARE_INFO pre_info;
@@ -156,12 +153,12 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	std::cout << std::endl;
 #endif
 
-	if (ClientCount > 1) SetEvent(RecvEvent);
+	LeaveCriticalSection(&csRecv);
 }
 
 void SERVER::Send_AllPacket()
 {
-	if (ClientCount > 1) WaitForSingleObject(SendEvent, INFINITE);
+	EnterCriticalSection(&csSend);
 	ALL_PACKET packet;
 	memcpy(packet.P_info, playerMng->HandOverInfo(), sizeof(PlayerInfo) * MAX_PLAYER);
 	for (int i = 0; i < enemyManager->bulletMng->getBulletNum(); ++i)
@@ -180,6 +177,14 @@ void SERVER::Send_AllPacket()
 	packet.bullet_num = enemyManager->bulletMng->getBulletNum();
 	memcpy(packet.Ui, UIMng->HandOverInfo(), sizeof(UI) * MAX_PLAYER);
 
+	memcpy(packet.effectEnemy, &enemyManager->effectInfo, sizeof(EFFECT_INFO) * MAX_MOB);
+	memcpy(packet.effectBullet, &enemyManager->effectBulletInfo, sizeof(EFFECT_INFO) * MAX_BULLET);
+	packet.effectEnemyNum = enemyManager->effectNum;
+	packet.effectBulletNum = enemyManager->effectBulletNum;
+	for (int i = 0; i < enemyManager->effectNum; ++i)
+	{
+		std::cout << "index: " << enemyManager->effectInfo[i].state << ", pos: " << enemyManager->effectInfo[i].previous_pos.x << ", " << enemyManager->effectInfo[i].previous_pos.y << std::endl;
+	}
 #ifdef TEST__SEND_ALLPACKET__PINFO_POS
 	for (int i = 0; i < ClientCount; ++i)
 	{
@@ -206,10 +211,7 @@ void SERVER::Send_AllPacket()
 
 	for (auto& cl : v_clients)
 		send(cl, (char*)&packet, sizeof(packet), 0);
-	if (ClientCount > 1) SetEvent(SendEvent);
-	//enemyManager->Recv(&Clientinfo);
-	SetEvent(SendEvent);
-
+	LeaveCriticalSection(&csSend);
 }
 
 void SERVER::ClientLogin(SOCKET& clientsock, UINT& nThreadEvent, HANDLE& ThreadEvent)
@@ -229,7 +231,19 @@ void SERVER::ClientLogin(SOCKET& clientsock, UINT& nThreadEvent, HANDLE& ThreadE
 
 void SERVER::UpdateInitVariable()
 {
+	for (int i = 0; i < MAX_MOB; ++i)
+		enemyManager->effectInfo->state = none;
+	enemyManager->effectNum = 0;
 	enemyManager->UpdateState();
+
+	for (int i = 0; i < MAX_BULLET; ++i)
+		enemyManager->effectBulletInfo->state = none;
+	enemyManager->effectBulletNum = 0;
+
+
+	for (int i = 0; i < MAX_PLAYER; ++i)
+		playerMng->effectInfo->state = none;
+	playerMng->effectNum = 0;
 }
 
 void SERVER::UpdateMovement()
@@ -246,12 +260,140 @@ void SERVER::UpdateFrequent()
 	//플레이어 받아오면 player->getcore() 넘겨준다.
 }
 
+void SERVER::UpdateMergeInfo()
+{
+	EnterCriticalSection(&csMerge);
+
+	Mergeinfo.clear();
+	Mergeinfo.reserve(Collideinfo.size() + PlayerCollideinfo.size());
+	for (int i = 0; i < Collideinfo.size(); ++i)
+		Mergeinfo.push_back(Collideinfo[i]);
+	for (int i = 0; i < PlayerCollideinfo.size(); ++i)
+		Mergeinfo.push_back(PlayerCollideinfo[i]);
+
+
+	sort(Mergeinfo.begin(), Mergeinfo.end(), [](const CollideInfo& lhs, const CollideInfo& rhs) { return lhs.index < rhs.index; });
+	if (Collideinfo.size() + PlayerCollideinfo.size())
+	{
+		std::cout << "merge size: " << Mergeinfo.size() << "== sum: " << Collideinfo.size() + PlayerCollideinfo.size() << std::endl;
+		for (int i = 0; i < Collideinfo.size(); ++i)
+			std::cout << "colid inex: " << Collideinfo[i].index << ", type: " << (int)Collideinfo[i].collide_type << std::endl;
+		for (int i = 0; i < PlayerCollideinfo.size(); ++i)
+			std::cout << "Player inex: " << PlayerCollideinfo[i].index << ", type: " << (int)PlayerCollideinfo[i].collide_type << std::endl;
+		for (int i = 0; i < Mergeinfo.size(); ++i)
+		{
+			std::cout << "merge inex: " << Mergeinfo[i].index << ", type: " << (int)Mergeinfo[i].collide_type << std::endl;
+		}
+	}
+	Collideinfo.clear();
+	PlayerCollideinfo.clear();
+	LeaveCriticalSection(&csMerge);
+}
+
 void SERVER::UpdateImmediately()
 {
-	if (ClientCount > 1) WaitForSingleObject(UpdateEvent, INFINITE);
-	playerMng->UpdateCollide(PlayerCollideinfo);
-	enemyManager->UpdateCollide(Collideinfo);
-	if (ClientCount > 1) SetEvent(UpdateEvent);
+	PlayerInfo* pInfo = playerMng->HandOverInfo();
+
+	for (int i = 0; i < Mergeinfo.size(); ++i)
+	{
+		//std::cout << "check" << std::endl;
+		switch (Mergeinfo.back().collide_type)
+		{
+		case COLLIDE_TYPE::SWORD_TO_PLAYER:
+		{
+			int id = Mergeinfo[i].index;
+			COLLIDE_TYPE type = Mergeinfo[i].collide_type;
+			int count = std::count_if(Mergeinfo.begin(), Mergeinfo.end(), [id, type](const CollideInfo& cinfo) { return (cinfo.index == id && cinfo.collide_type == type); });
+			if (count > 1) {
+				std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
+				break;
+			}
+			if (pInfo[id].numOfShell == 0)
+				pInfo[id].hp.Add_damage(SWORD_DAMAGE);
+			else if (pInfo[id].numOfShell >= 1)
+				pInfo[id].numOfShell--;
+		}
+		break;
+		case COLLIDE_TYPE::SWORD_TO_ENEMY:
+		{
+			int index = Mergeinfo.back().index;
+			COLLIDE_TYPE type = Mergeinfo[i].collide_type;
+			int count = std::count_if(Mergeinfo.begin(), Mergeinfo.end(), [index, type](const CollideInfo& cinfo) { return (cinfo.index == index && cinfo.collide_type == type); });
+			if (count > 1) {
+				std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
+				break;
+			}
+			if (index >= enemyManager->getEnemyNumber()) {
+				std::cout << "bug:sword_to_enemy[invalide index]" << std::endl;
+				break;
+			}
+			enemyManager->destroy(index);
+		}
+		break;
+		case COLLIDE_TYPE::SWORD_TO_ENEMYS_BULLET:
+		{
+			int index = Mergeinfo.back().index;
+			COLLIDE_TYPE type = Mergeinfo[i].collide_type;
+			int count = std::count_if(Mergeinfo.begin(), Mergeinfo.end(), [index, type](const CollideInfo& cinfo) { return (cinfo.index == index && cinfo.collide_type == type); });
+			if (count > 1) {
+				std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
+				break;
+			}
+			if (index >= enemyManager->bulletMng->getBulletNum()) {
+				std::cout << "bug:sword_to_enemys_bullet[invalide index]" << std::endl;
+				break;
+			}
+			enemyManager->SetBulletInfo(index);
+			enemyManager->bulletMng->destroy(index);
+			}
+		break;
+		case COLLIDE_TYPE::BULLET_TO_ENEMY:
+		{
+			int index = Mergeinfo.back().index;
+			COLLIDE_TYPE type = Mergeinfo[i].collide_type;
+			int count = std::count_if(Mergeinfo.begin(), Mergeinfo.end(), [index, type](const CollideInfo& cinfo) { return (cinfo.index == index && cinfo.collide_type == type); });
+			if (count > 1) {
+				std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
+				break;
+			}
+			if (index >= enemyManager->getEnemyNumber()) {
+				std::cout << "bug:bullet_to_enemy[invalide index]" << std::endl;
+				break;
+			}
+			enemyManager->destroy(index);
+		}
+		break;
+		case COLLIDE_TYPE::BULLET_TO_ENEMYS_BULLET:
+		{
+			int index = Mergeinfo.back().index;
+			COLLIDE_TYPE type = Mergeinfo[i].collide_type;
+			int count = std::count_if(Mergeinfo.begin(), Mergeinfo.end(), [index, type](const CollideInfo& cinfo) { return (cinfo.index == index && cinfo.collide_type == type); });
+			if (count > 1) {
+				std::cout << "\n\n\n\n------delete error------\n\n\n\n" << std::endl;
+				break;
+			}
+			if (index >= enemyManager->bulletMng->getBulletNum()) {
+				std::cout << "bug:bullet_to_enemys_bullet[invalide index]" << std::endl;
+				break;
+			}
+			enemyManager->SetBulletInfo(index);
+			enemyManager->bulletMng->destroy(index);
+		}
+		break;
+		case COLLIDE_TYPE::ENEMYS_BULLET_TO_PLAYER:
+
+			break;
+		case COLLIDE_TYPE::ENEMYS_BOMB_TO_PLAYER:
+			break;
+		default:
+			break;
+		}
+		Mergeinfo.pop_back();
+	}
+	//if (ClientCount > 1) WaitForSingleObject(UpdateEvent, INFINITE);
+	//playerMng->UpdateCollide(PlayerCollideinfo);
+	//enemyManager->UpdateCollide(Collideinfo);
+	//if (ClientCount > 1) SetEvent(UpdateEvent);
 }
 
 EnemyManager* SERVER::getList()
@@ -275,6 +417,7 @@ void SERVER::Spawn()
 	shootStock++;
 	if (shootStock > shootTerm) {
 		shootStock = 0;
+		std::cout << std::endl << "Mob Number: " << enemyManager->getEnemyNumber() << std::endl << std::endl;
 		enemyManager->shoot();
 	}
 }
@@ -283,11 +426,14 @@ void SERVER::Processing(SOCKET& client_sock, HANDLE& ThreadEvent)
 {
 	QueryPerformanceCounter(&end);
 	Recv_Packet(client_sock);
+	//std::cout << "thread - " << (int)ThreadEvent << std::endl;
 	// if all thread's recved packet, start server update
+	UpdateMergeInfo();
 	SetEvent(ThreadEvent);
 	WaitForSingleObject(GetServerEvent(), INFINITE);
 	//
-	UpdateImmediately();
+	//std::cout << "take off" << std::endl;
+	//UpdateImmediately();
 	SetEvent(ThreadEvent);
 	// if the server has been updated, start sending packets
 	Send_AllPacket();
@@ -295,6 +441,10 @@ void SERVER::Processing(SOCKET& client_sock, HANDLE& ThreadEvent)
 
 int SERVER::Update()
 {
+	InitializeCriticalSection(&csMerge);
+	InitializeCriticalSection(&csRecv);
+	InitializeCriticalSection(&csSend);
+
 	while (1) {
 		// accept()
 		addrlen = sizeof(clientaddr);
@@ -316,6 +466,9 @@ int SERVER::Update()
 		else { CloseHandle(hThread); }
 
 	}
+	DeleteCriticalSection(&csMerge);
+	DeleteCriticalSection(&csRecv);
+	DeleteCriticalSection(&csSend);
 
 	// 소켓 닫기
 	closesocket(listen_sock);

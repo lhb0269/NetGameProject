@@ -1,6 +1,7 @@
 #include "global.h"
 #include<iostream>
 #include "PlayerInfoManager.h"
+#include "PACKET.h"
 std::random_device rd;
 std::mt19937_64 re(rd());
 std::uniform_int_distribution<int> uid(100, 2900);
@@ -19,7 +20,6 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager()
 {
-	DeleteCriticalSection(&cs);
 	/*for (int i = 0; i < mobNum; ++i)
 		delete enemyList[i];*/
 	//delete bulletMng;
@@ -71,12 +71,11 @@ void EnemyManager::spawn(const POINT spawnPos, int typeSwitch, bool isProtect)
 	enemyList[mobNum]->setShape(typeSwitch);
 	if (!enemyList[mobNum]->isSpawned())
 		enemyList[mobNum]->spawnSignal();
-	enemyList[mobNum]->SetState(be_spawn);
-	enemyList[mobNum]->SetPrePos(enemyList[mobNum]->getPos());
-
+	effectInfo[effectNum].state = be_spawn;
+	effectInfo[effectNum].previous_pos = spawnPos;
+	effectNum++;
 	//printf("mobnum= %d, x = %d, y = %d angle = %d, force.x = %f, force.y = %f, size = %ld, velocity.x = %f, velocity.y = %f, weight = %f \n", mobNum, enemyList[mobNum]->getPos().x, enemyList[mobNum]->getPos().y, enemyList[mobNum]->getAngle(), enemyList[mobNum]->getForce().x, enemyList[mobNum]->getForce().y, enemyList[mobNum]->getSize(), enemyList[mobNum]->getVelocity().x, enemyList[mobNum]->getVelocity().y, enemyList[mobNum]->getWeight());
 	mobNum++;
-
 #ifdef TEST__SWORD_TO_ENEMY_PRT
 	std::cout << "������ �޸� [" << mobNum - 1 << "] = " << enemyList[mobNum - 1] << std::endl;
 	std::cout << std::endl;
@@ -120,9 +119,7 @@ void EnemyManager::move(const PlayerInfo* pInfo)
 		}
 	}
 	RECT map = { 0, 0, WHOLE_MAP, WHOLE_MAP };
-	EnterCriticalSection(&cs);
 	bulletMng->moveAll(&map);
-	LeaveCriticalSection(&cs);
 
 	//if (boss != nullptr) {
 	//	boss->move(playerPos);
@@ -184,6 +181,16 @@ int EnemyManager::getEnemyNumber()
 	return mobNum;
 }
 
+void EnemyManager::destroy(int index)
+{
+	effectInfo[effectNum].previous_pos = enemyList[index]->getPos();
+	effectInfo[effectNum].state = be_destroyed;
+	effectNum++;
+
+	*enemyList[index] = *enemyList[--mobNum];
+	delete enemyList[mobNum];
+}
+
 //Bomber* EnemyManager::getBomb(int index)
 //{
 //	return dynamic_cast<Bomber*>(enemyList[index]);
@@ -191,8 +198,6 @@ int EnemyManager::getEnemyNumber()
 
 void EnemyManager::init()
 {
-	InitializeCriticalSection(&cs);
-
 	for (int i = 0; i < MAX_MOB; ++i) {
 		enemyList[i] = NULL;
 		targetPlayer[i] = 0;
@@ -202,6 +207,13 @@ void EnemyManager::init()
 	}
 	nowBulletType = 0;
 	mobNum = 0;
+}
+
+void EnemyManager::SetBulletInfo(int index)
+{
+	effectBulletInfo[effectBulletNum].previous_pos = bulletMng->getBulletPtr(index)->getPos();
+	effectBulletInfo[effectBulletNum].state = (bulletMng->getBulletPtr(index)->igetType() == NORMAL) ? particle_nomal : particle_super;
+	effectBulletNum++;
 }
 
 void EnemyManager::UpdateCollide(std::vector<CollideInfo>& ce)
@@ -221,26 +233,13 @@ void EnemyManager::UpdateCollide(std::vector<CollideInfo>& ce)
 			std::cout << "����� �޸� [" << index << "] = " << enemyList[index] << std::endl;
 			std::cout << "������ �޸� [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
 #endif
-			POINT previous_pos = enemyList[index]->getPos();
-			*enemyList[index] = *enemyList[--mobNum];
-			enemyList[index]->SetState(be_destroyed);
-			enemyList[index]->SetPrePos(previous_pos);
-			delete enemyList[mobNum];
+			destroy(index);
 		}
 		break;
 		case COLLIDE_TYPE::SWORD_TO_ENEMYS_BULLET:
 		{
-			EnterCriticalSection(&cs);
 			int index = ce.back().index;
-			POINT previous_pos = bulletMng->getBulletPtr(index)->getPos();
-			int bullet_type = bulletMng->getBulletPtr(index)->igetType();
 			bulletMng->destroy(index);
-			if (bullet_type == NORMAL)
-				bulletMng->getBulletPtr(index)->SetState(particle_nomal);
-			else
-				bulletMng->getBulletPtr(index)->SetState(particle_super);
-			bulletMng->getBulletPtr(index)->SetPrePos(previous_pos);
-			LeaveCriticalSection(&cs);
 		}
 		break;
 		case COLLIDE_TYPE::BULLET_TO_ENEMY:
@@ -254,26 +253,14 @@ void EnemyManager::UpdateCollide(std::vector<CollideInfo>& ce)
 			std::cout << "����� �޸� [" << index << "] = " << enemyList[index] << std::endl;
 			std::cout << "������ �޸� [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
 #endif
-			POINT previous_pos = enemyList[index]->getPos();
-			* enemyList[index] = *enemyList[--mobNum];
-			enemyList[index]->SetState(be_destroyed);
-			enemyList[index]->SetPrePos(previous_pos);
-			delete enemyList[mobNum];
+			destroy(index);
 		}
 		break;
 		case COLLIDE_TYPE::BULLET_TO_ENEMYS_BULLET:
 		{
-			EnterCriticalSection(&cs);
 			int index = ce.back().index;
-			POINT previous_pos = bulletMng->getBulletPtr(index)->getPos();
-			int bullet_type = bulletMng->getBulletPtr(index)->igetType();
+
 			bulletMng->destroy(index);
-			if (bullet_type == NORMAL)
-				bulletMng->getBulletPtr(index)->SetState(particle_nomal);
-			else
-				bulletMng->getBulletPtr(index)->SetState(particle_super);
-			bulletMng->getBulletPtr(index)->SetPrePos(previous_pos);
-			LeaveCriticalSection(&cs);
 		}
 		break;
 		case COLLIDE_TYPE::ENEMYS_BULLET_TO_PLAYER:

@@ -105,7 +105,7 @@ int EnemyManager::isAttacked(const LKM::Shape* bitBox)
 			else {
 				result = i;
 				enemyList[i]->protectOnOff(false);
-				effectMng.add(enemyList[i]->getPos(), Break);
+				//effectMng.add(enemyList[i]->getPos(), Break);
 			}
 			break;
 		}
@@ -149,15 +149,6 @@ void EnemyManager::EnemyInfoUpdate(const Enemy* enm, const Bullet* blet)
 	for (int i = 0; i < bulletMng->getBulletNum(); ++i)
 	{
 		bulletMng->addBullet(blet[i], i);
-		switch (blet[i].GetState())
-		{
-		case particle_nomal:
-			effectMng.add(blet[i].GetPrePos(), Particle_Normal);
-			break;
-		case particle_super:
-			effectMng.add(blet[i].GetPrePos(), Particle_Super);
-			break;
-		}
 	}
 	for (int i = 0; i < mobNum; ++i)
 	{
@@ -188,20 +179,40 @@ void EnemyManager::EnemyInfoUpdate(const Enemy* enm, const Bullet* blet)
 			}
 			//mobNum++;
 		}
-		switch (enm[i].GetState())
-		{
-		case be_spawn:
-			effectMng.add(enm[i].GetPrePos(), Create);
-			break;
-		case be_breaken:
-			effectMng.add(enm[i].GetPrePos(), Break);
-			break;
-		case be_destroyed:
-			effectMng.add(enm[i].GetPrePos(), Destroy);
-			break;
-		}
+
 		*enemyList[i] = enm[i];
 		enemyList[i]->UpdateBody();	//현재 HeadedMob만 만들어둠.
+	}
+}
+
+void EnemyManager::EnemyEffectUpdate(const EFFECT_INFO* enm, const EFFECT_INFO* blet)
+{
+	for (int i = 0; i < bulletMng->getBulletNum(); ++i)
+	{
+		switch (blet[i].state)
+		{
+		case particle_nomal:
+			effectMng.add(blet[i].previous_pos, Particle_Normal);
+			break;
+		case particle_super:
+			effectMng.add(blet[i].previous_pos, Particle_Super);
+			break;
+		}
+	}
+	for (int i = 0; i < mobNum; ++i)
+	{
+		switch (enm[i].state)
+		{
+		case be_spawn:
+			effectMng.add(enm[i].previous_pos, Create);
+			break;
+		case be_breaken:
+			effectMng.add(enm[i].previous_pos, Break);
+			break;
+		case be_destroyed:
+			effectMng.add(enm[i].previous_pos, Destroy);
+			break;
+		}
 	}
 }
 

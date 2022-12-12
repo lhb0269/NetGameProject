@@ -38,9 +38,11 @@ private:
 	vector<CollideInfo> PlayerCollideinfo;
 	RECT mapsize;
 
+public:
 	HANDLE ReadEvent;
 	HANDLE SendEvent;
-public:
+	HANDLE PaintEvent;
+
 	void err_quit(const char* msg);
 	void err_display(const char* msg);
 
@@ -64,6 +66,7 @@ public:
 	void UpdateOtherPlayers();
 	void UpdateOtherPlayerBullets(RECT* map);
 	void UpdateEnemy();
+	void UpdateEnemyEffect();
 	void UpdateClientUiInfo();
 	void UpdateClientPacketData();
 	void UpdateScore(int score);

@@ -3,7 +3,7 @@
 #include "MapManager.h"
 #include "EffectManager.h"
 #include "Monster.h"
-#define MAX_MOB 30
+#include "Packet.h"
 
 class CLIENT;
 class EnemyManager
@@ -17,6 +17,12 @@ public:
 public:
 	BulletManager* bulletMng = new BulletManager;
 
+	EFFECT_INFO effectInfo[MAX_MOB];
+	int effectNum;
+
+	EFFECT_INFO effectBulletInfo[MAX_BULLET];
+	int effectBulletNum;
+
 	EnemyManager();
 	~EnemyManager();
 	void draw(HDC hdc);
@@ -29,6 +35,7 @@ public:
 
 	//update
 	void EnemyInfoUpdate(const Enemy* enm, const Bullet* blet);
+	void EnemyEffectUpdate(const EFFECT_INFO* enm, const EFFECT_INFO* blet);
 	void SetMosterType(int n);
 
 	//client

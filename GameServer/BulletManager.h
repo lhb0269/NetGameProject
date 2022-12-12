@@ -1,6 +1,6 @@
 #pragma once
 #include "Object.h"
-
+#include "global.h"
 enum BULLET_TYPE {
 	NORMAL = 0xf000, SUPER, PARRYING
 };
@@ -25,7 +25,6 @@ public:
 	void move();
 	bool collideTo(const LKM::Shape*);
 };
-
 
 #define MAX_BULLET 300
 

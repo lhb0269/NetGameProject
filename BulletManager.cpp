@@ -82,7 +82,7 @@ int BulletManager::isCollideToSword(const LKM::Shape * sword)
 			if (bullet.collideTo(sword)) {
 				result = i;
 				//effectMng.add(bullet.getPos(), bullet.getType() ? Particle_Normal : Particle_Super );
-				destroy(i);
+				//destroy(i);
 				break;
 			}
 		}
@@ -99,7 +99,7 @@ int BulletManager::isCollideToBullet(const LKM::Shape * bullet)
 			if (now.collideTo(bullet)) {
 				result = i;
 				//effectMng.add(now.getPos(), now.getType() ? Particle_Normal : Particle_Super);
-				destroy(i);
+				//destroy(i);
 				break;
 			}
 		}

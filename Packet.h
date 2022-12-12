@@ -55,6 +55,11 @@ struct LOBBYPACKET {
 	int		id;
 };
 
+struct EFFECT_INFO {
+	POINT previous_pos;
+	int state;
+};
+
 struct CollideEnemy {
 	int Enemyid = -1;
 	int Playerid;
@@ -63,8 +68,12 @@ struct CollideEnemy {
 
 struct ALL_PACKET {
 	PlayerInfo	P_info[4];
-	Enemy		enemyList[30];
+	Enemy		enemyList[MAX_MOB];
 	Bullet		bulletList[MAX_BULLET];
+	EFFECT_INFO effectEnemy[MAX_MOB];
+	EFFECT_INFO effectBullet[MAX_BULLET];
+	UINT		effectEnemyNum;
+	UINT		effectBulletNum;
 	UINT		mob_num;
 	UINT		bullet_num;
 	UI			Ui[4];

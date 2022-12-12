@@ -33,4 +33,5 @@ enum Enemy_Kind {
 #define WHOLE_MAP 2500
 #define BLOCK_SIZE 20
 #define MAP_RAY 650
+#define MAX_MOB 30
 

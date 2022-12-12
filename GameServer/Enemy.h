@@ -1,8 +1,8 @@
 #pragma once
 #include "LKM_Physics.h"
 #include "Object.h"
-#include "BulletManager.h"
 
+class BulletManager;
 
 enum STATE {
 	none, be_spawn, be_breaken, be_destroyed, particle_nomal, particle_super
