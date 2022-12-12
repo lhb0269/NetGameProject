@@ -6,6 +6,8 @@
 
 BulletManager::BulletManager()
 {
+	for (int i = 0; i < MAX_BULLET; ++i)
+		bulletList[i] = NULL;
 	numBullet = 0;
 }
 
