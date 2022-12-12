@@ -14,7 +14,7 @@ public:
 	BulletManager* bulletMng = new BulletManager;
 	PlayerInfoManager* playerMng;
 
-	CRITICAL_SECTION cs;
+	//CRITICAL_SECTION cs;
 
 	EnemyManager();
 	~EnemyManager();
@@ -23,6 +23,7 @@ public:
 	void move(const PlayerInfo* pInfo);
 	BOOL isAttacked(const LKM::Shape* sword);
 	void shoot();
+	void destroy(int index);
 	int getEnemyNumber();
 	Bomber* getBomb(int index);
 	//void destroy(int index);

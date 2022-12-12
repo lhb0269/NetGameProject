@@ -214,7 +214,7 @@ bool CLIENT::GameSet()
 void CLIENT::printUI(POINT& point, HDC hdc)
 {
 	TCHAR playerID[MAX_PLAYER][25];
-	TCHAR playerReady[MAX_PLAYER][10];
+	TCHAR playerReady[MAX_PLAYER][15];
 	TCHAR score[MAX_PLAYER][15];
 	WCHAR playerColor[MAX_PLAYER][20] = { { L"Black" },{ L"Red" },{ L"Green" },{ L"Blue" } };
 	for (int i = 0; i < MAX_PLAYER; ++i) {

@@ -46,8 +46,19 @@ void BulletManager::addBullet(POINT start, POINT target, bool type)
 }
 
 void BulletManager::destroy(int index) {
+	POINT previous_pos = getBulletPtr(index)->getPos();
+	int bullet_type = getBulletPtr(index)->igetType();
+
 	*bulletList[index] = *bulletList[--numBullet];
+
+	if (bullet_type == NORMAL)
+		getBulletPtr(index)->SetState(particle_nomal);
+	else
+		getBulletPtr(index)->SetState(particle_super);
+	getBulletPtr(index)->SetPrePos(previous_pos);
+
 	delete bulletList[numBullet];
+	bulletList[numBullet] = NULL;
 }
 
 void BulletManager::moveAll(RECT* map)

@@ -39,7 +39,7 @@ public:
 	~BulletManager();
 	int getBulletNum();
 	Bullet* getBulletPtr(int index);
-	void destroy(int i);
+	void destroy(int index);
 	void moveAll(RECT* map);
 	BOOL isCollideToSword(const LKM::Shape* sword);
 	BOOL isCollideToBullet(const LKM::Shape* bullet);

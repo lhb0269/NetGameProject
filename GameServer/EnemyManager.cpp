@@ -19,7 +19,7 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager()
 {
-	DeleteCriticalSection(&cs);
+	//DeleteCriticalSection(&cs);
 	/*for (int i = 0; i < mobNum; ++i)
 		delete enemyList[i];*/
 	//delete bulletMng;
@@ -120,9 +120,9 @@ void EnemyManager::move(const PlayerInfo* pInfo)
 		}
 	}
 	RECT map = { 0, 0, WHOLE_MAP, WHOLE_MAP };
-	EnterCriticalSection(&cs);
+	//EnterCriticalSection(&cs);
 	bulletMng->moveAll(&map);
-	LeaveCriticalSection(&cs);
+	//LeaveCriticalSection(&cs);
 
 	//if (boss != nullptr) {
 	//	boss->move(playerPos);
@@ -178,6 +178,16 @@ void EnemyManager::shoot()
 	//}
 }
 
+void EnemyManager::destroy(int index)
+{
+	POINT previous_pos = enemyList[index]->getPos();
+	*enemyList[index] = *enemyList[--mobNum];
+	enemyList[index]->SetState(be_destroyed);
+	enemyList[index]->SetPrePos(previous_pos);
+	delete enemyList[mobNum];
+	enemyList[mobNum] = NULL;
+}
+
 
 int EnemyManager::getEnemyNumber()
 {
@@ -191,7 +201,7 @@ int EnemyManager::getEnemyNumber()
 
 void EnemyManager::init()
 {
-	InitializeCriticalSection(&cs);
+	//InitializeCriticalSection(&cs);
 
 	for (int i = 0; i < MAX_MOB; ++i) {
 		enemyList[i] = NULL;
@@ -221,26 +231,21 @@ void EnemyManager::UpdateCollide(std::vector<CollideInfo>& ce)
 			std::cout << "����� �޸� [" << index << "] = " << enemyList[index] << std::endl;
 			std::cout << "������ �޸� [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
 #endif
-			POINT previous_pos = enemyList[index]->getPos();
-			*enemyList[index] = *enemyList[--mobNum];
-			enemyList[index]->SetState(be_destroyed);
-			enemyList[index]->SetPrePos(previous_pos);
-			delete enemyList[mobNum];
+			if (index >= mobNum) {
+				//std::cout << "bug:sword_to_enemy[invalide index]" << std::endl;
+				break;
+			}
+			destroy(index);
 		}
 		break;
 		case COLLIDE_TYPE::SWORD_TO_ENEMYS_BULLET:
 		{
-			EnterCriticalSection(&cs);
 			int index = ce.back().index;
-			POINT previous_pos = bulletMng->getBulletPtr(index)->getPos();
-			int bullet_type = bulletMng->getBulletPtr(index)->igetType();
+			if (index >= bulletMng->getBulletNum()) {
+				//std::cout << "bug:sword_to_enemys_bullet[invalide index]" << std::endl;
+				break;
+			}
 			bulletMng->destroy(index);
-			if (bullet_type == NORMAL)
-				bulletMng->getBulletPtr(index)->SetState(particle_nomal);
-			else
-				bulletMng->getBulletPtr(index)->SetState(particle_super);
-			bulletMng->getBulletPtr(index)->SetPrePos(previous_pos);
-			LeaveCriticalSection(&cs);
 		}
 		break;
 		case COLLIDE_TYPE::BULLET_TO_ENEMY:
@@ -254,26 +259,21 @@ void EnemyManager::UpdateCollide(std::vector<CollideInfo>& ce)
 			std::cout << "����� �޸� [" << index << "] = " << enemyList[index] << std::endl;
 			std::cout << "������ �޸� [" << mobNum << "] = " << enemyList[mobNum] << std::endl << std::endl;
 #endif
-			POINT previous_pos = enemyList[index]->getPos();
-			* enemyList[index] = *enemyList[--mobNum];
-			enemyList[index]->SetState(be_destroyed);
-			enemyList[index]->SetPrePos(previous_pos);
-			delete enemyList[mobNum];
+			if (index >= mobNum) {
+				//std::cout << "bug:bullet_to_enemy[invalide index]" << std::endl;
+				break;
+			}
+			destroy(index);
 		}
 		break;
 		case COLLIDE_TYPE::BULLET_TO_ENEMYS_BULLET:
 		{
-			EnterCriticalSection(&cs);
 			int index = ce.back().index;
-			POINT previous_pos = bulletMng->getBulletPtr(index)->getPos();
-			int bullet_type = bulletMng->getBulletPtr(index)->igetType();
+			if (index >= bulletMng->getBulletNum()) {
+				//std::cout << "bug:bullet_to_enemys_bullet[invalide index]" << std::endl;
+				break;
+			}
 			bulletMng->destroy(index);
-			if (bullet_type == NORMAL)
-				bulletMng->getBulletPtr(index)->SetState(particle_nomal);
-			else
-				bulletMng->getBulletPtr(index)->SetState(particle_super);
-			bulletMng->getBulletPtr(index)->SetPrePos(previous_pos);
-			LeaveCriticalSection(&cs);
 		}
 		break;
 		case COLLIDE_TYPE::ENEMYS_BULLET_TO_PLAYER:
