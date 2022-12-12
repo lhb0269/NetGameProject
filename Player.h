@@ -39,16 +39,15 @@ struct PlayerBullet {
 	POINTFLOAT velocity;
 
 	PlayerBullet(POINT point, POINTFLOAT velo);
-	~PlayerBullet();
+	~PlayerBullet() {};
 	void translocate();
-
 };
 
 #define MAX_PLAYER_BULLET 100
 class PlayerBulletManager {
+public:
 	PlayerBullet* playerBullet[MAX_PLAYER_BULLET];
 	int num;
-public:
 	PlayerBulletManager();
 	~PlayerBulletManager();
 	void add(POINT pos, POINTFLOAT velocity);
@@ -83,6 +82,7 @@ class Player : public RealObject
 
 	int bangMotion;
 	POINT Bangpos;
+	clock_t BangCooltime;
 	POINTFLOAT velocity;
 
 	int id;

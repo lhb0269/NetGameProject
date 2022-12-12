@@ -387,11 +387,12 @@ void Player::mouseInput(BOOL lbtn, BOOL rbtn, POINT mPos)
 
 	static int lastInput = 1;
 	if (rbtn) {
-		if (state <= BANG) {
+		if (state <= BANG && clock() - BangCooltime > 1500) {
 			state = BANG;
 			sword.nowAngle = (FLOAT)atan2(temp.y, temp.x);
 			sword.stopRotate(true);
 			bang(temp);
+			BangCooltime = clock();
 		}
 	}else if (!rbtn && state == BANG) {
 		state = USUAL;
@@ -526,8 +527,10 @@ PlayerBulletManager::~PlayerBulletManager()
 
 void PlayerBulletManager::add(POINT pos, POINTFLOAT velocity)
 {
-	if(num < MAX_PLAYER_BULLET)
+	if (num < MAX_PLAYER_BULLET)
+	{
 		playerBullet[num++] = new PlayerBullet(pos, velocity);
+	}
 }
 
 void PlayerBulletManager::move(RECT * map)
@@ -578,21 +581,12 @@ LKM::Shape * PlayerBulletManager::getBulletShape(int index)
 	return &form;
 }
 
-
-
-// 
-
-
 PlayerBullet::PlayerBullet(POINT point, POINTFLOAT velo)
 {
 	pos = point;
 	start = point;
 	lastPos = point;
 	velocity = velo;
-}
-
-PlayerBullet::~PlayerBullet()
-{
 }
 
 void PlayerBullet::translocate()

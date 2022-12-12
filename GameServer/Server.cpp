@@ -111,7 +111,6 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 	{
 	case CLIENTINFO:
 	{
-
 		if (ClientCount != playerMng->GetPlayerNum())
 			playerMng->SetPlayerNum(ClientCount);
 
@@ -128,11 +127,6 @@ void SERVER::Recv_Packet(SOCKET& clientsock)
 				std::cout << "type: " << (int)Collideinfo[i].collide_type << std::endl << std::endl;
 			}
 #endif
-		}
-		if (pre_info.collide_player_num)
-		{
-			PlayerCollideinfo.resize(pre_info.collide_player_num);
-			retval = recv(clientsock, (char*)&PlayerCollideinfo[0], sizeof(CollideInfo) * PlayerCollideinfo.size(), MSG_WAITALL);
 		}
 
 		playerMng->RecvPlayer(Clientinfo.Pinfo);
@@ -249,7 +243,6 @@ void SERVER::UpdateFrequent()
 void SERVER::UpdateImmediately()
 {
 	if (ClientCount > 1) WaitForSingleObject(UpdateEvent, INFINITE);
-	//playerMng->UpdateCollide(PlayerCollideinfo);
 	playerMng->UpdateCollide();
 	enemyManager->UpdateCollide(Collideinfo);
 	if (ClientCount > 1) SetEvent(UpdateEvent);

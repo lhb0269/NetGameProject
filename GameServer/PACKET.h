@@ -24,6 +24,14 @@ enum class COLLIDE_TYPE {
 	SWORD_TO_PLAYER,
 };
 
+struct PlayerBullet {
+	POINT pos;
+	POINT lastPos;
+	POINT start;
+	POINTFLOAT velocity;
+	bool state;
+};
+
 struct PREPARE_INFO {
 	PACKET_TYPE packet_type;
 	int collide_ememy_num;
@@ -80,3 +88,4 @@ struct ClientInfo {
 	PlayerInfo	Pinfo;
 	UI			Ui;
 };
+

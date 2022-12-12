@@ -78,7 +78,6 @@ void CLIENT::Send_Packet(PREPARE_INFO pre_info)
 		retval = send(sock, (char*)&pre_info, sizeof(PREPARE_INFO), 0);
 		retval = send(sock, (char*)&Clientinfo, sizeof(ClientInfo), 0);
 		if (Collideinfo.size()) retval = send(sock, (char*)&Collideinfo[0], sizeof(CollideInfo) * Collideinfo.size(), 0);
-		if (PlayerCollideinfo.size()) retval = send(sock, (char*)&PlayerCollideinfo[0], sizeof(CollideInfo) * PlayerCollideinfo.size(), 0);
 		break;
 	}
 	case LOBBYPACKET:

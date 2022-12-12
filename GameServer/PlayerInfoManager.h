@@ -20,7 +20,6 @@ public:
 	bool getReady();
 
 	PlayerInfo* HandOverInfo();
-	void UpdateCollide(std::vector<CollideInfo>& ce);
 	void UpdateCollide();
 	BOOL beAttacked(const LKM::Shape* hitBox,POINT pos);
 	void setSwordShape(LKM::Shape& fsword,Sword& sword);

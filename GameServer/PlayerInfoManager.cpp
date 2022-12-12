@@ -91,11 +91,6 @@ PlayerInfo* PlayerInfoManager::HandOverInfo()
 	return pInfo;
 }
 
-void PlayerInfoManager::UpdateCollide(std::vector<CollideInfo>& ce)
-{
-
-}
-
 void PlayerInfoManager::UpdateCollide()
 {
 	//player sword -> player
@@ -119,6 +114,7 @@ void PlayerInfoManager::UpdateCollide()
 		}
 	}
 }
+
 BOOL PlayerInfoManager::beAttacked(const LKM::Shape* hitBox,POINT pos)
 {
 	LKM::Shape temp(8);
@@ -127,6 +123,7 @@ BOOL PlayerInfoManager::beAttacked(const LKM::Shape* hitBox,POINT pos)
 	}
 	return temp.Collide2Shape(hitBox);
 }
+
 
 void PlayerInfoManager::getSwordCollider(LKM::Shape* hitBox, LKM::Shape& fsword,Sword& sword, POINT pos)
 {

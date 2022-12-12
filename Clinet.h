@@ -35,7 +35,6 @@ private:
 
 	ClientInfo Clientinfo;
 	vector<CollideInfo> Collideinfo;
-	vector<CollideInfo> PlayerCollideinfo;
 	RECT mapsize;
 
 	HANDLE ReadEvent;
@@ -55,7 +54,6 @@ public:
 	
 	ClientInfo* GetClientInfo() { return &Clientinfo; }
 	vector<CollideInfo>& GetCollideInfo() { return Collideinfo; }
-	vector<CollideInfo>& GetPlayerCollideInfo() { return PlayerCollideinfo; }
 	void SetMapSize(RECT r) { mapsize = r; }
 	RECT& GetMapSize() { return mapsize; }
 
